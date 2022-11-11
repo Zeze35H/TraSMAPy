@@ -3,12 +3,13 @@
 
 from trasmapy import TraSMAPy
 
+import traci
+
 
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
-    traSMAPy.startSimulation()
-
     traSMAPy.vehicle.add("vehicle0", "route0")
+
     while traSMAPy.simulation.getMinExpectedNumber() > 0:
         traSMAPy.doSimulationStep()
 

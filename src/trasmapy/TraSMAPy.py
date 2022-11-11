@@ -12,10 +12,13 @@ else:
 from sumolib import checkBinary  # noqa
 import traci  # noqa
 
+from trasmapy.Concessioner import Concessioner
 
 class TraSMAPy:
     def __init__(self) -> None:
         self._step: int = 0
+        self._startSimulation()
+        self._concessioner = Concessioner()
 
     def _getOptions(self):
         optParser = optparse.OptionParser()
@@ -28,7 +31,7 @@ class TraSMAPy:
         options, args = optParser.parse_args()
         return options
 
-    def startSimulation(self) -> None:
+    def _startSimulation(self) -> None:
         options = self._getOptions()
 
         # this script has been called from the command line. It will start sumo as a
