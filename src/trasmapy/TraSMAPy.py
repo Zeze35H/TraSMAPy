@@ -34,15 +34,14 @@ class TraSMAPy:
     def _startSimulation(self, sumoCfg: str) -> None:
         options = self._getOptions()
 
-        # this script has been called from the command line. It will start sumo as a
+        # script has been called from the command line. It will start sumo as a
         # server, then connect and run
         if options.nogui:
             sumoBinary = checkBinary("sumo")
         else:
             sumoBinary = checkBinary("sumo-gui")
 
-        # this is the normal way of using traci. sumo is started as a
-        # subprocess and then the python script connects and runs
+        # sumo is started as a subprocess and then the python script connects and runs
         traci.start(
             [sumoBinary, "-c", sumoCfg, "--tripinfo-output", "tripinfo.xml"]
         )
