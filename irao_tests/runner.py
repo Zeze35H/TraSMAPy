@@ -16,6 +16,7 @@ def run(traSMAPy: TraSMAPy):
 
     e10 = traSMAPy.concenssioner.getDetector("e1_0")
     e10.listen(lambda x: print(x))
+    print(e10.position)
 
     while traci.simulation.getMinExpectedNumber() > 0:
         if traSMAPy.step > 20:

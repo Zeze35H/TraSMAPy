@@ -62,6 +62,8 @@ class Concessioner:
                 return det
         raise KeyError(f"Detector not found: [detectorId={detectorId}]")
 
+    #  def getToll(self, detectorId)
+
     def _doSimulationStep(self) -> None:
         for detector in self._detectors.values():
             detector._doSimulationStep()
