@@ -15,9 +15,9 @@ import traci  # noqa
 from trasmapy.Concessioner import Concessioner
 
 class TraSMAPy:
-    def __init__(self) -> None:
+    def __init__(self, sumoCfg: str) -> None:
         self._step: int = 0
-        self._startSimulation()
+        self._startSimulation(sumoCfg)
         self._concessioner = Concessioner()
 
     def _getOptions(self):
@@ -31,7 +31,7 @@ class TraSMAPy:
         options, args = optParser.parse_args()
         return options
 
-    def _startSimulation(self) -> None:
+    def _startSimulation(self, sumoCfg: str) -> None:
         options = self._getOptions()
 
         # this script has been called from the command line. It will start sumo as a
@@ -44,8 +44,16 @@ class TraSMAPy:
         # this is the normal way of using traci. sumo is started as a
         # subprocess and then the python script connects and runs
         traci.start(
-            [sumoBinary, "-c", "hello.sumocfg", "--tripinfo-output", "tripinfo.xml"]
+            [sumoBinary, "-c", sumoCfg, "--tripinfo-output", "tripinfo.xml"]
         )
+
+    @property
+    def step(self) -> int:
+        return self._step
+
+    @property
+    def concenssioner(self) -> Concessioner:
+        return self._concessioner
 
     def closeSimulation(self) -> None:
         traci.close()
@@ -54,15 +62,3 @@ class TraSMAPy:
     def doSimulationStep(self) -> None:
         self._step += 1
         traci.simulationStep()
-
-    @property
-    def step(self) -> int:
-        return self._step
-
-    @property
-    def vehicle(self):
-        return traci.vehicle
-
-    @property
-    def simulation(self):
-        return traci.simulation

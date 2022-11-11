@@ -8,14 +8,20 @@ import traci
 
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
-    traSMAPy.vehicle.add("vehicle0", "route0")
+    traci.vehicle.add("vehicle0", "route0", typeID="Car")
 
-    while traSMAPy.simulation.getMinExpectedNumber() > 0:
+    laneId = "1to2_1"
+    lane = traSMAPy.concenssioner.getLane(laneId)
+    lane.forbidAll()
+
+    while traci.simulation.getMinExpectedNumber() > 0:
+        if traSMAPy.step > 20:
+            lane.allowAll()
         traSMAPy.doSimulationStep()
 
     traSMAPy.closeSimulation()
 
 
 if __name__ == "__main__":
-    traSMAPy = TraSMAPy()
+    traSMAPy = TraSMAPy("hello.sumocfg")
     run(traSMAPy)
