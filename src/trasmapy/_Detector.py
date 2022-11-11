@@ -9,6 +9,7 @@ class Detector(IdentifiedObject):
 
     @property
     def timeSinceLastDetection(self):
+        """Returns how many seconds elapsed since the last detection."""
         return traci.inductionloop.getTimeSinceDetection(self.id)
 
     def listen(self, listener):
