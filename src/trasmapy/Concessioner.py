@@ -32,12 +32,17 @@ class Concessioner:
 
     @property
     def edges(self) -> dict[str, Edge]:
+        """Returns a list of all edges in the network."""
         return self._edges.copy()
 
     def getEdge(self, edgeId: str) -> Edge:
+        """Returns an object representing the edge with the given ID in the network.
+        Raises KeyError if the given edge doesn't exist."""
         return self._edges[edgeId]
 
     def getLane(self, laneId: str) -> Lane:
+        """Returns an object representing the lane with the given ID in the network.
+        Raises KeyError if the given lane doesn't exist in any edge."""
         for edge in self._edges.values():
             try:
                 return edge.getLane(laneId)
@@ -46,6 +51,8 @@ class Concessioner:
         raise KeyError(f"Lane not found: [laneId={laneId}]")
 
     def getDetector(self, detectorId: str) -> Detector:
+        """Returns an object representing the inductionloop (E1) with the given ID in the network.
+        Raises KeyError if the given inductionloop doesn't exist in any lane."""
         try:
             return self._detectors[detectorId]
         except KeyError:
