@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from TraSMAPy import TraSMAPy
+from trasmapy import TraSMAPy
 
 
 def run(traSMAPy: TraSMAPy):
