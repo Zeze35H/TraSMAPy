@@ -1,18 +1,16 @@
 import traci
 
+from trasmapy._IdentifiedObject import IdentifiedObject
+
 class Edge:
     pass
 
-class Lane:
+class Lane(IdentifiedObject):
     def __init__(self, laneId: str, parentEdge: Edge) -> None:
-        self._id = laneId
+        super().__init__(laneId)
         self._parent = parentEdge
 
-        self._maxSpeed : float = traci.lane.getMaxSpeed(self._id)
-
-    @property
-    def id(self) -> str:
-        return self._id
+        self._maxSpeed : float = traci.lane.getMaxSpeed(self.id)
 
     @property
     def parent(self) -> Edge:
@@ -27,7 +25,7 @@ class Lane:
         """Sets the maximum speed for the vehicles in this lane."""
         if isinstance(newVal, float) or isinstance(newVal, int):
             self._maxSpeed = newVal
-            traci.lane.setMaxSpeed(self._id, self._maxSpeed)
+            traci.lane.setMaxSpeed(self.id, self._maxSpeed)
         else:
             raise ValueError("maxSpeed needs to be a number (int/float data type).")
 
@@ -39,11 +37,11 @@ class Lane:
 
     def setAllowed(self, allowedVehicleClasses: list[str]) -> None:
         """Set the classes of vehicles allowed to move on this lane."""
-        traci.lane.setAllowed(self._id, allowedVehicleClasses)
+        traci.lane.setAllowed(self.id, allowedVehicleClasses)
 
     def setDisallowed(self, disallowedVehicleClasses: list[str]) -> None:
         """Set the classes of vehicles disallowed to move on this lane."""
-        traci.lane.setDisallowed(self._id, disallowedVehicleClasses)
+        traci.lane.setDisallowed(self.id, disallowedVehicleClasses)
 
     def allowAll(self) -> None:
         """Allow all vehicle classes to move on this lane."""

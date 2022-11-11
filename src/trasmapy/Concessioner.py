@@ -4,6 +4,7 @@ import traci
 
 from trasmapy._Edge import Edge
 from trasmapy._Lane import Lane
+from trasmapy._Detector import Detector
 
 
 class Concessioner:
@@ -27,6 +28,8 @@ class Concessioner:
                 print(f"Failed to find any lanes for edge (skipping it): [edgeId={edgeId}]",file=stderr)
                 continue
 
+        self._detectors : dict[str, Detector] = {}
+
     @property
     def edges(self) -> dict[str, Edge]:
         return self._edges.copy()
@@ -41,3 +44,17 @@ class Concessioner:
             except KeyError:
                 continue
         raise KeyError(f"Lane not found: [laneId={laneId}]")
+
+    def getDetector(self, detectorId: str) -> Detector:
+        try:
+            return self._detectors[detectorId]
+        except KeyError:
+            if detectorId in traci.inductionloop.getIDList():
+                det = Detector(detectorId)
+                self._detectors[detectorId] = det
+                return det
+        raise KeyError(f"Detector not found: [detectorId={detectorId}]")
+
+    def _doSimulationStep(self) -> None:
+        for detector in self._detectors.values():
+            detector._doSimulationStep()

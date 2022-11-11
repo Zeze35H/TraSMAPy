@@ -62,3 +62,4 @@ class TraSMAPy:
     def doSimulationStep(self) -> None:
         self._step += 1
         traci.simulationStep()
+        self._concessioner._doSimulationStep()
