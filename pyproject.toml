@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0", "traci>=1.15.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "TraSMAPy"
+version = "0.0.1"
+authors = [
+  { name="Ana Barros", email="author@example.com" },
+  { name="Ivo Saavedra", email="author@example.com" },
+  { name="João Costa", email="joaocosta.work@posteo.net" },
+  { name="João Sousa", email="author@example.com" },
+  { name="Ricardo Fontão", email="author@example.com" },
+  { name="Telmo Baptista", email="author@example.com" },
+]
+description = "API para o suminho"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/JoaoCostaIFG/TraSMAPy"
+"Bug Tracker" = "https://github.com/JoaoCostaIFG/TraSMAPy/issues"

@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+src/TraSMAPy.egg-info/PKG-INFO
+src/TraSMAPy.egg-info/SOURCES.txt
+src/TraSMAPy.egg-info/dependency_links.txt
+src/TraSMAPy.egg-info/top_level.txt
+src/trasmapy/TraSMAPy.py
+src/trasmapy/__init__.py
