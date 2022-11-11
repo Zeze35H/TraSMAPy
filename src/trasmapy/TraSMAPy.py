@@ -25,6 +25,10 @@ class TraSMAPy:
         return self._step
 
     @property
+    def minExpectedNumber(self) -> int:
+        return traci.simulation.getMinExpectedNumber()
+
+    @property
     def concenssioner(self) -> Concessioner:
         return self._concessioner
 

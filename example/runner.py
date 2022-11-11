@@ -17,7 +17,7 @@ def run(traSMAPy: TraSMAPy):
     e10 = traSMAPy.concenssioner.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 
-    while traci.simulation.getMinExpectedNumber() > 0:
+    while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:
             lane.allowAll()
         traSMAPy.doSimulationStep()
