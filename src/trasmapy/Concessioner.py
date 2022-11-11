@@ -2,9 +2,9 @@ from sys import stderr
 
 import traci
 
-from trasmapy._Edge import Edge
-from trasmapy._Lane import Lane
-from trasmapy._Detector import Detector
+from trasmapy.concessioner._Edge import Edge
+from trasmapy.concessioner._Lane import Lane
+from trasmapy.concessioner._Detector import Detector
 
 
 class Concessioner:

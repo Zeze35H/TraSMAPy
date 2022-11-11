@@ -1,6 +1,6 @@
 import traci
 
-from trasmapy._Lane import Lane
+from trasmapy.concessioner._Lane import Lane
 from trasmapy._IdentifiedObject import IdentifiedObject
 
 

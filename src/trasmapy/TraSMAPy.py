@@ -20,6 +20,23 @@ class TraSMAPy:
         self._startSimulation(sumoCfg)
         self._concessioner = Concessioner()
 
+    @property
+    def step(self) -> int:
+        return self._step
+
+    @property
+    def concenssioner(self) -> Concessioner:
+        return self._concessioner
+
+    def closeSimulation(self) -> None:
+        traci.close()
+        sys.stdout.flush()
+
+    def doSimulationStep(self) -> None:
+        self._step += 1
+        traci.simulationStep()
+        self._concessioner._doSimulationStep()
+
     def _getOptions(self):
         optParser = optparse.OptionParser()
         optParser.add_option(
@@ -45,20 +62,3 @@ class TraSMAPy:
         traci.start(
             [sumoBinary, "-c", sumoCfg, "--tripinfo-output", "tripinfo.xml"]
         )
-
-    @property
-    def step(self) -> int:
-        return self._step
-
-    @property
-    def concenssioner(self) -> Concessioner:
-        return self._concessioner
-
-    def closeSimulation(self) -> None:
-        traci.close()
-        sys.stdout.flush()
-
-    def doSimulationStep(self) -> None:
-        self._step += 1
-        traci.simulationStep()
-        self._concessioner._doSimulationStep()
