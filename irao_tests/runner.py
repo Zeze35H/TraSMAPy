@@ -21,6 +21,7 @@ def run(traSMAPy: TraSMAPy):
         if traSMAPy.step > 20:
             lane.allowAll()
         traSMAPy.doSimulationStep()
+        print(e10.timeSinceLastDetection)
 
     traSMAPy.closeSimulation()
 

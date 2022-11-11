@@ -7,6 +7,10 @@ class Detector(IdentifiedObject):
         super().__init__(detectorId)
         self._listeners = []
 
+    @property
+    def timeSinceLastDetection(self):
+        return traci.inductionloop.getTimeSinceDetection(self.id)
+
     def listen(self, listener):
         """Hooks into the detector. The given function will be called with the IDs of the detected vehicles there's a detection."""
         self._listeners.append(listener)
