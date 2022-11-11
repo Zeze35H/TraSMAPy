@@ -17,6 +17,7 @@ def run(traSMAPy: TraSMAPy):
     while traci.simulation.getMinExpectedNumber() > 0:
         if traSMAPy.step > 20:
             lane.allowAll()
+        print(traci.inductionloop.getLastStepVehicleNumber("e1_0"))
         traSMAPy.doSimulationStep()
 
     traSMAPy.closeSimulation()

@@ -118,8 +118,6 @@ class Concessioner:
             except KeyError:
                 edgeToLaneMap[parentEdgeId] = [laneId]
 
-        print(edgeToLaneMap)
-
         self._edges : dict[str, _Edge] = {} 
         for edgeId in traci.edge.getIDList():
             try:
