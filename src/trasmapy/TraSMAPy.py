@@ -47,6 +47,7 @@ class TraSMAPy:
         self._step += 1
         traci.simulationStep()
         self._concessioner._doSimulationStep()
+        self._users._doSimulationStep()
 
     def _getOptions(self):
         optParser = optparse.OptionParser()

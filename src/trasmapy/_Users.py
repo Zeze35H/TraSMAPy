@@ -1,3 +1,55 @@
+import traci
+from traci.constants import VAR_STOPSTATE
+
+from trasmapy.users._Vehicle import Vehicle
+
+
 class Users:
     def __init__(self):
-        pass
+        # the vehicles being tracked
+        self._vehicles: dict[str, Vehicle] = {}
+
+    def getVehicle(self, vehicleId: str) -> Vehicle:
+        return self._vehicles[vehicleId]
+
+    def createVehicle(
+        self,
+        vehicleId: str,
+        routeId: str,
+        typeId: str = "DEFAULT_VEHTYPE",
+        personNumber: int = 0,
+        personCapacity: int = 0,
+    ) -> Vehicle:
+        """Creates a vehicle and adds it to the network.
+        If the route is empty (\"\"), the vehicle will be added to a random network edge.
+        If the route consists of two disconnected edges, the vehicle will be treated like
+        a <trip> and use the fastest route between the two edges."""
+        if vehicleId in self._vehicles:
+            raise KeyError(
+                f"A vehicle with the given ID already exists: [vehicleId={vehicleId}]."
+            )
+
+        traci.vehicle.add(
+            vehicleId,
+            routeId,
+            typeID=typeId,
+            personNumber=personNumber,
+            personCapacity=personCapacity,
+        )
+        traci.vehicle.subscribe(
+            vehicleId, [VAR_STOPSTATE]
+        )  # subscribe stoped state byte
+
+        v = Vehicle(vehicleId)
+        self._vehicles[vehicleId] = v
+        return v
+
+    def _doSimulationStep(self) -> None:
+        res: dict[str, dict] = traci.vehicle.getAllSubscriptionResults()  # type: ignore
+        # the vehicles that exited the simulation on this step
+        vehiclesThatDied: set[str] = self._vehicles.keys() - res.keys()
+
+        for vehicleId in vehiclesThatDied:
+            # garanteed to be in the map (doesn't need catch)
+            v = self._vehicles.pop(vehicleId)
+            v._dead = True

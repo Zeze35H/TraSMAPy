@@ -16,15 +16,26 @@ def run(traSMAPy: TraSMAPy):
     e10 = traSMAPy.concenssioner.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 
-    traci.vehicle.add(
-        "vehicle0", "route0", typeID="Car", personNumber=5, personCapacity=10
+    v0 = traSMAPy.users.createVehicle(
+        "vehicle0", "route0", typeId="Car", personNumber=5, personCapacity=10
+    )
+    v1 = traSMAPy.users.createVehicle(
+        "vehicle1", "route0", typeId="Car", personNumber=5, personCapacity=10
+    )
+    v2 = traSMAPy.users.createVehicle(
+        "vehicle2", "route0", typeId="Car", personNumber=5, personCapacity=10
+    )
+    v3 = traSMAPy.users.createVehicle(
+        "vehicle3", "route0", typeId="Car", personNumber=5, personCapacity=10
     )
 
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:
             lane.allowAll()
+
+        print(v0.speed)
+        #  print(traci.simulation.getPendingVehicles(), traci.vehicle.getIDList())
         traSMAPy.doSimulationStep()
-        print(e10.timeSinceLastDetection)
 
     traSMAPy.closeSimulation()
 
