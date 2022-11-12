@@ -10,25 +10,28 @@ from trasmapy.concessioner._Detector import Detector
 class Concessioner:
     def __init__(self) -> None:
         # obtain map from l
-        edgeToLaneMap : dict[str, list[str]] = {}
+        edgeToLaneMap: dict[str, list[str]] = {}
         for laneId in traci.lane.getIDList():
-            parentEdgeId : str = traci.lane.getEdgeID(laneId)
+            parentEdgeId: str = traci.lane.getEdgeID(laneId)
             try:
                 laneList = edgeToLaneMap[parentEdgeId]
                 laneList.append(laneId)
             except KeyError:
                 edgeToLaneMap[parentEdgeId] = [laneId]
 
-        self._edges : dict[str, Edge] = {} 
+        self._edges: dict[str, Edge] = {}
         for edgeId in traci.edge.getIDList():
             try:
                 laneList = edgeToLaneMap[edgeId]
                 self._edges[edgeId] = Edge(edgeId, laneList)
             except KeyError:
-                print(f"Failed to find any lanes for edge (skipping it): [edgeId={edgeId}]",file=stderr)
+                print(
+                    f"Failed to find any lanes for edge (skipping it): [edgeId={edgeId}]",
+                    file=stderr,
+                )
                 continue
 
-        self._detectors : dict[str, Detector] = {}
+        self._detectors: dict[str, Detector] = {}
 
     @property
     def edges(self) -> dict[str, Edge]:

@@ -15,6 +15,7 @@ import traci  # noqa
 from trasmapy._Concessioner import Concessioner
 from trasmapy._Users import Users
 
+
 class TraSMAPy:
     def __init__(self, sumoCfg: str) -> None:
         self._step: int = 0
@@ -69,6 +70,4 @@ class TraSMAPy:
             sumoBinary = checkBinary("sumo-gui")
 
         # sumo is started as a subprocess and then the python script connects and runs
-        traci.start(
-            [sumoBinary, "-c", sumoCfg, "--tripinfo-output", "tripinfo.xml"]
-        )
+        traci.start([sumoBinary, "-c", sumoCfg, "--tripinfo-output", "tripinfo.xml"])

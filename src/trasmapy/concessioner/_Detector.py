@@ -2,6 +2,7 @@ import traci
 
 from trasmapy._IdentifiedObject import IdentifiedObject
 
+
 class Detector(IdentifiedObject):
     def __init__(self, detectorId: str) -> None:
         super().__init__(detectorId)

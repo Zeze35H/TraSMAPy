@@ -2,7 +2,8 @@ from abc import abstractmethod
 
 from trasmapy._Detector import Detector
 
-class Toll():
+
+class Toll:
     def __init__(self, detector) -> None:
         self._detector = detector
 

@@ -16,7 +16,13 @@ def run(traSMAPy: TraSMAPy):
     e10 = traSMAPy.concenssioner.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 
-    traci.vehicle.add("vehicle0", "route0", typeID="Car")
+    traci.vehicle.add(
+        "vehicle0", "route0", typeID="Car", personNumber=5, personCapacity=10
+    )
+    print(traci.vehicle.getPersonCapacity("vehicle0"))
+    print(traci.vehicle.getPersonNumber("vehicle0"))
+    print(traci.vehicle.getVehicleClass("vehicle0"))
+    traci.vehicle.setType("vehicle0", "otipo")
 
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:

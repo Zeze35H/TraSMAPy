@@ -8,10 +8,10 @@ class Edge(IdentifiedObject):
     def __init__(self, edgeId: str, laneList: list[str]) -> None:
         super().__init__(edgeId)
 
-        self._lanes : dict[str, Lane] = {}
+        self._lanes: dict[str, Lane] = {}
         for laneId in laneList:
             self._lanes[laneId] = Lane(laneId, self)
-        
+
     @property
     def lanes(self):
         return self._lanes.copy()
@@ -46,4 +46,3 @@ class Edge(IdentifiedObject):
     def forbidAll(self) -> None:
         """Forbid all vehicle classes to move on this edge."""
         self.setDisallowed(["all"])
-
