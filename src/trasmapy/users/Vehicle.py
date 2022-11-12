@@ -1,6 +1,8 @@
 import traci
 
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy.users.MoveReason import MoveReason
+from trasmapy.users.VehicleClass import VehicleClass
 
 
 class Vehicle(IdentifiedObject):
@@ -9,19 +11,19 @@ class Vehicle(IdentifiedObject):
 
     @property
     def vehicleClass(self) -> str:
-        return traci.vehicle.getVehicleClass(self.id) # type: ignore
+        return traci.vehicle.getVehicleClass(self.id)  # type: ignore
 
     @vehicleClass.setter
-    def vehicleClass(self, newVehicleClass: str) -> None:
+    def vehicleClass(self, newVehicleClass: VehicleClass) -> None:
         """Sets the vehicle abstact class."""
-        if isinstance(newVehicleClass, str):
-            traci.vehicle.setVehicleClass(self.id, newVehicleClass)
+        if isinstance(newVehicleClass, VehicleClass):
+            traci.vehicle.setVehicleClass(self.id, newVehicleClass.value)
         else:
-            raise ValueError("type needs to be a string.")
+            raise ValueError("type needs to be a VehicleClass instance.")
 
     @property
     def type(self) -> str:
-        return traci.vehicle.getTypeID(self.id) # type: ignore
+        return traci.vehicle.getTypeID(self.id)  # type: ignore
 
     @type.setter
     def type(self, newTypeId: str) -> None:
@@ -33,27 +35,27 @@ class Vehicle(IdentifiedObject):
 
     @property
     def emissionClass(self) -> str:
-        return traci.vehicle.getEmissionClass(self.id) # type: ignore
+        return traci.vehicle.getEmissionClass(self.id)  # type: ignore
 
     @property
     def shapeClass(self) -> str:
-        return traci.vehicle.getShapeClass(self.id) # type: ignore
+        return traci.vehicle.getShapeClass(self.id)  # type: ignore
 
     @property
     def personCapacity(self) -> int:
         """Returns the person capacity of the vehicle."""
-        return traci.vehicle.getPersonCapacity(self.id) # type: ignore
+        return traci.vehicle.getPersonCapacity(self.id)  # type: ignore
 
     @property
     def personCount(self) -> int:
         """Returns the number of people inside the vehicle."""
-        return traci.vehicle.getPersonNumber(self.id) # type: ignore
+        return traci.vehicle.getPersonNumber(self.id)  # type: ignore
 
     @property
     def speed(self) -> float:
         """Returns the speed of the vehicle within the last step (m/s).
         Error value: -2^30"""
-        return traci.vehicle.getSpeed(self.id) # type: ignore
+        return traci.vehicle.getSpeed(self.id)  # type: ignore
 
     @speed.setter
     def speed(self, newVal: float) -> None:
@@ -67,12 +69,12 @@ class Vehicle(IdentifiedObject):
     def lateralSpeed(self) -> float:
         """Returns the lateral speed of the vehicle within the last step (m/s).
         Error value: -2^30"""
-        return traci.vehicle.getLateralSpeed(self.id) # type: ignore
+        return traci.vehicle.getLateralSpeed(self.id)  # type: ignore
 
     @property
     def acceleration(self) -> float:
         """Returns the acceleration in the previous time step (m/s^2)."""
-        return traci.vehicle.getAcceleration(self.id) # type: ignore
+        return traci.vehicle.getAcceleration(self.id)  # type: ignore
 
     @acceleration.setter
     def acceleration(self, newAccel: float, duration: float) -> None:
@@ -86,80 +88,80 @@ class Vehicle(IdentifiedObject):
     @property
     def edgeId(self) -> str:
         """Returns the ID of the edge the vehicle was in the previous time step."""
-        return traci.vehicle.getRoadID(self.id) # type: ignore
+        return traci.vehicle.getRoadID(self.id)  # type: ignore
 
     @property
     def laneId(self) -> str:
         """Returns the ID of the lane the vehicle was in the previous time step."""
-        return traci.vehicle.getLaneID(self.id) # type: ignore
+        return traci.vehicle.getLaneID(self.id)  # type: ignore
 
     @property
     def drivenDistance(self) -> float:
         """Returns the distance the vehicle has already driven (m).
         Error value: -2^30"""
-        return traci.vehicle.getDistance(self.id) # type: ignore
+        return traci.vehicle.getDistance(self.id)  # type: ignore
 
     @property
     def CO2Emissions(self) -> float:
         """Returns the vehicle's CO2 emissions during this time step (mg/s).
         To get the value for one step multiply with the step length.
         Error value: -2^30"""
-        return traci.vehicle.getCO2Emission(self.id) # type: ignore
+        return traci.vehicle.getCO2Emission(self.id)  # type: ignore
 
     @property
     def COEmissions(self) -> float:
         """Returns the vehicle's CO emissions during this time step (mg/s).
         To get the value for one step multiply with the step length.
         Error value: -2^30"""
-        return traci.vehicle.getCOEmission(self.id) # type: ignore
+        return traci.vehicle.getCOEmission(self.id)  # type: ignore
 
     @property
     def HCEmissions(self) -> float:
         """Returns the vehicle's HC emissions during this time step (mg/s).
         To get the value for one step multiply with the step length.
         Error value: -2^30"""
-        return traci.vehicle.getHCEmission(self.id) # type: ignore
+        return traci.vehicle.getHCEmission(self.id)  # type: ignore
 
     @property
     def PMxEmissions(self) -> float:
         """Returns the vehicle's PMx emissions during this time step (mg/s).
         To get the value for one step multiply with the step length.
         Error value: -2^30"""
-        return traci.vehicle.getPMxEmission(self.id) # type: ignore
+        return traci.vehicle.getPMxEmission(self.id)  # type: ignore
 
     @property
     def NOxEmissions(self) -> float:
         """Returns the vehicle's NOx emissions during this time step (mg/s).
         To get the value for one step multiply with the step length.
         Error value: -2^30"""
-        return traci.vehicle.getNOxEmission(self.id) # type: ignore
+        return traci.vehicle.getNOxEmission(self.id)  # type: ignore
 
     @property
     def fuelConsumption(self) -> float:
         """Returns the vehicle's NOx emissions during this time step (ml/s).
         To get the value for one step multiply with the step length.
         Error value: -2^30"""
-        return traci.vehicle.getFuelConsumption(self.id) # type: ignore
+        return traci.vehicle.getFuelConsumption(self.id)  # type: ignore
 
     @property
     def electricityConsumption(self) -> float:
         """Returns the vehicle's electricity consumption during this time step (Wh/s).
         To get the value for one step multiply with the step length.
         Error value: -2^30"""
-        return traci.vehicle.getElectricityConsumption(self.id) # type: ignore
+        return traci.vehicle.getElectricityConsumption(self.id)  # type: ignore
 
     @property
     def noiseEmission(self) -> float:
         """Returns the noise generated by the vehicle (dBA).
         Error value: -2^30"""
-        return traci.vehicle.getNoiseEmission(self.id) # type: ignore
+        return traci.vehicle.getNoiseEmission(self.id)  # type: ignore
 
     @property
     def timeLoss(self) -> float:
-        return traci.vehicle.getTimeLoss(self.id) # type: ignore
+        return traci.vehicle.getTimeLoss(self.id)  # type: ignore
 
     def _getStopState(self) -> int:
-        return traci.vehicle.getStopState(self.id) # type: ignore
+        return traci.vehicle.getStopState(self.id)  # type: ignore
 
     def isStopped(self) -> bool:
         """Returns whether the vehicle's stop state is: stopped"""
@@ -200,3 +202,9 @@ class Vehicle(IdentifiedObject):
     def stopUntil(self, until: float, edgeId: str, pos: float = 1) -> None:
         """Stops the vehicle at the given position in the given edge until a given simulation time (s)."""
         traci.vehicle.setStop(self.id, edgeId, pos, until=until)
+
+    def moveTo(
+        self, laneId: str, pos: float, reason: MoveReason = MoveReason.AUTOMATIC
+    ) -> None:
+        """Move a vehicle to a new position along its current route."""
+        traci.vehicle.moveTo(self.id, laneId, pos, reason.value)

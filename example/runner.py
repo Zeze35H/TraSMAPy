@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from trasmapy import TraSMAPy
+from trasmapy import TraSMAPy, VehicleClass
 
 import traci
 
@@ -11,7 +11,7 @@ def run(traSMAPy: TraSMAPy):
     laneId = "1to2_1"
     lane = traSMAPy.concenssioner.getLane(laneId)
     #  lane.forbidAll()
-    lane.setDisallowed(["passenger"])
+    lane.setDisallowed([VehicleClass.PASSENGER])
 
     e10 = traSMAPy.concenssioner.getDetector("e1_0")
     e10.listen(lambda x: print(x))
@@ -19,10 +19,6 @@ def run(traSMAPy: TraSMAPy):
     traci.vehicle.add(
         "vehicle0", "route0", typeID="Car", personNumber=5, personCapacity=10
     )
-    print(traci.vehicle.getPersonCapacity("vehicle0"))
-    print(traci.vehicle.getPersonNumber("vehicle0"))
-    print(traci.vehicle.getVehicleClass("vehicle0"))
-    traci.vehicle.setType("vehicle0", "otipo")
 
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:

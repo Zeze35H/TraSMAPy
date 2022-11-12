@@ -29,7 +29,7 @@ class TraSMAPy:
 
     @property
     def minExpectedNumber(self) -> int:
-        return traci.simulation.getMinExpectedNumber() # type: ignore
+        return traci.simulation.getMinExpectedNumber()  # type: ignore
 
     @property
     def concenssioner(self) -> Concessioner:

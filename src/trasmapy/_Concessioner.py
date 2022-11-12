@@ -12,7 +12,7 @@ class Concessioner:
         # obtain map from l
         edgeToLaneMap: dict[str, list[str]] = {}
         for laneId in traci.lane.getIDList():
-            parentEdgeId: str = traci.lane.getEdgeID(laneId)
+            parentEdgeId: str = traci.lane.getEdgeID(laneId)  # type: ignore
             try:
                 laneList = edgeToLaneMap[parentEdgeId]
                 laneList.append(laneId)

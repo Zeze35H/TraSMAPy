@@ -1,6 +1,7 @@
 import traci
 
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy.users.VehicleClass import VehicleClass
 
 
 class Edge:
@@ -12,7 +13,7 @@ class Lane(IdentifiedObject):
         super().__init__(laneId)
         self._parent = parentEdge
 
-        self._maxSpeed: float = traci.lane.getMaxSpeed(self.id)
+        self._maxSpeed: float = traci.lane.getMaxSpeed(self.id)  # type: ignore
 
     @property
     def parent(self) -> Edge:
@@ -37,18 +38,26 @@ class Lane(IdentifiedObject):
         if maxSpeed < self._maxSpeed:
             self.maxSpeed = maxSpeed
 
-    def setAllowed(self, allowedVehicleClasses: list[str]) -> None:
+    def _setAllowed(self, allowedVehicleClasses: list[str]) -> None:
         """Set the classes of vehicles allowed to move on this lane."""
         traci.lane.setAllowed(self.id, allowedVehicleClasses)
 
-    def setDisallowed(self, disallowedVehicleClasses: list[str]) -> None:
+    def _setDisallowed(self, disallowedVehicleClasses: list[str]) -> None:
         """Set the classes of vehicles disallowed to move on this lane."""
         traci.lane.setDisallowed(self.id, disallowedVehicleClasses)
 
+    def setAllowed(self, allowedVehicleClasses: list[VehicleClass]) -> None:
+        """Set the classes of vehicles allowed to move on this lane."""
+        self._setAllowed(list(map(lambda x: x.value, allowedVehicleClasses)))
+
+    def setDisallowed(self, disallowedVehicleClasses: list[VehicleClass]) -> None:
+        """Set the classes of vehicles disallowed to move on this lane."""
+        self._setDisallowed(list(map(lambda x: x.value, disallowedVehicleClasses)))
+
     def allowAll(self) -> None:
         """Allow all vehicle classes to move on this lane."""
-        self.setAllowed(["all"])
+        self._setAllowed(["all"])
 
     def forbidAll(self) -> None:
         """Forbid all vehicle classes to move on this lane."""
-        self.setDisallowed(["all"])
+        self._setDisallowed(["all"])
