@@ -29,14 +29,14 @@ class TraSMAPy:
 
     @property
     def minExpectedNumber(self) -> int:
-        return traci.simulation.getMinExpectedNumber()
+        return traci.simulation.getMinExpectedNumber() # type: ignore
 
     @property
     def concenssioner(self) -> Concessioner:
         return self._concessioner
 
     @property
-    def users(self) -> Concessioner:
+    def users(self) -> Users:
         return self._users
 
     def closeSimulation(self) -> None:
