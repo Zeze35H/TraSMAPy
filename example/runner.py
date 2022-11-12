@@ -29,12 +29,14 @@ def run(traSMAPy: TraSMAPy):
         "vehicle3", "route0", typeId="Car", personNumber=5, personCapacity=10
     )
 
+    print(traci.vehicletype.getIDList())
+
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:
             lane.allowAll()
 
-        print(v0.speed)
-        #  print(traci.simulation.getPendingVehicles(), traci.vehicle.getIDList())
+        print(traci.vehicle.getAllowedSpeed("vehicle0"))
+        print(traci.vehicle.getSpeed("vehicle0"))
         traSMAPy.doSimulationStep()
 
     traSMAPy.closeSimulation()

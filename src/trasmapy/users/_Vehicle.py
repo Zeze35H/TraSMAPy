@@ -1,5 +1,4 @@
 import functools
-from warnings import resetwarnings
 
 import traci
 
@@ -98,6 +97,12 @@ class Vehicle(IdentifiedObject):
         """Returns the lateral speed of the vehicle within the last step (m/s).
         Error value: -2^30"""
         return traci.vehicle.getLateralSpeed(self.id)  # type: ignore
+
+    @property
+    @_checkVehicleExistance
+    def allowedSpeed(self) -> float:
+        """Returns the maximum allowed speed of the lane the vehicle is in (m/s)."""
+        return traci.vehicle.getAllowedSpeed(self.id)  # type: ignore
 
     @property
     @_checkVehicleExistance
@@ -261,6 +266,7 @@ class Vehicle(IdentifiedObject):
         """Move a vehicle to a new position along its current route."""
         traci.vehicle.moveTo(self.id, laneId, pos, reason.value)
 
+    @_checkVehicleExistance
     def remove(self, reason: RemoveReason = RemoveReason.VAPORIZED) -> None:
         self._dead = True
         traci.vehicle.remove(self.id, reason=reason)

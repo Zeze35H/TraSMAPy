@@ -3,6 +3,7 @@ from enum import IntEnum
 
 class RemoveReason(IntEnum):
     """Vehicle started teleport"""
+
     TELEPORT = 0x00
     """Vehicle removed while parking"""
     PARKING = 0x01

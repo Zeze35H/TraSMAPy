@@ -9,8 +9,24 @@ class Users:
         # the vehicles being tracked
         self._vehicles: dict[str, Vehicle] = {}
 
+    def getAllVehicleIds(self) -> list[str]:
+        return traci.vehicle.getIDList()  # type: ignore
+
+    def getAllPendingVehicleIds(self) -> list[str]:
+        return traci.simulation.getPendingVehicles()  # type: ignore
+
     def getVehicle(self, vehicleId: str) -> Vehicle:
-        return self._vehicles[vehicleId]
+        try:
+            return self._vehicles[vehicleId]
+        except KeyError:
+            if (
+                vehicleId in self.getAllVehicleIds()
+                or vehicleId in self.getAllPendingVehicleIds()
+            ):
+                return self._registerVehicle(vehicleId)
+            raise KeyError(
+                f"There are no vehicles with the given ID in the simulation: [vehicleId={vehicleId}]"
+            )
 
     def createVehicle(
         self,
@@ -36,9 +52,11 @@ class Users:
             personNumber=personNumber,
             personCapacity=personCapacity,
         )
-        traci.vehicle.subscribe(
-            vehicleId, [VAR_STOPSTATE]
-        )  # subscribe stoped state byte
+        return self._registerVehicle(vehicleId)
+
+    def _registerVehicle(self, vehicleId) -> Vehicle:
+        # subscribe stoped state byte (check liveness)
+        traci.vehicle.subscribe(vehicleId, [VAR_STOPSTATE])
 
         v = Vehicle(vehicleId)
         self._vehicles[vehicleId] = v
