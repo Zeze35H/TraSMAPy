@@ -3,6 +3,7 @@ import functools
 import traci
 
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy.users._VehicleType import VehicleType
 from trasmapy.users.MoveReason import MoveReason
 from trasmapy.users.RemoveReason import RemoveReason
 from trasmapy.users.VehicleClass import VehicleClass
@@ -27,8 +28,8 @@ class Vehicle(IdentifiedObject):
 
     @property
     @_checkVehicleExistance
-    def vehicleClass(self) -> str:
-        return traci.vehicle.getVehicleClass(self.id)  # type: ignore
+    def vehicleClass(self) -> VehicleClass:
+        return VehicleClass(traci.vehicle.getVehicleClass(self.id))
 
     @vehicleClass.setter
     @_checkVehicleExistance
@@ -41,17 +42,19 @@ class Vehicle(IdentifiedObject):
 
     @property
     @_checkVehicleExistance
-    def vehicleType(self) -> str:
-        return traci.vehicle.getTypeID(self.id)  # type: ignore
+    def vehicleType(self) -> VehicleType:
+        return VehicleType(traci.vehicle.getTypeID(self.id))  # type: ignore
 
     @vehicleType.setter
     @_checkVehicleExistance
-    def vehicleType(self, newTypeId: str) -> None:
+    def vehicleType(self, newType: VehicleType) -> None:
         """Sets the vehicle type ID."""
-        if isinstance(newTypeId, str):
-            traci.vehicle.setType(self.id, newTypeId)
+        if isinstance(newType, str):
+            traci.vehicle.setType(self.id, newType)
+        elif isinstance(newType, VehicleType):
+            traci.vehicle.setType(self.id, newType.id)
         else:
-            raise ValueError("type needs to be a string.")
+            raise ValueError("type needs to be a VehicleType instance or a string.")
 
     @property
     @_checkVehicleExistance
