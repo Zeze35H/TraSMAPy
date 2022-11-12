@@ -1,0 +1,15 @@
+@startuml
+
+Vehicle <|-- PrivateVehicle
+Vehicle <|-- VehicleForHire
+Vehicle <|-- PublicTransport
+
+PrivateVehicle <|-- ElectricVehicle
+PrivateVehicle <|-- Motorcycle
+PrivateVehicle <|-- CombustionVehicle
+
+VehicleForHire <|-- Taxi
+
+PublicTransport <|-- Bus
+
+@enduml

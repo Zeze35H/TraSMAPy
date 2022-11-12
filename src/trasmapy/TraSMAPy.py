@@ -12,13 +12,15 @@ else:
 from sumolib import checkBinary  # noqa
 import traci  # noqa
 
-from trasmapy.Concessioner import Concessioner
+from trasmapy._Concessioner import Concessioner
+from trasmapy._Users import Users
 
 class TraSMAPy:
     def __init__(self, sumoCfg: str) -> None:
         self._step: int = 0
         self._startSimulation(sumoCfg)
         self._concessioner = Concessioner()
+        self._users = Users()
 
     @property
     def step(self) -> int:
@@ -31,6 +33,10 @@ class TraSMAPy:
     @property
     def concenssioner(self) -> Concessioner:
         return self._concessioner
+
+    @property
+    def users(self) -> Concessioner:
+        return self._users
 
     def closeSimulation(self) -> None:
         traci.close()
