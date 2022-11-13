@@ -8,6 +8,13 @@ class VehicleType(IdentifiedObject):
     def __init__(self, typeId: str) -> None:
         super().__init__(typeId)
 
+    def duplicate(self, cloneId: str):
+        if cloneId in traci.vehicletype.getIDList():
+            raise ValueError(f"There's already a vehicle type with the given ID: [TypeId={cloneId}]")
+
+        traci.vehicletype.copy(self.id, cloneId)
+        return VehicleType(cloneId)
+
     @property
     def length(self) -> float:
         """Returns the length of the vehicles of this type (m)."""
@@ -177,3 +184,6 @@ class VehicleType(IdentifiedObject):
         if not (isinstance(newVal, float) or isinstance(newVal, int)):
             raise ValueError("Scale needs to be a number (int/float data type).")
         traci.vehicletype.setScale(self.id, newVal)
+
+    def __str__(self) -> str:
+        return self.id

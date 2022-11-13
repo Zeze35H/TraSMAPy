@@ -31,15 +31,6 @@ class Vehicle(IdentifiedObject):
     def vehicleClass(self) -> VehicleClass:
         return VehicleClass(traci.vehicle.getVehicleClass(self.id))
 
-    @vehicleClass.setter
-    @_checkVehicleExistance
-    def vehicleClass(self, newVehicleClass: VehicleClass) -> None:
-        """Sets the vehicle abstact class."""
-        if isinstance(newVehicleClass, VehicleClass):
-            traci.vehicle.setVehicleClass(self.id, newVehicleClass.value)
-        else:
-            raise ValueError("type needs to be a VehicleClass instance.")
-
     @property
     @_checkVehicleExistance
     def vehicleType(self) -> VehicleType:
@@ -113,9 +104,8 @@ class Vehicle(IdentifiedObject):
         """Returns the acceleration in the previous time step (m/s^2)."""
         return traci.vehicle.getAcceleration(self.id)  # type: ignore
 
-    @acceleration.setter
     @_checkVehicleExistance
-    def acceleration(self, newAccel: float, duration: float) -> None:
+    def setAcceleration(self, newAccel: float, duration: float) -> None:
         """Sets the vehicle acceleration (m/s^2) for the given amount of time."""
         if not (isinstance(newAccel, float) or isinstance(newAccel, int)):
             raise ValueError("Acceleration needs to be a number (int/float data type).")

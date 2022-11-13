@@ -19,6 +19,7 @@ def run(traSMAPy: TraSMAPy):
     v0 = traSMAPy.users.createVehicle(
         "vehicle0", "route0", typeId="Car", personNumber=5, personCapacity=10
     )
+
     v1 = traSMAPy.users.createVehicle(
         "vehicle1", "route0", typeId="Car", personNumber=5, personCapacity=10
     )
@@ -33,8 +34,6 @@ def run(traSMAPy: TraSMAPy):
         if traSMAPy.step > 20:
             lane.allowAll()
 
-        print(traci.vehicle.getAllowedSpeed("vehicle0"))
-        print(traci.vehicle.getSpeed("vehicle0"))
         traSMAPy.doSimulationStep()
 
     traSMAPy.closeSimulation()
