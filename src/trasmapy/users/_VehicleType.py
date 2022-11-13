@@ -10,7 +10,9 @@ class VehicleType(IdentifiedObject):
 
     def duplicate(self, cloneId: str):
         if cloneId in traci.vehicletype.getIDList():
-            raise ValueError(f"There's already a vehicle type with the given ID: [TypeId={cloneId}]")
+            raise ValueError(
+                f"There's already a vehicle type with the given ID: [TypeId={cloneId}]"
+            )
 
         traci.vehicletype.copy(self.id, cloneId)
         return VehicleType(cloneId)

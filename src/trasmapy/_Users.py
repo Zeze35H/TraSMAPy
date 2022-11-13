@@ -16,7 +16,7 @@ class Users:
         return traci.simulation.getPendingVehicles()  # type: ignore
 
     def getAllVehicleTypeIds(self) -> list[str]:
-        return traci.vehicletype.getIDList() # type: ignore
+        return traci.vehicletype.getIDList()  # type: ignore
 
     def getVehicle(self, vehicleId: str) -> Vehicle:
         try:
