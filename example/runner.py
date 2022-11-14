@@ -10,16 +10,16 @@ def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
     laneId = "1to2_1"
     lane = traSMAPy.network.getLane(laneId)
-    traSMAPy.network.getLane("1to2_0").forbidAll()
-    traSMAPy.network.getLane("1to2_1").forbidAll()
-    #  lane.setDisallowed([VehicleClass.PASSENGER])
+    lane.setDisallowed([VehicleClass.PASSENGER])
 
     e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 
     traSMAPy.users.createVehicle("vehicle0", "route0", typeId="Bus")
     for i in range(1, 5):
-        traSMAPy.users.createVehicle(f"vehicle{i}", "route0", typeId="Car", personNumber=5, personCapacity=10)
+        traSMAPy.users.createVehicle(
+            f"vehicle{i}", "route0", typeId="Car", personNumber=5, personCapacity=10
+        )
 
     #  traci.vehicle.setBusStop("vehicle0", "bs_0", duration=100)
 

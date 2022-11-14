@@ -43,19 +43,19 @@ class Users:
         If the route is empty (\"\"), the vehicle will be added to a random network edge.
         If the route consists of two disconnected edges, the vehicle will be treated like
         a <trip> and use the fastest route between the two edges."""
-        if vehicleId in self._vehicles:
-            raise KeyError(
-                f"A vehicle with the given ID already exists: [vehicleId={vehicleId}]."
+        try:
+            traci.vehicle.add(
+                vehicleId,
+                routeId,
+                typeID=typeId,
+                personNumber=personNumber,
+                personCapacity=personCapacity,
             )
-
-        traci.vehicle.add(
-            vehicleId,
-            routeId,
-            typeID=typeId,
-            personNumber=personNumber,
-            personCapacity=personCapacity,
-        )
-        return self._registerVehicle(vehicleId)
+            return self._registerVehicle(vehicleId)
+        except traci.TraCIException as e:
+            raise KeyError(
+                f"A error occured while adding the vehicle with the given ID: [vehicleId={vehicleId}], [error={e}]."
+            )
 
     def _registerVehicle(self, vehicleId) -> Vehicle:
         # subscribe stoped state byte (check liveness)
