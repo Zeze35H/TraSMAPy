@@ -210,6 +210,10 @@ class Vehicle(IdentifiedObject):
     def _getStopState(self) -> int:
         return traci.vehicle.getStopState(self.id)  # type: ignore
 
+    def isStoppedAnyReason(self) -> bool:
+        """Returns whether the vehicle's is stopped state for any reason (any stopped state)"""
+        return self._getStopState() > 0
+
     def isStopped(self) -> bool:
         """Returns whether the vehicle's stop state is: stopped"""
         return self._getStopState() & 1 != 0

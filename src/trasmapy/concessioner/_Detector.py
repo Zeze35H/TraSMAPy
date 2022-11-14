@@ -28,10 +28,10 @@ class Detector(IdentifiedObject):
         self._listeners.append(listener)
 
     def _doSimulationStep(self):
-        if traci.inductionloop.getLastStepVehicleNumber(self.id) == 0:
+        detectedVehicles = traci.inductionloop.getLastStepVehicleIDs(self.id)
+        if len(detectedVehicles) == 0:
             # nothing happened
             return
 
-        detectedVehicles = traci.inductionloop.getLastStepVehicleIDs(self.id)
         for listener in self._listeners:
             listener(detectedVehicles)

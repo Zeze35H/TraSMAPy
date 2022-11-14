@@ -46,6 +46,7 @@ class Concessioner:
     def getLane(self, laneId: str) -> Lane:
         """Returns an object representing the lane with the given ID in the network.
         Raises KeyError if the given lane doesn't exist in any edge."""
+        # TODO if this func causes performance problems: create index from laneId to Edge
         for edge in self._edges.values():
             try:
                 return edge.getLane(laneId)

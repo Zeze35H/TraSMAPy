@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from trasmapy._Detector import Detector
+from trasmapy.concessioner._Detector import Detector
 
 
 class Toll:
