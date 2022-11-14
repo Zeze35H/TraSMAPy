@@ -4,19 +4,15 @@ from trasmapy._IdentifiedObject import IdentifiedObject
 from trasmapy.users.VehicleClass import VehicleClass
 
 
-class Edge:
-    pass
-
-
 class Lane(IdentifiedObject):
-    def __init__(self, laneId: str, parentEdge: Edge) -> None:
+    def __init__(self, laneId: str, parentEdge) -> None:
         super().__init__(laneId)
         self._parent = parentEdge
 
         self._maxSpeed: float = traci.lane.getMaxSpeed(self.id)  # type: ignore
 
     @property
-    def parent(self) -> Edge:
+    def parent(self):
         return self._parent
 
     @property
