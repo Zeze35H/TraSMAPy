@@ -7,10 +7,10 @@ if "SUMO_HOME" in os.environ:
     tools = os.path.join(os.environ["SUMO_HOME"], "tools")
     sys.path.append(tools)
 else:
-    exit("please declare environment variable 'SUMO_HOME'")
+    exit("Please declare environment variable 'SUMO_HOME'.")
 
-from sumolib import checkBinary  # noqa
-import traci  # noqa
+from sumolib import checkBinary
+import traci
 
 from trasmapy._Network import Network
 from trasmapy._Users import Users
@@ -20,8 +20,8 @@ class TraSMAPy:
     def __init__(self, sumoCfg: str) -> None:
         self._step: int = 0
         self._startSimulation(sumoCfg)
-        self._network = Network()
-        self._users = Users()
+        self._network: Network = Network()
+        self._users: Users = Users()
 
     @property
     def step(self) -> int:
