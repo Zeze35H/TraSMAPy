@@ -12,7 +12,7 @@ else:
 from sumolib import checkBinary  # noqa
 import traci  # noqa
 
-from trasmapy._Concessioner import Concessioner
+from trasmapy._Network import Network
 from trasmapy._Users import Users
 
 
@@ -20,7 +20,7 @@ class TraSMAPy:
     def __init__(self, sumoCfg: str) -> None:
         self._step: int = 0
         self._startSimulation(sumoCfg)
-        self._concessioner = Concessioner()
+        self._network = Network()
         self._users = Users()
 
     @property
@@ -32,8 +32,8 @@ class TraSMAPy:
         return traci.simulation.getMinExpectedNumber()  # type: ignore
 
     @property
-    def concenssioner(self) -> Concessioner:
-        return self._concessioner
+    def network(self) -> Network:
+        return self._network
 
     @property
     def users(self) -> Users:
@@ -46,7 +46,7 @@ class TraSMAPy:
     def doSimulationStep(self) -> None:
         self._step += 1
         traci.simulationStep()
-        self._concessioner._doSimulationStep()
+        self._network._doSimulationStep()
         self._users._doSimulationStep()
 
     def _getOptions(self):

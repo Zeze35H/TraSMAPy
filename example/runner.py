@@ -9,11 +9,12 @@ import traci
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
     laneId = "1to2_1"
-    lane = traSMAPy.concenssioner.getLane(laneId)
-    lane.parent.forbidAll()
+    lane = traSMAPy.network.getLane(laneId)
+    traSMAPy.network.getLane("1to2_0").forbidAll()
+    traSMAPy.network.getLane("1to2_1").forbidAll()
     #  lane.setDisallowed([VehicleClass.PASSENGER])
 
-    e10 = traSMAPy.concenssioner.getDetector("e1_0")
+    e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 
     traSMAPy.users.createVehicle("vehicle0", "route0", typeId="Bus")

@@ -2,12 +2,12 @@ from sys import stderr
 
 import traci
 
-from trasmapy.concessioner._Edge import Edge
-from trasmapy.concessioner._Lane import Lane
-from trasmapy.concessioner._Detector import Detector
+from trasmapy.network._Edge import Edge
+from trasmapy.network._Lane import Lane
+from trasmapy.network._Detector import Detector
 
 
-class Concessioner:
+class Network:
     def __init__(self) -> None:
         # obtain map from l
         edgeToLaneMap: dict[str, list[str]] = {}

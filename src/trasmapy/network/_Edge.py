@@ -1,7 +1,7 @@
 import traci
 
 from trasmapy._IdentifiedObject import IdentifiedObject
-from trasmapy.concessioner._Lane import Lane
+from trasmapy.network._Lane import Lane
 from trasmapy.users.VehicleClass import VehicleClass
 
 
