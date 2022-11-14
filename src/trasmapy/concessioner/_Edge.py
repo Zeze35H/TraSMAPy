@@ -81,7 +81,7 @@ class Edge(IdentifiedObject):
 
     @property
     def vehicleMeanLength(self) -> float:
-        """Returns the mean length of the behicles on the edge in the last time step (m)."""
+        """Returns the mean length of the vehicles on the edge in the last time step (m)."""
         return traci.edge.getLastStepLength(self.id)  # type: ignore
 
     @property
