@@ -104,9 +104,10 @@ class Edge(IdentifiedObject):
 
     def setMaxSpeed(self, maxSpeed: float) -> None:
         """Sets the maximum speed for the vehicles in this edge (for all lanes) to the given value."""
-        # Can't use traci directly because Lane state needs to be updated: traci.edge.setMaxSpeed(self.id, maxSpeed)
-        for lane in self._lanes.values():
-            lane.maxSpeed = maxSpeed
+        if isinstance(maxSpeed, float) or isinstance(maxSpeed, int):
+            traci.edge.setMaxSpeed(self.id, maxSpeed)
+        else:
+            raise ValueError("maxSpeed needs to be a number (int/float data type).")
 
     def limitMaxSpeed(self, maxSpeed: float) -> None:
         """Limits the maximum speed for the vehicles in this edge to the given value.
@@ -114,26 +115,23 @@ class Edge(IdentifiedObject):
         for lane in self._lanes.values():
             lane.limitMaxSpeed(maxSpeed)
 
-    def _setAllowed(self, allowedVehicleClasses: list[str]) -> None:
-        """Set the classes of vehicles allowed to move on this edge."""
-        traci.lane.setAllowed(self.id, allowedVehicleClasses)
-
-    def _setDisallowed(self, disallowedVehicleClasses: list[str]) -> None:
-        """Set the classes of vehicles disallowed to move on this edge."""
-        traci.lane.setDisallowed(self.id, disallowedVehicleClasses)
-
     def setAllowed(self, allowedVehicleClasses: list[VehicleClass]) -> None:
         """Set the classes of vehicles allowed to move on this edge."""
-        self._setAllowed(list(map(lambda x: x.value, allowedVehicleClasses)))
+        # Note: although traci.edge.setAllowed exists, it isn't recognized by sumo
+        for lane in self._lanes.values():
+            lane.setAllowed(allowedVehicleClasses)
 
     def setDisallowed(self, disallowedVehicleClasses: list[VehicleClass]) -> None:
         """Set the classes of vehicles disallowed to move on this edge."""
-        self._setDisallowed(list(map(lambda x: x.value, disallowedVehicleClasses)))
+        for lane in self._lanes.values():
+            lane.setDisallowed(disallowedVehicleClasses)
 
     def allowAll(self) -> None:
         """Allow all vehicle classes to move on this edge."""
-        self._setAllowed(["all"])
+        for lane in self._lanes.values():
+            lane.allowAll()
 
     def forbidAll(self) -> None:
         """Forbid all vehicle classes to move on this edge."""
-        self._setDisallowed(["all"])
+        for lane in self._lanes.values():
+            lane.forbidAll()
