@@ -1,5 +1,8 @@
 <routes>
     <vType accel="1.0" decel="5.0" id="Car" length="2.0" maxSpeed="100.0" sigma="0.0" />
-    <route id="route0" edges="1to2 out"/>
+    <vType accel="1.0" decel="5.0" id="Bus" length="2.0" maxSpeed="100.0" sigma="0.0" vClass="bus" />
+    <route id="route0" edges="1to2 out">
+        <!-- <stop busStop="bs_0" duration="10"/> -->
+    </route>
     <!-- <vehicle depart="1" id="veh0" route="route0" type="Car" /> -->
 </routes>

@@ -16,19 +16,14 @@ def run(traSMAPy: TraSMAPy):
     e10 = traSMAPy.concenssioner.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 
-    v0 = traSMAPy.users.createVehicle(
-        "vehicle0", "route0", typeId="Car", personNumber=5, personCapacity=10
-    )
+    traSMAPy.users.createVehicle("vehicle0", "route0", typeId="Bus")
+    for i in range(1, 5):
+        traSMAPy.users.createVehicle(f"vehicle{i}", "route0", typeId="Car", personNumber=5, personCapacity=10)
 
-    v1 = traSMAPy.users.createVehicle(
-        "vehicle1", "route0", typeId="Car", personNumber=5, personCapacity=10
-    )
-    v2 = traSMAPy.users.createVehicle(
-        "vehicle2", "route0", typeId="Car", personNumber=5, personCapacity=10
-    )
-    v3 = traSMAPy.users.createVehicle(
-        "vehicle3", "route0", typeId="Car", personNumber=5, personCapacity=10
-    )
+    traci.vehicle.setBusStop("vehicle0", "bs_0", duration=100)
+
+    print(traci.vehicle.getRouteID("vehicle0"))
+    print(traci.vehicle.getNextStops("vehicle0"))
 
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:
