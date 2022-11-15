@@ -12,6 +12,8 @@ def run(traSMAPy: TraSMAPy):
     lane = traSMAPy.network.getLane(laneId)
     lane.setDisallowed([VehicleClass.PASSENGER])
 
+    print(traSMAPy.network.stops)
+
     e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 
@@ -23,8 +25,8 @@ def run(traSMAPy: TraSMAPy):
 
     #  traci.vehicle.setBusStop("vehicle0", "bs_0", duration=100)
 
-    print(traci.vehicle.getRouteID("vehicle0"))
-    print(traci.vehicle.getNextStops("vehicle0"))
+    #  print(traci.vehicle.getRouteID("vehicle0"))
+    #  print(traci.vehicle.getNextStops("vehicle0"))
 
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:

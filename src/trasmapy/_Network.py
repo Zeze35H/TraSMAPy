@@ -1,9 +1,11 @@
 from sys import stderr
+from itertools import chain
 
 import traci
 
 from trasmapy.network._Edge import Edge
 from trasmapy.network._Lane import Lane
+from trasmapy.network._Stop import Stop
 from trasmapy.network._Detector import Detector
 
 
@@ -19,11 +21,16 @@ class Network:
             except KeyError:
                 edgeToLaneMap[parentEdgeId] = [laneId]
 
+        laneToStopMap: dict[str, list[tuple[str, str]]] = {}
+        self._mapStops(laneToStopMap, "b", traci.busstop)
+        self._mapStops(laneToStopMap, "c", traci.chargingstation)
+        self._mapStops(laneToStopMap, "p", traci.parkingarea)
+
         self._edges: dict[str, Edge] = {}
         for edgeId in traci.edge.getIDList():
             try:
                 laneList = edgeToLaneMap[edgeId]
-                self._edges[edgeId] = Edge(edgeId, laneList)
+                self._edges[edgeId] = Edge(edgeId, laneList, laneToStopMap)
             except KeyError:
                 print(
                     f"Failed to find any lanes for edge (skipping it): [edgeId={edgeId}]",
@@ -33,10 +40,28 @@ class Network:
 
         self._detectors: dict[str, Detector] = {}
 
+    def _mapStops(self, map, prefix: str, traciModule):
+        for stopId in traciModule.getIDList():
+            parentLaneId: str = traciModule.getLaneID(stopId)  # type: ignore
+            try:
+                stopList = map[stopId]
+                stopList.append((prefix, stopId))
+            except KeyError:
+                map[parentLaneId] = [stopId]
+
     @property
     def edges(self) -> dict[str, Edge]:
         """Returns a list of all edges in the network."""
         return self._edges.copy()
+
+    @property
+    def stops(self) -> dict[str, list[Stop]]:
+        ret: dict[str, list[Stop]] = {}
+        for edge in self._edges.values():
+            edgeStops = edge.stops.values()
+            if len(edgeStops) > 0:
+                ret[edge.id] = list(chain(*edgeStops))
+        return ret
 
     def getEdge(self, edgeId: str) -> Edge:
         """Returns an object representing the edge with the given ID in the network.

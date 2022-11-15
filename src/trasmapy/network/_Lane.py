@@ -1,17 +1,40 @@
 import traci
 
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy.network._Stop import Stop
+from trasmapy.network._BusStop import BusStop
+from trasmapy.network._ChargingStation import ChargingStation
+from trasmapy.network._ParkingArea import ParkingArea
 from trasmapy.users.VehicleClass import VehicleClass
 
 
 class Lane(IdentifiedObject):
-    def __init__(self, laneId: str, parentEdge) -> None:
+    def __init__(self, laneId: str, parentEdge, laneToStopMap) -> None:
         super().__init__(laneId)
         self._parent = parentEdge
+        self._stops: dict[str, Stop] = {}
+        try:
+            stops = laneToStopMap[self.id]
+            for stop in stops:
+                if stop[0] == "b":
+                    self._stops[stop[1]] = BusStop(stop[1], self)
+                elif stop[0] == "c":
+                    self._stops[stop[1]] = ChargingStation(stop[1], self)
+                elif stop[0] == "p":
+                    self._stops[stop[1]] = ParkingArea(stop[1], self)
+                else:
+                    raise KeyError(f"Unknown stop type: [typePrefix={stop[0]}].")
+        except KeyError:
+            # ignored
+            pass
 
     @property
     def parent(self):
         return self._parent
+
+    @property
+    def stops(self) -> list[Stop]:
+        return list(self._stops.values())
 
     @property
     def linkCount(self) -> int:

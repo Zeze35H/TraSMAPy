@@ -2,16 +2,17 @@ import traci
 
 from trasmapy._IdentifiedObject import IdentifiedObject
 from trasmapy.network._Lane import Lane
+from trasmapy.network._Stop import Stop
 from trasmapy.users.VehicleClass import VehicleClass
 
 
 class Edge(IdentifiedObject):
-    def __init__(self, edgeId: str, laneList: list[str]) -> None:
+    def __init__(self, edgeId: str, laneList: list[str], laneToStopMap) -> None:
         super().__init__(edgeId)
 
         self._lanes: dict[str, Lane] = {}
         for laneId in laneList:
-            self._lanes[laneId] = Lane(laneId, self)
+            self._lanes[laneId] = Lane(laneId, self, laneToStopMap)
 
     @property
     def streetName(self) -> str:
@@ -96,8 +97,17 @@ class Edge(IdentifiedObject):
         return traci.edge.getLastStepHaltingNumber(self.id)  # type: ignore
 
     @property
-    def lanes(self) -> dict[str, Lane]:
-        return self._lanes.copy()
+    def stops(self) -> dict[str, list[Stop]]:
+        ret: dict[str, list[Stop]] = {}
+        for lane in self._lanes.values():
+            laneStops = lane.stops
+            if len(laneStops) > 0:
+                ret[lane.id] = lane.stops
+        return ret
+
+    @property
+    def lanes(self) -> list[Lane]:
+        return list(self._lanes.values())
 
     def getLane(self, laneId) -> Lane:
         return self._lanes[laneId]
