@@ -2,12 +2,11 @@ from enum import IntEnum
 
 
 class MoveReason(IntEnum):
+    AUTOMATIC = 0x00
     """Infer reason from move distance."""
 
-    AUTOMATIC = 0x00
-
-    """Vehicle teleports to another location"""
     TELEPORT = 0x01
+    """Vehicle teleports to another location"""
 
-    """vehicle moved normally"""
     NORMAL = 0x02
+    """vehicle moved normally"""

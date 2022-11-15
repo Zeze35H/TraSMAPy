@@ -5,6 +5,7 @@ from trasmapy.network._Stop import Stop
 from trasmapy.network._BusStop import BusStop
 from trasmapy.network._ChargingStation import ChargingStation
 from trasmapy.network._ParkingArea import ParkingArea
+from trasmapy.users.StopType import StopType
 from trasmapy.users.VehicleClass import VehicleClass
 
 
@@ -16,11 +17,11 @@ class Lane(IdentifiedObject):
         try:
             stops = laneToStopMap[self.id]
             for stop in stops:
-                if stop[0] == "b":
+                if stop[0] == StopType.BUS_STOP:
                     self._stops[stop[1]] = BusStop(stop[1], self)
-                elif stop[0] == "c":
+                elif stop[0] == StopType.CHARGING_STATION:
                     self._stops[stop[1]] = ChargingStation(stop[1], self)
-                elif stop[0] == "p":
+                elif stop[0] == StopType.PARKING_AREA:
                     self._stops[stop[1]] = ParkingArea(stop[1], self)
                 else:
                     raise KeyError(f"Unknown stop type: [typePrefix={stop[0]}].")

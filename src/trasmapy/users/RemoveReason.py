@@ -2,14 +2,13 @@ from enum import IntEnum
 
 
 class RemoveReason(IntEnum):
-    """Vehicle started teleport"""
-
     TELEPORT = 0x00
-    """Vehicle removed while parking"""
+    """Vehicle started teleport"""
     PARKING = 0x01
-    """Vehicle arrived"""
+    """Vehicle removed while parking"""
     ARRIVED = 0x02
-    """Vehicle was vaporized"""
+    """Vehicle arrived"""
     VAPORIZED = 0x03
-    """Vehicle finished route during teleport"""
+    """Vehicle was vaporized"""
     TELEPORT_ARRIVED = 0x04
+    """Vehicle finished route during teleport"""

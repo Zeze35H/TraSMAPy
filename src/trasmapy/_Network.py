@@ -7,6 +7,7 @@ from trasmapy.network._Edge import Edge
 from trasmapy.network._Lane import Lane
 from trasmapy.network._Stop import Stop
 from trasmapy.network._Detector import Detector
+from trasmapy.users.StopType import StopType
 
 
 class Network:
@@ -21,10 +22,10 @@ class Network:
             except KeyError:
                 edgeToLaneMap[parentEdgeId] = [laneId]
 
-        laneToStopMap: dict[str, list[tuple[str, str]]] = {}
-        self._mapStops(laneToStopMap, "b", traci.busstop)
-        self._mapStops(laneToStopMap, "c", traci.chargingstation)
-        self._mapStops(laneToStopMap, "p", traci.parkingarea)
+        laneToStopMap: dict[str, list[tuple[StopType, str]]] = {}
+        self._mapStops(laneToStopMap, StopType.BUS_STOP, traci.busstop)
+        self._mapStops(laneToStopMap, StopType.CHARGING_STATION, traci.chargingstation)
+        self._mapStops(laneToStopMap, StopType.PARKING_AREA, traci.parkingarea)
 
         self._edges: dict[str, Edge] = {}
         for edgeId in traci.edge.getIDList():
@@ -40,7 +41,7 @@ class Network:
 
         self._detectors: dict[str, Detector] = {}
 
-    def _mapStops(self, map, prefix: str, traciModule):
+    def _mapStops(self, map, prefix: StopType, traciModule):
         for stopId in traciModule.getIDList():
             parentLaneId: str = traciModule.getLaneID(stopId)  # type: ignore
             try:
@@ -56,6 +57,7 @@ class Network:
 
     @property
     def stops(self) -> dict[str, list[Stop]]:
+        """A map from edgeId to its stops (in its lanes)."""
         ret: dict[str, list[Stop]] = {}
         for edge in self._edges.values():
             edgeStops = edge.stops.values()

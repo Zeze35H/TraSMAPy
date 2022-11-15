@@ -1,11 +1,14 @@
 import functools
 
 import traci
+from traci.constants import INVALID_DOUBLE_VALUE
 
 from trasmapy._IdentifiedObject import IdentifiedObject
 from trasmapy.users._VehicleType import VehicleType
+from trasmapy.users._VehicleStop import VehicleStop
 from trasmapy.users.MoveReason import MoveReason
 from trasmapy.users.RemoveReason import RemoveReason
+from trasmapy.users.StopType import StopType
 from trasmapy.users.VehicleClass import VehicleClass
 
 
@@ -216,45 +219,107 @@ class Vehicle(IdentifiedObject):
 
     def isStopped(self) -> bool:
         """Returns whether the vehicle's stop state is: stopped"""
-        return self._getStopState() & 1 != 0
+        return self._getStopState() & (StopType.DEFAULT + 1) != 0
 
     def isParking(self) -> bool:
         """Returns whether the vehicle's stop state is: parking"""
-        return self._getStopState() & 2 != 0
+        return self._getStopState() & (StopType.PARKING << 1) != 0
 
     def isTriggered(self) -> bool:
         """Returns whether the vehicle's stop state is: triggered"""
-        return self._getStopState() & 4 != 0
+        return self._getStopState() & (StopType.TRIGGERED << 1) != 0
 
     def isContainerTriggered(self) -> bool:
         """Returns whether the vehicle's stop state is: containerTriggered"""
-        return self._getStopState() & 8 != 0
+        return self._getStopState() & (StopType.CONTAINER_TRIGGERED << 1) != 0
 
     def isAtBusStop(self) -> bool:
         """Returns whether the vehicle's stop state is: atBusStop"""
-        return self._getStopState() & 16 != 0
+        return self._getStopState() & (StopType.BUS_STOP << 1) != 0
 
     def isAtContainerStop(self) -> bool:
         """Returns whether the vehicle's stop state is: atContainerStop"""
-        return self._getStopState() & 32 != 0
+        return self._getStopState() & (StopType.CONTAINER_STOP << 1) != 0
 
     def isAtChargingStation(self) -> bool:
         """Returns whether the vehicle's stop state is: atChargingStation"""
-        return self._getStopState() & 64 != 0
+        return self._getStopState() & (StopType.CHARGING_STATION << 1) != 0
 
     def isAtParkingArea(self) -> bool:
         """Returns whether the vehicle's stop state is: atParkingArea"""
-        return self._getStopState() & 128 != 0
+        return self._getStopState() & (StopType.PARKING_AREA << 1) != 0
 
     @_checkVehicleExistance
-    def stopFor(self, duration: float, edgeId: str, pos: float = 1) -> None:
-        """Stops the vehicle at the given position in the given edge for the given duration (s)."""
-        traci.vehicle.setStop(self.id, edgeId, pos, duration=duration)
+    def getStops(self) -> list[VehicleStop]:
+        stops: list[VehicleStop] = []
+        for stopData in traci.vehicle.getStops(self.id):
+            stops.append(VehicleStop(stopData))
+        return stops
 
     @_checkVehicleExistance
-    def stopUntil(self, until: float, edgeId: str, pos: float = 1) -> None:
-        """Stops the vehicle at the given position in the given edge until a given simulation time (s)."""
-        traci.vehicle.setStop(self.id, edgeId, pos, until=until)
+    def stopFor(
+        self,
+        stoppingPlaceId: str,
+        duration: float,
+        endPos: float = 1,
+        startPos: float = INVALID_DOUBLE_VALUE,
+        stopTypes: list[StopType] = [StopType.DEFAULT],
+    ) -> None:
+        """Stops the vehicle at the given position in the given edge for the given duration (s).
+        Re-issuing a stop command with the same lane and position allows changing the duration.
+        Setting the duration to 0 cancels an existing stop.
+        BUS_STOP, CONTAINER_STOP, CHARGING_STATION, and the PARKING_AREA stops change the meaning of the
+        stoppingPlaceId (from edgeId, to stop type). These can't be combined.
+        Note that it might not be possible for a vehicle to stop at a given place because of access restrictions.
+        Some stop types might ignore the given stop position."""
+        try:
+            traci.vehicle.setStop(
+                self.id,
+                stoppingPlaceId,
+                pos=endPos,
+                startPos=startPos,
+                duration=duration,
+                flags=functools.reduce(lambda x, y: x | y, stopTypes),
+            )
+        except traci.TraCIException as e:
+            raise ValueError(
+                f"It isn't possible for the vehicle to stop there: [vehicleId={self.id}], [error={e}]"
+            )
+
+    @_checkVehicleExistance
+    def stopUntil(
+        self,
+        stoppingPlaceId: str,
+        until: float,
+        endPos: float = 1,
+        startPos: float = INVALID_DOUBLE_VALUE,
+        stopTypes: list[StopType] = [StopType.DEFAULT],
+    ) -> None:
+        """Stops the vehicle at the given position in the given edge until a given simulation time (s).
+        See the stopFor(...) method."""
+        try:
+            traci.vehicle.setStop(
+                self.id,
+                stoppingPlaceId,
+                pos=endPos,
+                startPos=startPos,
+                until=until,
+                flags=functools.reduce(lambda x, y: x | y, stopTypes),
+            )
+        except traci.TraCIException as e:
+            raise ValueError(
+                f"It isn't possible for the vehicle to stop there: [vehicleId={self.id}], [error={e}]"
+            )
+
+    def resume(self) -> None:
+        """Resumes the march of a stopped vehicle.
+        Throws exception if the vehicle isn't stopped."""
+        if self.isStoppedAnyReason():
+            traci.vehicle.resume(self.id)
+        else:
+            raise ValueError(
+                f"The vehicle isn't stopped, so it can't resume: [vehicleId={self.id}]"
+            )
 
     @_checkVehicleExistance
     def moveTo(
