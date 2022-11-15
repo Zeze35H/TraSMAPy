@@ -12,12 +12,12 @@ def run(traSMAPy: TraSMAPy):
     lane = traSMAPy.network.getLane(laneId)
     lane.setDisallowed([VehicleClass.PASSENGER])
 
-    print(traSMAPy.network.stops)
+    print(lane.stops[0])
 
     e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 
-    traSMAPy.users.createVehicle("vehicle0", "route0", typeId="Bus")
+    bus = traSMAPy.users.createVehicle("vehicle0", "route0", typeId="Bus")
     for i in range(1, 5):
         traSMAPy.users.createVehicle(
             f"vehicle{i}", "route0", typeId="Car", personNumber=5, personCapacity=10
