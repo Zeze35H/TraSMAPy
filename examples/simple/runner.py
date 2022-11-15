@@ -4,11 +4,12 @@
 from trasmapy import TraSMAPy, VehicleClass, StopType
 
 import traci
-import pyflwor
 
 
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
+    traSMAPy.registerQuery("stopsQuery", "network/edges[self.id == '1to2']/stops")
+
     lane = traSMAPy.network.getLane("1to2_1")
     lane.setDisallowed([VehicleClass.PASSENGER])
 
@@ -24,12 +25,11 @@ def run(traSMAPy: TraSMAPy):
         if traSMAPy.step > 20:
             lane.allowAll()
         traSMAPy.doSimulationStep()
+        print(traSMAPy.collectedStatistics)
 
     traSMAPy.closeSimulation()
 
 
 if __name__ == "__main__":
     traSMAPy = TraSMAPy("hello.sumocfg")
-    #  run(traSMAPy)
-    q = pyflwor.compile("trasmapy/network/edges[self.id == '1to2']/stops")
-    print(q({"trasmapy": traSMAPy}))
+    run(traSMAPy)

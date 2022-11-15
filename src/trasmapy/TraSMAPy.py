@@ -11,6 +11,7 @@ else:
 
 from sumolib import checkBinary
 import traci
+import pyflwor
 
 from trasmapy._Network import Network
 from trasmapy._Users import Users
@@ -19,6 +20,9 @@ from trasmapy._Users import Users
 class TraSMAPy:
     def __init__(self, sumoCfg: str) -> None:
         self._step: int = 0
+        self._collectedStatistics: dict[int, dict] = {}
+        self._queries = {}
+
         self._startSimulation(sumoCfg)
         self._network: Network = Network()
         self._users: Users = Users()
@@ -39,15 +43,33 @@ class TraSMAPy:
     def users(self) -> Users:
         return self._users
 
-    def closeSimulation(self) -> None:
-        traci.close()
-        sys.stdout.flush()
+    @property
+    def collectedStatistics(self) -> dict[int, dict]:
+        return self._collectedStatistics.copy()
+
+    def registerQuery(self, queryName: str, queryString: str) -> None:
+        if queryName in self._queries:
+            raise KeyError(
+                f"There's a query with that name already registered: [queryName={queryName}]."
+            )
+        self._queries[queryName] = pyflwor.compile(queryString)
 
     def doSimulationStep(self) -> None:
         self._step += 1
         traci.simulationStep()
+
         self._network._doSimulationStep()
         self._users._doSimulationStep()
+
+        self._collectedStatistics[self._step] = {}
+        for query in self._queries.items():
+            self._collectedStatistics[self._step][query[0]] = query[1](
+                {"network": self._network, "users": self._users}
+            )
+
+    def closeSimulation(self) -> None:
+        traci.close()
+        sys.stdout.flush()
 
     def _getOptions(self):
         optParser = optparse.OptionParser()
