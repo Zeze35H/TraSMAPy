@@ -21,6 +21,10 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dependencies = [
+  "traci",
+  "pyflwor @ git+https://github.com/JoaoCostaIFG/pyflwor.git"
+]
 
 [project.urls]
 "Homepage" = "https://github.com/JoaoCostaIFG/TraSMAPy"
