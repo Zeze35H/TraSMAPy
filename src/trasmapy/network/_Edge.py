@@ -1,3 +1,5 @@
+from itertools import chain
+
 import traci
 
 from trasmapy._IdentifiedObject import IdentifiedObject
@@ -7,12 +9,13 @@ from trasmapy.users.VehicleClass import VehicleClass
 
 
 class Edge(IdentifiedObject):
-    def __init__(self, edgeId: str, laneList: list[str], laneToStopMap) -> None:
+    def __init__(self, edgeId: str, laneList: list[Lane]) -> None:
         super().__init__(edgeId)
 
         self._lanes: dict[str, Lane] = {}
-        for laneId in laneList:
-            self._lanes[laneId] = Lane(laneId, self, laneToStopMap)
+        for lane in laneList:
+            lane._setParent(self)
+            self._lanes[lane.id] = lane
 
     @property
     def streetName(self) -> str:
@@ -97,17 +100,12 @@ class Edge(IdentifiedObject):
         return traci.edge.getLastStepHaltingNumber(self.id)  # type: ignore
 
     @property
-    def stops(self) -> dict[str, list[Stop]]:
-        ret: dict[str, list[Stop]] = {}
-        for lane in self._lanes.values():
-            laneStops = lane.stops
-            if len(laneStops) > 0:
-                ret[lane.id] = lane.stops
-        return ret
-
-    @property
     def lanes(self) -> list[Lane]:
         return list(self._lanes.values())
+
+    @property
+    def stops(self) -> list[Stop]:
+        return list(chain(*map(lambda x: x.stops, self._lanes.values())))
 
     def getLane(self, laneId) -> Lane:
         return self._lanes[laneId]

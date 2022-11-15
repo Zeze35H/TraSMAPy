@@ -1,18 +1,21 @@
 from trasmapy._IdentifiedObject import IdentifiedObject
 
 class Stop(IdentifiedObject):
-    def __init__(self, stopId: str, parentLane, traciModule) -> None:
+    def __init__(self, stopId: str, parentId: str, traciModule) -> None:
         super().__init__(stopId)
-        self._parent = parentLane
+        self._parentId = parentId
         self._traciModule = traciModule
+
+    def _setParent(self, parentLane) -> None:
+        self._parent = parentLane
+
+    @property
+    def parentLane(self):
+        return self._parent
 
     @property
     def name(self) -> str:
         return self._traciModule.getName(self.id) # type: ignore
-
-    @property
-    def lane(self):
-        return self._parent
 
     @property
     def startPos(self) -> float:

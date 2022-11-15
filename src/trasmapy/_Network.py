@@ -1,5 +1,4 @@
 from sys import stderr
-from itertools import chain
 
 import traci
 
@@ -7,31 +6,43 @@ from trasmapy.network._Edge import Edge
 from trasmapy.network._Lane import Lane
 from trasmapy.network._Stop import Stop
 from trasmapy.network._Detector import Detector
-from trasmapy.users.StopType import StopType
+from trasmapy.network._BusStop import BusStop
+from trasmapy.network._ChargingStation import ChargingStation
+from trasmapy.network._ParkingArea import ParkingArea
 
 
 class Network:
     def __init__(self) -> None:
-        # obtain map from l
-        edgeToLaneMap: dict[str, list[str]] = {}
+        # index Stops
+        self._stopsIndex: dict[str, Stop] = {}
+        laneToStopMap: dict[str, list[Stop]] = {}
+        self._indexStops(laneToStopMap, BusStop, traci.busstop)
+        self._indexStops(laneToStopMap, ChargingStation, traci.chargingstation)
+        self._indexStops(laneToStopMap, ParkingArea, traci.parkingarea)
+
+        # index Lanes
+        self._lanesIndex: dict[str, Lane] = {}
+        edgeToLaneMap: dict[str, list[Lane]] = {}
         for laneId in traci.lane.getIDList():
-            parentEdgeId: str = traci.lane.getEdgeID(laneId)  # type: ignore
             try:
-                laneList = edgeToLaneMap[parentEdgeId]
-                laneList.append(laneId)
+                stopList = laneToStopMap[laneId]
             except KeyError:
-                edgeToLaneMap[parentEdgeId] = [laneId]
+                stopList = []
 
-        laneToStopMap: dict[str, list[tuple[StopType, str]]] = {}
-        self._mapStops(laneToStopMap, StopType.BUS_STOP, traci.busstop)
-        self._mapStops(laneToStopMap, StopType.CHARGING_STATION, traci.chargingstation)
-        self._mapStops(laneToStopMap, StopType.PARKING_AREA, traci.parkingarea)
+            parentEdgeId: str = traci.lane.getEdgeID(laneId)  # type: ignore
+            lane = Lane(laneId, stopList)
+            self._lanesIndex[laneId] = lane
+            try:
+                edgeToLaneMap[parentEdgeId].append(lane)
+            except KeyError:
+                edgeToLaneMap[parentEdgeId] = [lane]
 
+        # index edges
         self._edges: dict[str, Edge] = {}
         for edgeId in traci.edge.getIDList():
             try:
                 laneList = edgeToLaneMap[edgeId]
-                self._edges[edgeId] = Edge(edgeId, laneList, laneToStopMap)
+                self._edges[edgeId] = Edge(edgeId, laneList)
             except KeyError:
                 print(
                     f"Failed to find any lanes for edge (skipping it): [edgeId={edgeId}]",
@@ -41,29 +52,30 @@ class Network:
 
         self._detectors: dict[str, Detector] = {}
 
-    def _mapStops(self, map, prefix: StopType, traciModule):
+    def _indexStops(self, laneToStopMap, StopClass, traciModule):
         for stopId in traciModule.getIDList():
             parentLaneId: str = traciModule.getLaneID(stopId)  # type: ignore
+            stop: Stop = StopClass(stopId, parentLaneId)
+            self._stopsIndex[stopId] = stop
             try:
-                stopList = map[stopId]
-                stopList.append((prefix, stopId))
+                laneToStopMap[parentLaneId].append(stop)
             except KeyError:
-                map[parentLaneId] = [stopId]
+                laneToStopMap[parentLaneId] = [stop]
 
     @property
-    def edges(self) -> dict[str, Edge]:
+    def edges(self) -> list[Edge]:
         """Returns a list of all edges in the network."""
-        return self._edges.copy()
+        return list(self._edges.values())
 
     @property
-    def stops(self) -> dict[str, list[Stop]]:
-        """A map from edgeId to its stops (in its lanes)."""
-        ret: dict[str, list[Stop]] = {}
-        for edge in self._edges.values():
-            edgeStops = edge.stops.values()
-            if len(edgeStops) > 0:
-                ret[edge.id] = list(chain(*edgeStops))
-        return ret
+    def lanes(self) -> list[Lane]:
+        """Returns a list of all edges in the network."""
+        return list(self._lanesIndex.values())
+
+    @property
+    def stops(self) -> list[Stop]:
+        """Returns a list of all stops in the network."""
+        return list(self._stopsIndex.values())
 
     def getEdge(self, edgeId: str) -> Edge:
         """Returns an object representing the edge with the given ID in the network.
@@ -73,13 +85,12 @@ class Network:
     def getLane(self, laneId: str) -> Lane:
         """Returns an object representing the lane with the given ID in the network.
         Raises KeyError if the given lane doesn't exist in any edge."""
-        # TODO if this func causes performance problems: create index from laneId to Edge
-        for edge in self._edges.values():
-            try:
-                return edge.getLane(laneId)
-            except KeyError:
-                continue
-        raise KeyError(f"Lane not found: [laneId={laneId}]")
+        return self._lanesIndex[laneId]
+
+    def getStop(self, stopId: str) -> Stop:
+        """Returns an object representing the lane with the given ID in the network.
+        Raises KeyError if the given lane doesn't exist in any edge."""
+        return self._stopsIndex[stopId]
 
     def getDetector(self, detectorId: str) -> Detector:
         """Returns an object representing the inductionloop (E1) with the given ID in the network.
