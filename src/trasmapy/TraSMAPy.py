@@ -51,11 +51,6 @@ class TraSMAPy:
         return traci.simulation.getDeltaT()  # type: ignore
 
     @property
-    def timeMs(self) -> float:
-        """The current simulation time (ms)."""
-        return traci.simulation.getCurrentTime()  # type: ignore
-
-    @property
     def time(self) -> float:
         """The current simulation time (s)."""
         return traci.simulation.getTime()  # type: ignore
