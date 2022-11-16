@@ -34,4 +34,5 @@ def run(traSMAPy: TraSMAPy):
 
 if __name__ == "__main__":
     traSMAPy = TraSMAPy("hello.sumocfg")
+    print(traSMAPy.abc)
     run(traSMAPy)

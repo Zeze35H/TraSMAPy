@@ -66,14 +66,7 @@ class TraSMAPy:
 
     def query(self, queryString: str) -> dict:
         """Run a query once and get its current result."""
-        return pyflwor.execute(
-            queryString,
-            {
-                "network": self._network,
-                "users": self._users,
-                "publicServices": self._publicServices,
-            },
-        )
+        return pyflwor.execute(queryString, self._getQueryMap())
 
     def registerQuery(self, queryName: str, queryString: str) -> None:
         """Register query to be run every tick.
@@ -96,16 +89,19 @@ class TraSMAPy:
         self._collectedStatistics[self._step] = {}
         for query in self._queries.items():
             self._collectedStatistics[self._step][query[0]] = query[1](
-                {
-                    "network": self._network,
-                    "users": self._users,
-                    "publicServices": self._publicServices,
-                }
+                self._getQueryMap()
             )
 
     def closeSimulation(self) -> None:
         traci.close()
         sys.stdout.flush()
+
+    def _getQueryMap(self) -> dict:
+        return {
+            "network": self._network,
+            "users": self._users,
+            "publicServices": self._publicServices,
+        }
 
     def _getOptions(self):
         optParser = optparse.OptionParser()
