@@ -27,7 +27,7 @@ class TraSMAPy:
         self._startSimulation(sumoCfg)
         self._network: Network = Network()
         self._users: Users = Users()
-        self._publicServices: PublicServices = PublicServices()
+        self._publicServices: PublicServices = PublicServices(self._users)
 
     @property
     def network(self) -> Network:
@@ -82,9 +82,9 @@ class TraSMAPy:
         traci.simulationStep()
 
         time = self.time
-        self._network._doSimulationStep(self._step, time)
-        self._users._doSimulationStep(self._step, time)
-        self._publicServices._doSimulationStep(self._step, time)
+        self._network._doSimulationStep(step=self._step, time=time)
+        self._users._doSimulationStep(step=self._step, time=time)
+        self._publicServices._doSimulationStep(step=self._step, time=time)
 
         self._collectedStatistics[self._step] = {}
         for query in self._queries.items():

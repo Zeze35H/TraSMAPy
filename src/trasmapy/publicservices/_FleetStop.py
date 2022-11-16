@@ -25,6 +25,10 @@ class FleetStop:
         self._until = self._timeStr2Sec(until) if isinstance(until, str) else until
 
     @property
+    def stop(self) -> Stop:
+        return self._stop
+
+    @property
     def duration(self) -> float:
         return self._duration
 

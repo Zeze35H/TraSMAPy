@@ -108,6 +108,6 @@ class Network(SimUpdatable):
         raise KeyError(f"Detector not found: [detectorId={detectorId}]")
 
     @override
-    def _doSimulationStep(self, step: int, time: float) -> None:
+    def _doSimulationStep(self, *args, step: int, time: float) -> None:
         for detector in self._detectors.values():
-            detector._doSimulationStep()
+            detector._doSimulationStep(args, step=step, time=time)

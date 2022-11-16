@@ -1,9 +1,11 @@
+from typing_extensions import override
 import traci
 
+from trasmapy._SimUpdatable import SimUpdatable
 from trasmapy._IdentifiedObject import IdentifiedObject
 
 
-class Detector(IdentifiedObject):
+class Detector(IdentifiedObject, SimUpdatable):
     def __init__(self, detectorId: str) -> None:
         super().__init__(detectorId)
         self._listeners = []
@@ -27,7 +29,8 @@ class Detector(IdentifiedObject):
         """Hooks into the detector. The given function will be called with the IDs of the detected vehicles there's a detection."""
         self._listeners.append(listener)
 
-    def _doSimulationStep(self):
+    @override
+    def _doSimulationStep(self, *args, step: int, time: float) -> None:
         detectedVehicles = traci.inductionloop.getLastStepVehicleIDs(self.id)
         if len(detectedVehicles) == 0:
             # nothing happened

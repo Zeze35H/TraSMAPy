@@ -2,6 +2,7 @@
 
 
 from trasmapy import TraSMAPy, VehicleClass, StopType
+from trasmapy.publicservices._FleetStop import FleetStop
 
 import traci
 
@@ -13,14 +14,21 @@ def run(traSMAPy: TraSMAPy):
 
     lane = traSMAPy.network.getLane("1to2_1")
     lane.setDisallowed([VehicleClass.PASSENGER])
+    busStop = traSMAPy.network.getStop("bs_0")
 
     e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 
-    bus = traSMAPy.users.createVehicle("vehicle0", "route0", typeId="Bus")
-    bus.stopFor("bs_0", 20.4, endPos=1, stopTypes=[StopType.BUS_STOP])
-    for i in range(1, 5):
-        traSMAPy.users.createVehicle(f"vehicle{i}", "route0", typeId="Car")
+    busType = traSMAPy.users.getVehicleType("Bus")
+    carType = traSMAPy.users.getVehicleType("Car")
+    route0 = traSMAPy.users.getRoute("route0")
+
+    traSMAPy.publicServices.createFleet("fleet0", route0, busType, [FleetStop(busStop, 5)], 100, 10, 0)
+
+    #  bus = traSMAPy.users.createVehicle("vehicle0", route0, vehicleType=busType)
+    #  bus.stopFor(busStop.id, 20.4, endPos=1, stopTypes=[StopType.BUS_STOP])
+    for i in range(0, 5):
+        traSMAPy.users.createVehicle(f"vehicle{i}", route0, vehicleType=carType)
 
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:
@@ -34,5 +42,4 @@ def run(traSMAPy: TraSMAPy):
 
 if __name__ == "__main__":
     traSMAPy = TraSMAPy("hello.sumocfg")
-    print(traSMAPy.abc)
     run(traSMAPy)

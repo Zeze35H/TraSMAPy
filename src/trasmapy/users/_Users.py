@@ -5,6 +5,7 @@ from traci.constants import VAR_STOPSTATE
 
 from trasmapy._SimUpdatable import SimUpdatable
 from trasmapy.users._Vehicle import Vehicle
+from trasmapy.users._VehicleType import VehicleType
 from trasmapy.users._Route import Route
 from trasmapy.network._Edge import Edge
 
@@ -23,6 +24,13 @@ class Users(SimUpdatable):
     def getAllVehicleTypeIds(self) -> list[str]:
         return traci.vehicletype.getIDList()  # type: ignore
 
+    def getVehicleType(self, vehicleTypeId: str) -> VehicleType:
+        if vehicleTypeId not in self.getAllVehicleTypeIds():
+            raise KeyError(
+                f"The vehicle type with the given ID does not exist: [vehicleTypeId={vehicleTypeId}]."
+            )
+        return VehicleType(vehicleTypeId)
+
     def getVehicle(self, vehicleId: str) -> Vehicle:
         try:
             return self._vehicles[vehicleId]
@@ -39,8 +47,8 @@ class Users(SimUpdatable):
     def createVehicle(
         self,
         vehicleId: str,
-        routeId: str,
-        typeId: str = "DEFAULT_VEHTYPE",
+        route: Route,
+        vehicleType: VehicleType = VehicleType("DEFAULT_VEHTYPE"),
         personNumber: int = 0,
         personCapacity: int = 0,
     ) -> Vehicle:
@@ -51,8 +59,8 @@ class Users(SimUpdatable):
         try:
             traci.vehicle.add(
                 vehicleId,
-                routeId,
-                typeID=typeId,
+                route.id,
+                typeID=vehicleType.id,
                 personNumber=personNumber,
                 personCapacity=personCapacity,
             )
@@ -90,7 +98,7 @@ class Users(SimUpdatable):
         return v
 
     @override
-    def _doSimulationStep(self, step: int, time: float) -> None:
+    def _doSimulationStep(self, *args, step: int, time: float) -> None:
         res: dict[str, dict] = traci.vehicle.getAllSubscriptionResults()  # type: ignore
         # the vehicles that exited the simulation on this step
         vehiclesThatDied: set[str] = self._vehicles.keys() - res.keys()

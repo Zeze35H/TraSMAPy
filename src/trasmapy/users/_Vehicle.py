@@ -257,10 +257,11 @@ class Vehicle(IdentifiedObject):
         return stops
 
     @_checkVehicleExistance
-    def stopFor(
+    def stop(
         self,
         stoppingPlaceId: str,
-        duration: float,
+        duration: float = INVALID_DOUBLE_VALUE,
+        until: float = INVALID_DOUBLE_VALUE,
         endPos: float = 1,
         startPos: float = INVALID_DOUBLE_VALUE,
         stopTypes: list[StopType] = [StopType.DEFAULT],
@@ -279,12 +280,26 @@ class Vehicle(IdentifiedObject):
                 pos=endPos,
                 startPos=startPos,
                 duration=duration,
+                until=until,
                 flags=functools.reduce(lambda x, y: x | y, stopTypes),
             )
         except traci.TraCIException as e:
             raise ValueError(
                 f"It isn't possible for the vehicle to stop there: [vehicleId={self.id}], [error={e}]"
             )
+
+    @_checkVehicleExistance
+    def stopFor(
+        self,
+        stoppingPlaceId: str,
+        duration: float,
+        endPos: float = 1,
+        startPos: float = INVALID_DOUBLE_VALUE,
+        stopTypes: list[StopType] = [StopType.DEFAULT],
+    ) -> None:
+        """Stops the vehicle at the given position in the given edge for the given duration (s).
+        See documentation for the stop(...) method."""
+        self.stop(stoppingPlaceId, duration=duration, endPos=endPos, startPos=startPos, stopTypes=stopTypes)
 
     @_checkVehicleExistance
     def stopUntil(
@@ -296,20 +311,8 @@ class Vehicle(IdentifiedObject):
         stopTypes: list[StopType] = [StopType.DEFAULT],
     ) -> None:
         """Stops the vehicle at the given position in the given edge until a given simulation time (s).
-        See the stopFor(...) method."""
-        try:
-            traci.vehicle.setStop(
-                self.id,
-                stoppingPlaceId,
-                pos=endPos,
-                startPos=startPos,
-                until=until,
-                flags=functools.reduce(lambda x, y: x | y, stopTypes),
-            )
-        except traci.TraCIException as e:
-            raise ValueError(
-                f"It isn't possible for the vehicle to stop there: [vehicleId={self.id}], [error={e}]"
-            )
+        See documentation for the stop(...) method."""
+        self.stop(stoppingPlaceId, until=until, endPos=endPos, startPos=startPos, stopTypes=stopTypes)
 
     def resume(self) -> None:
         """Resumes the march of a stopped vehicle.
