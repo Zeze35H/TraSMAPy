@@ -45,9 +45,18 @@ class TraSMAPy:
 
     @property
     def collectedStatistics(self) -> dict[int, dict]:
+        """The accumulated statistics of the queries."""
         return self._collectedStatistics.copy()
 
+    def query(self, queryString: str) -> dict:
+        """Run a query once and get its current result."""
+        return pyflwor.execute(
+            queryString, {"network": self._network, "users": self._users}
+        )
+
     def registerQuery(self, queryName: str, queryString: str) -> None:
+        """Register query to be run every tick.
+        Results are accumulated and can be obtained through the collectedStatistics property."""
         if queryName in self._queries:
             raise KeyError(
                 f"There's a query with that name already registered: [queryName={queryName}]."

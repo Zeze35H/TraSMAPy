@@ -8,7 +8,8 @@ import traci
 
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
-    traSMAPy.registerQuery("stopsQuery", "network/edges[self.id == '1to2']/stops")
+    queryStr =  "network/edges[self.id == '1to2']/stops"
+    traSMAPy.registerQuery("stopsQuery",queryStr)
 
     lane = traSMAPy.network.getLane("1to2_1")
     lane.setDisallowed([VehicleClass.PASSENGER])
@@ -25,8 +26,9 @@ def run(traSMAPy: TraSMAPy):
         if traSMAPy.step > 20:
             lane.allowAll()
         traSMAPy.doSimulationStep()
-        print(traSMAPy.collectedStatistics)
 
+    print(traSMAPy.collectedStatistics)
+    print(traSMAPy.query(queryStr))
     traSMAPy.closeSimulation()
 
 
