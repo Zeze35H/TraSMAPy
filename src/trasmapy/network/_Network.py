@@ -1,4 +1,5 @@
 from sys import stderr
+from typing_extensions import override
 
 import traci
 
@@ -13,7 +14,7 @@ from trasmapy.network._ChargingStation import ChargingStation
 from trasmapy.network._ParkingArea import ParkingArea
 
 
-class Network:
+class Network(SimUpdatable):
     def __init__(self) -> None:
         # index Stops
         self._stopsIndex: dict[str, Stop] = {}
@@ -106,6 +107,7 @@ class Network:
                 return det
         raise KeyError(f"Detector not found: [detectorId={detectorId}]")
 
-    def _doSimulationStep(self) -> None:
+    @override
+    def _doSimulationStep(self, step: int, time: float) -> None:
         for detector in self._detectors.values():
             detector._doSimulationStep()

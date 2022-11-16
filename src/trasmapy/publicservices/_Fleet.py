@@ -1,8 +1,11 @@
+from typing_extensions import override
+
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy._SimUpdatable import SimUpdatable
 from trasmapy.publicservices._FleetStop import FleetStop
 
 
-class Fleet(IdentifiedObject):
+class Fleet(IdentifiedObject, SimUpdatable):
     def __init__(
         self,
         fleetId: str,
@@ -32,3 +35,7 @@ class Fleet(IdentifiedObject):
     @property
     def start(self) -> float:
         return self._start
+
+    @override
+    def _doSimulationStep(self, step: int, time: float) -> None:
+        pass

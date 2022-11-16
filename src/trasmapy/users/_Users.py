@@ -1,12 +1,15 @@
+from typing_extensions import override
+
 import traci
 from traci.constants import VAR_STOPSTATE
 
+from trasmapy._SimUpdatable import SimUpdatable
 from trasmapy.users._Vehicle import Vehicle
 from trasmapy.users._Route import Route
 from trasmapy.network._Edge import Edge
 
 
-class Users:
+class Users(SimUpdatable):
     def __init__(self):
         # the vehicles being tracked
         self._vehicles: dict[str, Vehicle] = {}
@@ -86,7 +89,8 @@ class Users:
         self._vehicles[vehicleId] = v
         return v
 
-    def _doSimulationStep(self) -> None:
+    @override
+    def _doSimulationStep(self, step: int, time: float) -> None:
         res: dict[str, dict] = traci.vehicle.getAllSubscriptionResults()  # type: ignore
         # the vehicles that exited the simulation on this step
         vehiclesThatDied: set[str] = self._vehicles.keys() - res.keys()

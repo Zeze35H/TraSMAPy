@@ -30,35 +30,39 @@ class TraSMAPy:
         self._publicServices: PublicServices = PublicServices()
 
     @property
-    def step(self) -> int:
-        return self._step
-
-    @property
-    def stepLength(self) -> float:
-        """The length of one simulation step (s)."""
-        return traci.simulation.getDeltaT() # type: ignore
-
-    @property
-    def timeMs(self) -> float:
-        """The current simulation time (ms)."""
-        return traci.simulation.getCurrentTime() # type: ignore
-
-    @property
-    def time(self) -> float:
-        """The current simulation time (s)."""
-        return traci.simulation.getTime() # type: ignore
-
-    @property
-    def minExpectedNumber(self) -> int:
-        return traci.simulation.getMinExpectedNumber()  # type: ignore
-
-    @property
     def network(self) -> Network:
         return self._network
 
     @property
     def users(self) -> Users:
         return self._users
+
+    @property
+    def publicServices(self) -> PublicServices:
+        return self._publicServices
+
+    @property
+    def step(self) -> int:
+        return self._step
+
+    @property
+    def stepLength(self) -> float:
+        """The length of one simulation step (s)."""
+        return traci.simulation.getDeltaT()  # type: ignore
+
+    @property
+    def timeMs(self) -> float:
+        """The current simulation time (ms)."""
+        return traci.simulation.getCurrentTime()  # type: ignore
+
+    @property
+    def time(self) -> float:
+        """The current simulation time (s)."""
+        return traci.simulation.getTime()  # type: ignore
+
+    @property
+    def minExpectedNumber(self) -> int:
+        return traci.simulation.getMinExpectedNumber()  # type: ignore
 
     @property
     def collectedStatistics(self) -> dict[int, dict]:
@@ -68,7 +72,12 @@ class TraSMAPy:
     def query(self, queryString: str) -> dict:
         """Run a query once and get its current result."""
         return pyflwor.execute(
-            queryString, {"network": self._network, "users": self._users}
+            queryString,
+            {
+                "network": self._network,
+                "users": self._users,
+                "publicServices": self._publicServices,
+            },
         )
 
     def registerQuery(self, queryName: str, queryString: str) -> None:
@@ -84,13 +93,19 @@ class TraSMAPy:
         self._step += 1
         traci.simulationStep()
 
-        self._network._doSimulationStep()
-        self._users._doSimulationStep()
+        time = self.time
+        self._network._doSimulationStep(self._step, time)
+        self._users._doSimulationStep(self._step, time)
+        self._publicServices._doSimulationStep(self._step, time)
 
         self._collectedStatistics[self._step] = {}
         for query in self._queries.items():
             self._collectedStatistics[self._step][query[0]] = query[1](
-                {"network": self._network, "users": self._users}
+                {
+                    "network": self._network,
+                    "users": self._users,
+                    "publicServices": self._publicServices,
+                }
             )
 
     def closeSimulation(self) -> None:

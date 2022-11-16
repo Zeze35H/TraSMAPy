@@ -23,7 +23,8 @@ classifiers = [
 ]
 dependencies = [
   "traci",
-  "pyflwor @ git+https://github.com/JoaoCostaIFG/pyflwor.git"
+  "pyflwor @ git+https://github.com/JoaoCostaIFG/pyflwor.git",
+  "typing_extensions"
 ]
 
 [project.urls]
