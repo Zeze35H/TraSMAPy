@@ -2,6 +2,8 @@ import traci
 from traci.constants import VAR_STOPSTATE
 
 from trasmapy.users._Vehicle import Vehicle
+from trasmapy.users._Route import Route
+from trasmapy.network._Edge import Edge
 
 
 class Users:
@@ -56,6 +58,25 @@ class Users:
             raise KeyError(
                 f"A error occured while adding the vehicle with the given ID: [vehicleId={vehicleId}], [error={e}]."
             )
+
+    def getRoute(self, routeId: str) -> Route:
+        if routeId not in traci.route.getIDList():
+            raise KeyError(
+                f"The given route ID doesn't belong to any registered route: [routeId={routeId}]"
+            )
+        return Route(routeId)
+
+    def createRouteFromIds(self, routeId: str, edgesIds: list[str]) -> Route:
+        try:
+            traci.route.add(routeId, edgesIds)
+        except traci.TraCIException as e:
+            raise KeyError(
+                f"A error occured while adding the route with the given ID: [vehicleId={routeId}], [error={e}]."
+            )
+        return Route(routeId)
+
+    def createRouteFromEdges(self, routeId: str, edges: list[Edge]) -> Route:
+        return self.createRouteFromIds(routeId, list(map(lambda x: x.id, edges)))
 
     def _registerVehicle(self, vehicleId) -> Vehicle:
         # subscribe stoped state byte (check liveness)

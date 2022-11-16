@@ -18,7 +18,7 @@ def run(traSMAPy: TraSMAPy):
     e10.listen(lambda x: print(x))
 
     bus = traSMAPy.users.createVehicle("vehicle0", "route0", typeId="Bus")
-    bus.stopFor("bs_0", 20, endPos=1, stopTypes=[StopType.BUS_STOP])
+    bus.stopFor("bs_0", 20.4, endPos=1, stopTypes=[StopType.BUS_STOP])
     for i in range(1, 5):
         traSMAPy.users.createVehicle(f"vehicle{i}", "route0", typeId="Car")
 

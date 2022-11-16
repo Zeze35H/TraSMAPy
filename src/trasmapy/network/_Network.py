@@ -2,6 +2,8 @@ from sys import stderr
 
 import traci
 
+
+from trasmapy._SimUpdatable import SimUpdatable
 from trasmapy.network._Edge import Edge
 from trasmapy.network._Lane import Lane
 from trasmapy.network._Stop import Stop

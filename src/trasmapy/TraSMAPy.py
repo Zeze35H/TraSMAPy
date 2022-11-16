@@ -13,8 +13,9 @@ from sumolib import checkBinary
 import traci
 import pyflwor
 
-from trasmapy._Network import Network
-from trasmapy._Users import Users
+from trasmapy.network._Network import Network
+from trasmapy.users._Users import Users
+from trasmapy.publicservices._PublicServices import PublicServices
 
 
 class TraSMAPy:
@@ -26,10 +27,26 @@ class TraSMAPy:
         self._startSimulation(sumoCfg)
         self._network: Network = Network()
         self._users: Users = Users()
+        self._publicServices: PublicServices = PublicServices()
 
     @property
     def step(self) -> int:
         return self._step
+
+    @property
+    def stepLength(self) -> float:
+        """The length of one simulation step (s)."""
+        return traci.simulation.getDeltaT() # type: ignore
+
+    @property
+    def timeMs(self) -> float:
+        """The current simulation time (ms)."""
+        return traci.simulation.getCurrentTime() # type: ignore
+
+    @property
+    def time(self) -> float:
+        """The current simulation time (s)."""
+        return traci.simulation.getTime() # type: ignore
 
     @property
     def minExpectedNumber(self) -> int:
