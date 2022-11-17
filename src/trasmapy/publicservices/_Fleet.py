@@ -105,5 +105,4 @@ class Fleet(IdentifiedObject, SimUpdatable):
                 # all vehicles after the first one have the until time shifted by their spawn time
                 fleetStop.shiftUntilTime(time)
             newVehicle.stop(fleetStop)
-            print(newVehicle.getStops())
         self._vehicles.append(newVehicle)

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2022-11-14 15:12:26 by Eclipse SUMO netedit Version 1.14.0
+<!-- generated on 2022-11-17 16:25:08 by Eclipse SUMO netedit Version 1.14.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
-        <sumo-net-file value="/home/joao/Documents/UniStuff/5_1things/MS/TraSMAPy/example/hello.net.xml"/>
+        <sumo-net-file value="/home/joao/Documents/UniStuff/5_1things/MS/TraSMAPy/examples/simple/hello.net.xml"/>
     </input>
 
     <output>
-        <output-file value="/home/joao/Documents/UniStuff/5_1things/MS/TraSMAPy/example/hello.net.xml"/>
+        <output-file value="/home/joao/Documents/UniStuff/5_1things/MS/TraSMAPy/examples/simple/hello.net.xml"/>
     </output>
 
     <processing>
@@ -30,7 +30,7 @@
     </pedestrian>
 
     <netedit>
-        <additional-files value="/home/joao/Documents/UniStuff/5_1things/MS/TraSMAPy/example/hello.additionals.xml"/>
+        <additional-files value="/home/joao/Documents/UniStuff/5_1things/MS/TraSMAPy/examples/simple/hello.additionals.xml"/>
     </netedit>
 
 </configuration>

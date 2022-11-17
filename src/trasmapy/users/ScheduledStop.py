@@ -16,6 +16,12 @@ class ScheduledStop:
         until: Union[float, str] = INVALID_DOUBLE_VALUE,
         stopParams: list[StopType] = [],
     ) -> None:
+        """Represents a stop schedule. Useful to add a stop for a vehicle.
+        BUS_STOP, CONTAINER_STOP, CHARGING_STATION, PARKING_AREA, and DEFAULT can't be combined (stop types).
+        Some stop types might ignore the stop positions (follow their own rules).
+        PARKING - if present, the vehicle doesn't stop on the road (invisible in the simulation).
+        TRIGGERED - if present, the stop has to be manually ended.
+        """
         self._stop = stop
         self._stopParams = stopParams
         self._duration = (
@@ -23,6 +29,8 @@ class ScheduledStop:
         )
         self._until = self._timeStr2Sec(until) if isinstance(until, str) else until
         self._initialUntil = self._until
+
+        self._checkParamsValidaty()
 
     @property
     def stop(self) -> Stop:
@@ -62,3 +70,53 @@ class ScheduledStop:
         return timedelta(
             hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec
         ).total_seconds()
+
+    def _checkParamsValidaty(self):
+        if self._stop.stopType == StopType.BUS_STOP:
+            if not all(
+                x not in self._stopParams
+                for x in [
+                    StopType.DEFAULT,
+                    StopType.CONTAINER_STOP,
+                    StopType.CHARGING_STATION,
+                ]
+            ):
+                raise ValueError(
+                    f"Bus stops can't be associated with any of the following params: Default, ContainerStop, ChargingStation."
+                )
+        elif self._stop.stopType == StopType.CHARGING_STATION:
+            if not all(
+                x not in self._stopParams
+                for x in [
+                    StopType.DEFAULT,
+                    StopType.CONTAINER_STOP,
+                    StopType.BUS_STOP,
+                ]
+            ):
+                raise ValueError(
+                    f"Charging stations can't be associated with any of the following params: Default, ContainerStop, BusStop."
+                )
+        elif self._stop.stopType == StopType.DEFAULT:
+            if not all(
+                x not in self._stopParams
+                for x in [
+                    StopType.CHARGING_STATION,
+                    StopType.CONTAINER_STOP,
+                    StopType.BUS_STOP,
+                ]
+            ):
+                raise ValueError(
+                    f"Edge/Lane parking can't be associated with any of the following params: ChargingStation, ContainerStop, BusStop."
+                )
+        elif self._stop.stopType == StopType.PARKING_AREA:
+            if not all(
+                x not in self._stopParams
+                for x in [
+                    StopType.DEFAULT,
+                    StopType.CONTAINER_STOP,
+                    StopType.BUS_STOP,
+                ]
+            ):
+                raise ValueError(
+                    f"Parking areas can't be associated with any of the following params: Default, ContainerStop, BusStop."
+                )

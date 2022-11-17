@@ -260,13 +260,10 @@ class Vehicle(IdentifiedObject):
 
     @_checkVehicleExistance
     def stop(self, scheduledStop: ScheduledStop) -> None:
-        """Stops the vehicle at the given position in the given edge for the given duration (s).
-        Re-issuing a stop command with the same lane and position allows changing the duration.
+        """Stops the vehicle at the given location with the given schedule.
+        Re-issuing a stop command with the same location allows changing the duration.
         Setting the duration to 0 cancels an existing stop.
-        BUS_STOP, CONTAINER_STOP, CHARGING_STATION, and the PARKING_AREA stops change the meaning of the
-        stoppingPlaceId (from edgeId, to stop type). These can't be combined.
-        Note that it might not be possible for a vehicle to stop at a given place because of access restrictions.
-        Some stop types might ignore the given stop position."""
+        Note that it might not be possible for a vehicle to stop at a given place because of access restrictions."""
         try:
             traci.vehicle.setStop(
                 self.id,
