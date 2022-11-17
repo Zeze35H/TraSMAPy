@@ -2,6 +2,7 @@ from sys import stderr
 from typing_extensions import override
 
 import traci
+from traci.constants import INVALID_DOUBLE_VALUE
 
 
 from trasmapy._SimUpdatable import SimUpdatable
@@ -12,6 +13,7 @@ from trasmapy.network._Detector import Detector
 from trasmapy.network._BusStop import BusStop
 from trasmapy.network._ChargingStation import ChargingStation
 from trasmapy.network._ParkingArea import ParkingArea
+from trasmapy.network._LaneStop import LaneStop
 
 
 class Network(SimUpdatable):
@@ -58,7 +60,7 @@ class Network(SimUpdatable):
     def _indexStops(self, laneToStopMap, StopClass, traciModule):
         for stopId in traciModule.getIDList():
             parentLaneId: str = traciModule.getLaneID(stopId)  # type: ignore
-            stop: Stop = StopClass(stopId, parentLaneId)
+            stop: Stop = StopClass(stopId)
             self._stopsIndex[stopId] = stop
             try:
                 laneToStopMap[parentLaneId].append(stop)
@@ -107,7 +109,19 @@ class Network(SimUpdatable):
                 return det
         raise KeyError(f"Detector not found: [detectorId={detectorId}]")
 
+    def createLaneStop(
+        self, laneId: str, endPos: float = 0, startPos: float = INVALID_DOUBLE_VALUE
+    ) -> LaneStop:
+        lane = self.getLane(laneId)
+        return LaneStop(lane, endPos=endPos, startPos=startPos)
+
+    def createEdgeStop(
+        self, edgeId: str, endPos: float = 0, startPos: float = INVALID_DOUBLE_VALUE
+    ) -> LaneStop:
+        edge = self.getEdge(edgeId)
+        return LaneStop(edge.lanes[0], endPos=endPos, startPos=startPos)
+
     @override
     def _doSimulationStep(self, *args, step: int, time: float) -> None:
         for detector in self._detectors.values():
-            detector._doSimulationStep(args, step=step, time=time)
+            detector._doSimulationStep(*args, step=step, time=time)

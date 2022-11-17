@@ -1,30 +1,30 @@
+from abc import abstractmethod
+
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy.users.StopType import StopType
+
 
 class Stop(IdentifiedObject):
-    def __init__(self, stopId: str, parentId: str, traciModule) -> None:
+    stopType: StopType = StopType.DEFAULT
+
+    def __init__(self, stopId: str) -> None:
         super().__init__(stopId)
-        self._parentId = parentId
-        self._traciModule = traciModule
-
-    def _setParent(self, parentLane) -> None:
-        self._parent = parentLane
 
     @property
-    def parentLane(self):
-        return self._parent
+    def stopTypes(self) -> StopType:
+        return self.stopType
 
     @property
-    def name(self) -> str:
-        return self._traciModule.getName(self.id) # type: ignore
+    @abstractmethod
+    def lane(self):
+        pass
 
     @property
+    @abstractmethod
     def startPos(self) -> float:
-        return self._traciModule.getStartPos(self.id) # type: ignore
+        pass
 
     @property
+    @abstractmethod
     def endPos(self) -> float:
-        return self._traciModule.getEndPos(self.id) # type: ignore
-
-    @property
-    def vehicleIds(self) -> list[str]:
-        return self._traciModule.getVehicleIDs(self.id) # type: ignore
+        pass

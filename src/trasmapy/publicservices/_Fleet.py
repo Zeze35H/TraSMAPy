@@ -1,7 +1,5 @@
 from typing_extensions import override
 
-import traci
-
 from trasmapy._IdentifiedObject import IdentifiedObject
 from trasmapy._SimUpdatable import SimUpdatable
 from trasmapy.publicservices._FleetStop import FleetStop
@@ -9,7 +7,6 @@ from trasmapy.users._Route import Route
 from trasmapy.users._Users import Users
 from trasmapy.users._Vehicle import Vehicle
 from trasmapy.users._VehicleType import VehicleType
-from trasmapy.users.StopType import StopType
 
 
 class Fleet(IdentifiedObject, SimUpdatable):
@@ -34,7 +31,7 @@ class Fleet(IdentifiedObject, SimUpdatable):
         self._lastSpawn: float = -1.0
         self._nextSpawn: float = -1.0
         self._spawnedVehiclesIds: list[str] = []
-        self._spawnedVehicles: list[Vehicle] = []
+        self._vehicles: list[Vehicle] = []
 
     @property
     def vehicleType(self) -> VehicleType:
@@ -81,7 +78,7 @@ class Fleet(IdentifiedObject, SimUpdatable):
     @property
     def vehicles(self) -> list[Vehicle]:
         """The vehicles that are currently present in the simulation."""
-        return self._spawnedVehicles.copy()
+        return self._vehicles.copy()
 
     @override
     def _doSimulationStep(self, *args, step: int, time: float) -> None:
@@ -91,9 +88,7 @@ class Fleet(IdentifiedObject, SimUpdatable):
             self._lastSpawn = time
             self._nextSpawn += self._period
         # remove dead vehicles from the list
-        self._spawnedVehicles = list(
-            filter(lambda v: not v.isDead(), self._spawnedVehicles)
-        )
+        self._vehicles = list(filter(lambda v: not v.isDead(), self._vehicles))
 
     def _spawnVehicle(self, users: Users):
         newVehicleId: str = f"fleet{self.id}{len(self._spawnedVehiclesIds)}"
@@ -110,6 +105,6 @@ class Fleet(IdentifiedObject, SimUpdatable):
                 until=fleetStop.until,
                 endPos=stop.endPos,
                 startPos=stop.startPos,
-                stopTypes=[StopType.BUS_STOP],
+                stopTypes=[stop.stopTypes],
             )
-        self._spawnedVehicles.append(newVehicle)
+        self._vehicles.append(newVehicle)
