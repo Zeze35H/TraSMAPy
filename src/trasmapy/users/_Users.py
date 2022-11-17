@@ -48,7 +48,7 @@ class Users(SimUpdatable):
     def createVehicle(
         self,
         vehicleId: str,
-        route: Union[Route, None],
+        route: Union[Route, None] = None,
         vehicleType: VehicleType = VehicleType("DEFAULT_VEHTYPE"),
         personNumber: int = 0,
         personCapacity: int = 0,
