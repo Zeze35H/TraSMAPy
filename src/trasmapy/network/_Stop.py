@@ -12,6 +12,11 @@ class Stop(IdentifiedObject):
 
     @property
     @abstractmethod
+    def laneIndex(self) -> int:
+        pass
+
+    @property
+    @abstractmethod
     def lane(self):
         pass
 

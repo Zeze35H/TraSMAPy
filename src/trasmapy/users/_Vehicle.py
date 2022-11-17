@@ -268,6 +268,7 @@ class Vehicle(IdentifiedObject):
             traci.vehicle.setStop(
                 self.id,
                 scheduledStop.stop.id,
+                laneIndex=scheduledStop.stop.laneIndex,
                 pos=scheduledStop.stop.endPos,
                 startPos=scheduledStop.stop.startPos,
                 duration=scheduledStop.duration,

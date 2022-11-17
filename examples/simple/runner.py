@@ -15,7 +15,7 @@ def run(traSMAPy: TraSMAPy):
     lane.setDisallowed([VehicleClass.PASSENGER])
     busStop = traSMAPy.network.getStop("bs_0")
     parkingArea = traSMAPy.network.getStop("pa_0")
-    laneStop = traSMAPy.network.createLaneStop("1to2_1", endPos=100)
+    laneStop = traSMAPy.network.createLaneStop(lane.id, endPos=100)
 
     e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
@@ -30,7 +30,7 @@ def run(traSMAPy: TraSMAPy):
     )
 
     bus = traSMAPy.users.createVehicle("v0", route0, vehicleType=busType)
-    bus.stopFor(parkingArea, 20.4, [StopType.PARKING])
+    bus.stopFor(laneStop, 20.4)
     for i in range(0, 5):
         traSMAPy.users.createVehicle(f"vehicle{i}", route0, vehicleType=carType)
 

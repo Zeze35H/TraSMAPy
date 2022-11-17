@@ -20,6 +20,12 @@ class StopLocation(Stop):
 
     @property
     @override
+    def laneIndex(self) -> int:
+        """The lane index is ignored on all stops beside LaneStops (StopType DEFAULT)."""
+        return 0
+
+    @property
+    @override
     def lane(self):
         return self._parent
 
