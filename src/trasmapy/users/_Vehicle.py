@@ -1,9 +1,10 @@
 import functools
+from typing_extensions import override
 
 import traci
-from traci.constants import INVALID_DOUBLE_VALUE
 
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy.color._Colorable import Colorable, Color
 from trasmapy.network._Stop import Stop
 from trasmapy.users.ScheduledStop import ScheduledStop
 from trasmapy.users.MoveReason import MoveReason
@@ -14,7 +15,7 @@ from trasmapy.users._VehicleType import VehicleType
 from trasmapy.users._VehicleStop import VehicleStop
 
 
-class Vehicle(IdentifiedObject):
+class Vehicle(IdentifiedObject, Colorable):
     @staticmethod
     def _checkVehicleExistance(method):
         @functools.wraps(method)
@@ -204,6 +205,18 @@ class Vehicle(IdentifiedObject):
     @_checkVehicleExistance
     def timeLoss(self) -> float:
         return traci.vehicle.getTimeLoss(self.id)  # type: ignore
+
+    @property
+    @override
+    @_checkVehicleExistance
+    def color(self) -> Color:
+        return Color(*traci.vehicle.getColor(self.id))
+
+    @color.setter
+    @override
+    @_checkVehicleExistance
+    def color(self, color: Color) -> None:
+        traci.vehicle.setColor(self.id, color.colorTupleA)
 
     def isDead(self) -> bool:
         return self._dead

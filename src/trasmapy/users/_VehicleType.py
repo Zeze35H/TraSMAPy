@@ -1,10 +1,11 @@
+from typing_extensions import override
 import traci
 
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy.color._Colorable import Colorable, Color
 from trasmapy.users.VehicleClass import VehicleClass
 
-
-class VehicleType(IdentifiedObject):
+class VehicleType(IdentifiedObject, Colorable):
     def __init__(self, typeId: str) -> None:
         super().__init__(typeId)
 
@@ -187,5 +188,12 @@ class VehicleType(IdentifiedObject):
             raise ValueError("Scale needs to be a number (int/float data type).")
         traci.vehicletype.setScale(self.id, newVal)
 
-    def __str__(self) -> str:
-        return self.id
+    @property
+    @override
+    def color(self) -> Color:
+        return Color(*traci.vehicletype.getColor(self.id))
+
+    @color.setter
+    @override
+    def color(self, color: Color) -> None:
+        traci.vehicletype.setColor(self.id, color.colorTupleA)
