@@ -5,12 +5,13 @@ from traci.constants import INVALID_DOUBLE_VALUE
 
 from trasmapy._IdentifiedObject import IdentifiedObject
 from trasmapy.network._Stop import Stop
-from trasmapy.users._VehicleType import VehicleType
-from trasmapy.users._VehicleStop import VehicleStop
+from trasmapy.users.ScheduledStop import ScheduledStop
 from trasmapy.users.MoveReason import MoveReason
 from trasmapy.users.RemoveReason import RemoveReason
 from trasmapy.users.StopType import StopType
 from trasmapy.users.VehicleClass import VehicleClass
+from trasmapy.users._VehicleType import VehicleType
+from trasmapy.users._VehicleStop import VehicleStop
 
 
 class Vehicle(IdentifiedObject):
@@ -258,13 +259,7 @@ class Vehicle(IdentifiedObject):
         return stops
 
     @_checkVehicleExistance
-    def stop(
-        self,
-        stop: Stop,
-        duration: float = INVALID_DOUBLE_VALUE,
-        until: float = INVALID_DOUBLE_VALUE,
-        stopParams: list[StopType] = [],
-    ) -> None:
+    def stop(self, scheduledStop: ScheduledStop) -> None:
         """Stops the vehicle at the given position in the given edge for the given duration (s).
         Re-issuing a stop command with the same lane and position allows changing the duration.
         Setting the duration to 0 cancels an existing stop.
@@ -275,14 +270,12 @@ class Vehicle(IdentifiedObject):
         try:
             traci.vehicle.setStop(
                 self.id,
-                stop.id,
-                pos=stop.endPos,
-                startPos=stop.startPos,
-                duration=duration,
-                until=until,
-                flags=functools.reduce(
-                    lambda x, y: x | y, [stop.stopType] + stopParams
-                ),
+                scheduledStop.stop.id,
+                pos=scheduledStop.stop.endPos,
+                startPos=scheduledStop.stop.startPos,
+                duration=scheduledStop.duration,
+                until=scheduledStop.until,
+                flags=functools.reduce(lambda x, y: x | y, scheduledStop.stopTypes),
             )
         except traci.TraCIException as e:
             raise ValueError(
@@ -291,33 +284,19 @@ class Vehicle(IdentifiedObject):
 
     @_checkVehicleExistance
     def stopFor(
-        self,
-        stop: Stop,
-        duration: float,
-        stopParams: list[StopType] = [],
+        self, stop: Stop, duration: float, stopParams: list[StopType] = []
     ) -> None:
         """Stops the vehicle at the given position in the given edge for the given duration (s).
         See documentation for the stop(...) method."""
-        self.stop(
-            stop,
-            duration=duration,
-            stopParams=stopParams,
-        )
+        self.stop(ScheduledStop(stop, duration=duration, stopParams=stopParams))
 
     @_checkVehicleExistance
     def stopUntil(
-        self,
-        stop: Stop,
-        until: float,
-        stopParams: list[StopType] = [],
+        self, stop: Stop, until: float, stopParams: list[StopType] = []
     ) -> None:
         """Stops the vehicle at the given position in the given edge until a given simulation time (s).
         See documentation for the stop(...) method."""
-        self.stop(
-            stop,
-            until=until,
-            stopParams=stopParams,
-        )
+        self.stop(ScheduledStop(stop, until=until, stopParams=stopParams))
 
     def resume(self) -> None:
         """Resumes the march of a stopped vehicle.

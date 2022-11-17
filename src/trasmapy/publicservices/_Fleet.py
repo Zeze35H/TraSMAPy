@@ -1,8 +1,11 @@
 from typing_extensions import override
+from math import inf
+
+from traci.constants import INVALID_DOUBLE_VALUE
 
 from trasmapy._IdentifiedObject import IdentifiedObject
 from trasmapy._SimUpdatable import SimUpdatable
-from trasmapy.publicservices._FleetStop import FleetStop
+from trasmapy.users.ScheduledStop import ScheduledStop
 from trasmapy.users._Route import Route
 from trasmapy.users._Users import Users
 from trasmapy.users._Vehicle import Vehicle
@@ -15,16 +18,16 @@ class Fleet(IdentifiedObject, SimUpdatable):
         fleetId: str,
         fleetRoute: Route,
         vehicleType: VehicleType,
-        fleetStops: list[FleetStop],
-        end: float,
-        period: int,
+        fleetStops: list[ScheduledStop],
+        period: float,
         start: float = 0,
+        end: float = INVALID_DOUBLE_VALUE,
     ) -> None:
         super().__init__(fleetId)
         self._route = fleetRoute
         self._vehicleType = vehicleType
         self._fleetStops = fleetStops
-        self._end = end
+        self._end = inf if end == INVALID_DOUBLE_VALUE else end
         self._period = period
         self._start = start
 
@@ -42,7 +45,7 @@ class Fleet(IdentifiedObject, SimUpdatable):
         return self._route
 
     @property
-    def fleetStops(self) -> list[FleetStop]:
+    def fleetStops(self) -> list[ScheduledStop]:
         return self._fleetStops.copy()
 
     @property
@@ -82,15 +85,15 @@ class Fleet(IdentifiedObject, SimUpdatable):
 
     @override
     def _doSimulationStep(self, *args, step: int, time: float) -> None:
-        users = args[0]
+        users: Users = args[0]
         if self._start < time < self._end and self._nextSpawn <= time:
-            self._spawnVehicle(users)
+            self._spawnVehicle(time, users)
             self._lastSpawn = time
             self._nextSpawn += self._period
         # remove dead vehicles from the list
         self._vehicles = list(filter(lambda v: not v.isDead(), self._vehicles))
 
-    def _spawnVehicle(self, users: Users):
+    def _spawnVehicle(self, time: float, users: Users):
         newVehicleId: str = f"fleet{self.id}{len(self._spawnedVehiclesIds)}"
         self._spawnedVehiclesIds.append(newVehicleId)
 
@@ -98,10 +101,9 @@ class Fleet(IdentifiedObject, SimUpdatable):
             newVehicleId, route=self._route, vehicleType=self._vehicleType
         )
         for fleetStop in self._fleetStops:
-            stop = fleetStop.stop
-            newVehicle.stop(
-                stop,
-                duration=fleetStop.duration,
-                until=fleetStop.until,
-            )
+            if len(self._spawnedVehiclesIds) > 1:
+                # all vehicles after the first one have the until time shifted by their spawn time
+                fleetStop.shiftUntilTime(time)
+            newVehicle.stop(fleetStop)
+            print(newVehicle.getStops())
         self._vehicles.append(newVehicle)

@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 
-from trasmapy import TraSMAPy, VehicleClass, StopType
-from trasmapy.publicservices._FleetStop import FleetStop
+from trasmapy import TraSMAPy, VehicleClass, StopType, ScheduledStop
 
 import traci
 
@@ -24,11 +23,11 @@ def run(traSMAPy: TraSMAPy):
     carType = traSMAPy.users.getVehicleType("Car")
     route0 = traSMAPy.users.getRoute("route0")
 
-    #  traSMAPy.publicServices.createFleet("fleet0", route0, busType, [FleetStop(laneStop, 5)], 100, 10, 0)
-    traSMAPy.publicServices.createFleet("fleet0", None, busType, [FleetStop(laneStop, 5)], 100, 10, 0)
+    #  traSMAPy.publicServices.createFleet("fleet0", route0, busType, [ScheduledStop(laneStop, duration=5)], 10)
+    traSMAPy.publicServices.createFleet("fleet0", None, busType, [ScheduledStop(busStop, until=20)], 40)
 
-    #  bus = traSMAPy.users.createVehicle("vehicle0", route0, vehicleType=busType)
-    #  bus.stopFor(busStop, 20.4)
+    bus = traSMAPy.users.createVehicle("v0", route0, vehicleType=busType)
+    bus.stopFor(busStop, 20.4)
     for i in range(0, 5):
         traSMAPy.users.createVehicle(f"vehicle{i}", route0, vehicleType=carType)
 
