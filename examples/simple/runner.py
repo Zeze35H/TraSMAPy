@@ -24,7 +24,8 @@ def run(traSMAPy: TraSMAPy):
     carType = traSMAPy.users.getVehicleType("Car")
     route0 = traSMAPy.users.getRoute("route0")
 
-    traSMAPy.publicServices.createFleet("fleet0", route0, busType, [FleetStop(laneStop, 5)], 100, 10, 0)
+    #  traSMAPy.publicServices.createFleet("fleet0", route0, busType, [FleetStop(laneStop, 5)], 100, 10, 0)
+    traSMAPy.publicServices.createFleet("fleet0", None, busType, [FleetStop(laneStop, 5)], 100, 10, 0)
 
     #  bus = traSMAPy.users.createVehicle("vehicle0", route0, vehicleType=busType)
     #  bus.stopFor(busStop.id, 20.4, endPos=1, stopTypes=[StopType.BUS_STOP])

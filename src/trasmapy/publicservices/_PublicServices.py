@@ -40,8 +40,8 @@ class PublicServices(SimUpdatable):
             route = self._users.createRouteFromEdges(
                 routeId,
                 [
-                    fleetStops[0].stop.parentLane.parentEdge,
-                    fleetStops[-1].stop.parentLane.parentEdge,
+                    fleetStops[0].stop.lane.parentEdge,
+                    fleetStops[-1].stop.lane.parentEdge,
                 ],
             )
         else:
