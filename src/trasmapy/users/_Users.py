@@ -1,3 +1,4 @@
+from typing import Union
 from typing_extensions import override
 
 import traci
@@ -47,19 +48,19 @@ class Users(SimUpdatable):
     def createVehicle(
         self,
         vehicleId: str,
-        route: Route,
+        route: Union[Route, None],
         vehicleType: VehicleType = VehicleType("DEFAULT_VEHTYPE"),
         personNumber: int = 0,
         personCapacity: int = 0,
     ) -> Vehicle:
         """Creates a vehicle and adds it to the network.
-        If the route is empty (\"\"), the vehicle will be added to a random network edge.
+        If the route is None, the vehicle will be added to a random network edge.
         If the route consists of two disconnected edges, the vehicle will be treated like
         a <trip> and use the fastest route between the two edges."""
         try:
             traci.vehicle.add(
                 vehicleId,
-                route.id,
+                route.id if isinstance(route, Route) else "",
                 typeID=vehicleType.id,
                 personNumber=personNumber,
                 personCapacity=personCapacity,
