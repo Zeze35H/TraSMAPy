@@ -1,3 +1,4 @@
+from typing import Union
 from typing_extensions import override
 
 from trasmapy._SimUpdatable import SimUpdatable
@@ -20,7 +21,7 @@ class PublicServices(SimUpdatable):
     def createFleet(
         self,
         fleetId: str,
-        fleetRoute: Route,
+        fleetRoute: Union[Route, None],
         vehicleType: VehicleType,
         fleetStops: list[FleetStop],
         end: float,

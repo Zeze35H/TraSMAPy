@@ -100,11 +100,8 @@ class Fleet(IdentifiedObject, SimUpdatable):
         for fleetStop in self._fleetStops:
             stop = fleetStop.stop
             newVehicle.stop(
-                stop.id,
+                stop,
                 duration=fleetStop.duration,
                 until=fleetStop.until,
-                endPos=stop.endPos,
-                startPos=stop.startPos,
-                stopTypes=[stop.stopTypes],
             )
         self._vehicles.append(newVehicle)

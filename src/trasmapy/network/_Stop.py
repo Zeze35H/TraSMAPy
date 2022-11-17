@@ -11,10 +11,6 @@ class Stop(IdentifiedObject):
         super().__init__(stopId)
 
     @property
-    def stopTypes(self) -> StopType:
-        return self.stopType
-
-    @property
     @abstractmethod
     def lane(self):
         pass

@@ -4,6 +4,7 @@ import traci
 from traci.constants import INVALID_DOUBLE_VALUE
 
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy.network._Stop import Stop
 from trasmapy.users._VehicleType import VehicleType
 from trasmapy.users._VehicleStop import VehicleStop
 from trasmapy.users.MoveReason import MoveReason
@@ -259,12 +260,10 @@ class Vehicle(IdentifiedObject):
     @_checkVehicleExistance
     def stop(
         self,
-        stoppingPlaceId: str,
+        stop: Stop,
         duration: float = INVALID_DOUBLE_VALUE,
         until: float = INVALID_DOUBLE_VALUE,
-        endPos: float = 1,
-        startPos: float = INVALID_DOUBLE_VALUE,
-        stopTypes: list[StopType] = [StopType.DEFAULT],
+        stopParams: list[StopType] = [],
     ) -> None:
         """Stops the vehicle at the given position in the given edge for the given duration (s).
         Re-issuing a stop command with the same lane and position allows changing the duration.
@@ -276,12 +275,14 @@ class Vehicle(IdentifiedObject):
         try:
             traci.vehicle.setStop(
                 self.id,
-                stoppingPlaceId,
-                pos=endPos,
-                startPos=startPos,
+                stop.id,
+                pos=stop.endPos,
+                startPos=stop.startPos,
                 duration=duration,
                 until=until,
-                flags=functools.reduce(lambda x, y: x | y, stopTypes),
+                flags=functools.reduce(
+                    lambda x, y: x | y, [stop.stopType] + stopParams
+                ),
             )
         except traci.TraCIException as e:
             raise ValueError(
@@ -291,28 +292,32 @@ class Vehicle(IdentifiedObject):
     @_checkVehicleExistance
     def stopFor(
         self,
-        stoppingPlaceId: str,
+        stop: Stop,
         duration: float,
-        endPos: float = 1,
-        startPos: float = INVALID_DOUBLE_VALUE,
-        stopTypes: list[StopType] = [StopType.DEFAULT],
+        stopParams: list[StopType] = [],
     ) -> None:
         """Stops the vehicle at the given position in the given edge for the given duration (s).
         See documentation for the stop(...) method."""
-        self.stop(stoppingPlaceId, duration=duration, endPos=endPos, startPos=startPos, stopTypes=stopTypes)
+        self.stop(
+            stop,
+            duration=duration,
+            stopParams=stopParams,
+        )
 
     @_checkVehicleExistance
     def stopUntil(
         self,
-        stoppingPlaceId: str,
+        stop: Stop,
         until: float,
-        endPos: float = 1,
-        startPos: float = INVALID_DOUBLE_VALUE,
-        stopTypes: list[StopType] = [StopType.DEFAULT],
+        stopParams: list[StopType] = [],
     ) -> None:
         """Stops the vehicle at the given position in the given edge until a given simulation time (s).
         See documentation for the stop(...) method."""
-        self.stop(stoppingPlaceId, until=until, endPos=endPos, startPos=startPos, stopTypes=stopTypes)
+        self.stop(
+            stop,
+            until=until,
+            stopParams=stopParams,
+        )
 
     def resume(self) -> None:
         """Resumes the march of a stopped vehicle.
