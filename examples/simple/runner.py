@@ -8,8 +8,8 @@ import traci
 
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
-    queryStr =  "network/edges[self.id == '1to2']/stops"
-    traSMAPy.registerQuery("stopsQuery",queryStr)
+    queryStr = "network/edges[self.id == '1to2']/stops"
+    traSMAPy.registerQuery("stopsQuery", queryStr)
 
     lane = traSMAPy.network.getLane("1to2_1")
     lane.setDisallowed([VehicleClass.PASSENGER])
@@ -25,7 +25,9 @@ def run(traSMAPy: TraSMAPy):
     route0 = traSMAPy.users.getRoute("route0")
 
     #  traSMAPy.publicServices.createFleet("fleet0", route0, busType, [ScheduledStop(laneStop, duration=5)], 10)
-    traSMAPy.publicServices.createFleet("fleet0", None, busType, [ScheduledStop(busStop, until=20)], 40)
+    traSMAPy.publicServices.createFleet(
+        "fleet0", None, busType, [ScheduledStop(busStop, until=20)], 40
+    )
 
     bus = traSMAPy.users.createVehicle("v0", route0, vehicleType=busType)
     bus.stopFor(parkingArea, 20.4, [StopType.PARKING])

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2022-11-17 16:51:53.277706 by $Id: ptlines2flows.py v1_3_1+0313-ccb31df3eb jakob.erdmann@dlr.de 2019-09-02 13:26:32 +0200 $ UNKNOWN
+  options: 
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <vType id="pt_bus" vClass="bus"/>
+    <vType id="pt_tram" vClass="tram"/>
+    <vType id="pt_train" vClass="rail"/>
+    <vType id="pt_subway" vClass="rail_urban"/>
+    <vType id="pt_light_rail" vClass="rail_urban"/>
+    <vType id="pt_monorail" vClass="rail"/>
+    <vType id="pt_trolleybus" vClass="bus"/>
+    <vType id="pt_minibus" vClass="bus"/>
+    <vType id="pt_share_taxi" vClass="taxi"/>
+    <vType id="pt_aerialway" vClass="bus"/>
+    <vType id="pt_ferry" vClass="ship"/>
+    <route id="pt_train_IC_LSA=GUS:0" color="14,113,53" edges="384435607#0 384435607#1" >
+        <stop busStop="4796000047" duration="20" until="118.0"/> <!-- Trofa -->
+    </route>
+    <route id="pt_train_U_PSB-GUS:0" color="238,30,35" edges="384435607#0 384435607#1" >
+        <stop busStop="4796000047" duration="20" until="118.0"/> <!-- Trofa -->
+    </route>
+    <route id="pt_train_U_PSB-BRA:0" color="80,185,72" edges="384435607#0 384435607#1" >
+        <stop busStop="4796000047" duration="20" until="118.0"/> <!-- Trofa -->
+    </route>
+    <flow id="pt_train_IC_LSA=GUS:0" type="pt_train" route="pt_train_IC_LSA=GUS:0" begin="15.0" end="3615.0" period="600" line="IC_LSA=GUS:0" >
+        <param key="name" value="CP Intercidades: Lisboa Santa Apolónia=&gt;Guimarães"/>
+        <param key="completeness" value="0.06"/>
+    </flow>
+    <flow id="pt_train_U_PSB-GUS:0" type="pt_train" route="pt_train_U_PSB-GUS:0" begin="165.0" end="3765.0" period="600" line="U_PSB-GUS:0" >
+        <param key="name" value="CP Urbano: Porto (São Pento) =&gt; Guimarães"/>
+        <param key="completeness" value="0.04"/>
+    </flow>
+    <flow id="pt_train_U_PSB-BRA:0" type="pt_train" route="pt_train_U_PSB-BRA:0" begin="383.0" end="3983.0" period="600" line="U_PSB-BRA:0" >
+        <param key="name" value="CP Urbano: Porto (São Bento) =&gt; Braga"/>
+        <param key="completeness" value="0.04"/>
+    </flow>
+</routes>

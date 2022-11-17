@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2022-11-17 16:51:53 by Eclipse SUMO sumo Version 1.14.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+
+    <input>
+        <net-file value="/home/joao/dir/2022-11-17-16-51-43/osm.net.xml"/>
+        <route-files value="/home/joao/dir/2022-11-17-16-51-43/trips.trips.xml"/>
+        <additional-files value="/home/joao/dir/2022-11-17-16-51-43/osm_stops.add.xml"/>
+    </input>
+
+    <output>
+        <vehroute-output value="/home/joao/dir/2022-11-17-16-51-43/vehroutes.xml"/>
+        <stop-output value="/home/joao/dir/2022-11-17-16-51-43/stopinfos.xml"/>
+    </output>
+
+    <time>
+        <begin value="0"/>
+    </time>
+
+    <processing>
+        <ignore-route-errors value="true"/>
+    </processing>
+
+    <routing>
+        <device.rerouting.adaptation-interval value="0"/>
+    </routing>
+
+    <report>
+        <aggregate-warnings value="5"/>
+        <error-log value="/home/joao/dir/2022-11-17-16-51-43/trips.trips.xml.errorlog"/>
+        <no-step-log value="true"/>
+    </report>
+
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <vehicle id="0_train_IC_LSA=GUS:0" type="pt_train" depart="15.00" departLane="0" arrival="243.00">
+        <route edges="384435607#0 384435607#1"/>
+        <stop busStop="4796000047" duration="30.00"/>
+    </vehicle>
+
+    <vehicle id="2_train_U_PSB-GUS:0" type="pt_train" depart="165.00" departLane="0" arrival="393.00">
+        <route edges="384435607#0 384435607#1"/>
+        <stop busStop="4796000047" duration="30.00"/>
+    </vehicle>
+
+    <vehicle id="3_train_U_PSB-BRA:0" type="pt_train" depart="383.00" departLane="0" arrival="611.00">
+        <route edges="384435607#0 384435607#1"/>
+        <stop busStop="4796000047" duration="30.00"/>
+    </vehicle>
+
+</routes>
