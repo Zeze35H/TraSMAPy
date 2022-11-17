@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from trasmapy import TraSMAPy, VehicleClass, StopType, ScheduledStop
+from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop
 
 import traci
 
