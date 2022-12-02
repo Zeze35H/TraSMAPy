@@ -11,6 +11,17 @@ def run(traSMAPy: TraSMAPy):
     queryStr = "network/edges[self.id == '1to2']/stops"
     traSMAPy.registerQuery("stopsQuery", queryStr)
 
+    t_2 = "2"
+    print(traci.trafficlight.getRedYellowGreenState(t_2))
+    phaseDuration = traci.trafficlight.getPhaseDuration(t_2)
+    nextSwitchTime = traci.trafficlight.getNextSwitch(t_2)
+    print(phaseDuration, nextSwitchTime, nextSwitchTime - traSMAPy.time)
+    print(traci.trafficlight.getPhase(t_2))
+    print(traci.trafficlight.getPhaseName(t_2))
+    print(traci.trafficlight.getAllProgramLogics(t_2))
+    print(traci.trafficlight.getControlledLinks(t_2))
+    print(traci.trafficlight.getControlledLanes(t_2))
+
     lane = traSMAPy.network.getLane("1to2_1")
     lane.setDisallowed([VehicleClass.PASSENGER])
     busStop = traSMAPy.network.getStop("bs_0")
