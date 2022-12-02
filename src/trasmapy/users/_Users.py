@@ -54,6 +54,8 @@ class Users(SimUpdatable):
         return VehicleType(vehicleTypeId)
 
     def getVehicle(self, vehicleId: str) -> Vehicle:
+        """Retrieve a registered vehicle reference to a vehicle in the network.
+        See createVehicle."""
         try:
             return self._vehicles[vehicleId]
         except KeyError:
@@ -74,7 +76,8 @@ class Users(SimUpdatable):
         personNumber: int = 0,
         personCapacity: int = 0,
     ) -> Vehicle:
-        """Creates a vehicle and adds it to the network.
+        """Creates a registered vehicle and adds it to the network.
+        Registered vehicles are vehicle objects whose liveness is checked (safe).
         If the route is None, the vehicle will be added to a random network edge.
         If the route consists of two disconnected edges, the vehicle will be treated like
         a <trip> and use the fastest route between the two edges."""
