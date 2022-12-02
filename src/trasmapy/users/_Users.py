@@ -24,8 +24,29 @@ class Users(SimUpdatable):
 
     def getAllVehicleTypeIds(self) -> list[str]:
         return traci.vehicletype.getIDList()  # type: ignore
+    
+    @property
+    def vehicles(self) -> list[Vehicle]:
+        """Retrieves an object for each vehicle currently in the simulation.
+        The API doesn't keep track of the liveness of the references returned
+        from this method. As such, the values returned from this method should
+        only be kept for one tick of the simulation (e.g., for querries)."""
+        return list(map(lambda id: Vehicle(id), self.getAllVehicleIds()))
+
+    @property
+    def pendingVehicles(self) -> list[Vehicle]:
+        """Retrieves an object for each pending vehicle currently in the simulation.
+        The API doesn't keep track of the liveness of the references returned
+        from this method. As such, the values returned from this method should
+        only be kept for one tick of the simulation (e.g., for querries)."""
+        return list(map(lambda id: Vehicle(id), self.getAllPendingVehicleIds()))
+
+    @property
+    def vehicleTypes(self) -> list[VehicleType]:
+        return list(map(lambda id: VehicleType(id), self.getAllVehicleTypeIds()))
 
     def getVehicleType(self, vehicleTypeId: str) -> VehicleType:
+        """Retrieves an object for each vehicle type currently in the simulation."""
         if vehicleTypeId not in self.getAllVehicleTypeIds():
             raise KeyError(
                 f"The vehicle type with the given ID does not exist: [vehicleTypeId={vehicleTypeId}]."
