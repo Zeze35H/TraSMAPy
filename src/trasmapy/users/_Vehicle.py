@@ -121,6 +121,20 @@ class Vehicle(IdentifiedObject, Colorable):
 
     @property
     @_checkVehicleExistance
+    def doRerouting(self) -> bool:
+        """Returns whether the vehicle is able to do automatic rerouting."""
+        return traci.vehicle.getParameter(self.id, "has.rerouting.device")  # type: ignore
+
+    @doRerouting.setter
+    @_checkVehicleExistance
+    def doRerouting(self, isRerouting: bool) -> None:
+        """Sets whether or not the vehicle is able to do automatic rerouting."""
+        if not isinstance(isRerouting, bool):
+            raise ValueError("isRerouting needs to be a bool.")
+        traci.vehicle.setParameter(self.id, "has.rerouting.device", isRerouting)
+
+    @property
+    @_checkVehicleExistance
     def edgeId(self) -> str:
         """Returns the ID of the edge the vehicle was in the previous time step."""
         return traci.vehicle.getRoadID(self.id)  # type: ignore

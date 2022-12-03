@@ -35,6 +35,9 @@ def run(traSMAPy: TraSMAPy):
     for i in range(0, 5):
         traSMAPy.users.createVehicle(f"vehicle{i}", route0, vehicleType=carType)
 
+    print(traci.vehicle.getParameter(bus.id, "has.taxi.device"))
+    print(bus.doRerouting)
+
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:
             lane.allowAll()
