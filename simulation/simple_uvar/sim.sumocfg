@@ -2,6 +2,8 @@
     <input>
         <net-file value="simple_uvar.net.xml"/>
         <route-files value="simple_uvar.rou.xml"/>
+        <additional-files value="simple_uvar_parking_lots.xml"/>
+        <gui-settings-file value="simple_uvar.settings.xml"/>
     </input>
     <time>
         <begin value="0"/>

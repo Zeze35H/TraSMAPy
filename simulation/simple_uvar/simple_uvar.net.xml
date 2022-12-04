@@ -1,26 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2022-12-02 09:50:25 by Eclipse SUMO netedit Version 1.14.1
+<!-- generated on 2022-12-03 23:47:48 by Eclipse SUMO netedit Version 1.15.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
+    <input>
+        <sumo-net-file value="C:\Users\Ivo Saavedra\Projects\TraSMAPy\simulation\simple_uvar\simple_uvar.net.xml"/>
+    </input>
+
     <output>
-        <output-file value="C:\Users\telmo\Desktop\TraSMAPy\simulation\simple_uvar\simple_uvar.net.xml"/>
+        <output-file value="C:\Users\Ivo Saavedra\Projects\TraSMAPy\simulation\simple_uvar\simple_uvar.net.xml"/>
     </output>
 
     <processing>
+        <geometry.min-radius.fix.railways value="false"/>
+        <geometry.max-grade.fix value="false"/>
         <offset.disable-normalization value="true"/>
+        <lefthand value="0"/>
     </processing>
 
     <junctions>
         <no-turnarounds value="true"/>
+        <junctions.corner-detail value="5"/>
+        <junctions.limit-turn-speed value="5.50"/>
+        <rectangular-lane-cut value="0"/>
     </junctions>
+
+    <pedestrian>
+        <walkingareas value="0"/>
+    </pedestrian>
 
 </configuration>
 -->
 
 <net version="1.9" junctionCornerDetail="5" limitTurnSpeed="5.50" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
 
-    <location netOffset="0.00,0.00" convBoundary="-300.00,-800.00,2000.00,400.00" origBoundary="10000000000.00,10000000000.00,-10000000000.00,-10000000000.00" projParameter="!"/>
+    <location netOffset="0.00,0.00" convBoundary="-300.00,-800.00,2000.00,400.00" origBoundary="-10000000000.00,-10000000000.00,10000000000.00,10000000000.00" projParameter="!"/>
 
     <edge id=":J29_0" function="internal">
         <lane id=":J29_0_0" index="0" speed="13.89" length="1.03" shape="97.34,4.13 97.23,4.02 97.15,3.95 97.06,3.90 96.92,3.83"/>

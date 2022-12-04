@@ -8,5 +8,4 @@
     <route id="r_0" edges="E40 E31 E32 E33 E34 E35"/>
     <route id="r_1" edges="E40 E31 E41 E51 E52 E53 E58 E47 E48"/>
 
-    <trip id="t_0" depart="0" from="E40" to="E48" via="E53"/>
 </routes>
