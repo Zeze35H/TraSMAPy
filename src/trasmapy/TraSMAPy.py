@@ -16,6 +16,7 @@ import pyflwor
 from trasmapy.network._Network import Network
 from trasmapy.users._Users import Users
 from trasmapy.publicservices._PublicServices import PublicServices
+from trasmapy.control._Control import Control
 
 
 class TraSMAPy:
@@ -28,6 +29,7 @@ class TraSMAPy:
         self._network: Network = Network()
         self._users: Users = Users()
         self._publicServices: PublicServices = PublicServices(self._users)
+        self._control: Control = Control()
 
     @property
     def network(self) -> Network:
@@ -40,6 +42,10 @@ class TraSMAPy:
     @property
     def publicServices(self) -> PublicServices:
         return self._publicServices
+
+    @property
+    def control(self) -> Control:
+        return self._control
 
     @property
     def step(self) -> int:
@@ -85,6 +91,7 @@ class TraSMAPy:
         self._network._doSimulationStep(step=self._step, time=time)
         self._users._doSimulationStep(step=self._step, time=time)
         self._publicServices._doSimulationStep(step=self._step, time=time)
+        self._control._doSimulationStep(step=self._step, time=time)
 
         self._collectedStatistics[self._step] = {}
         for query in self._queries.items():
@@ -101,6 +108,7 @@ class TraSMAPy:
             "network": self._network,
             "users": self._users,
             "publicServices": self._publicServices,
+            "control": self._control,
         }
 
     def _getOptions(self):
