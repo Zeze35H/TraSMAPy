@@ -14,6 +14,9 @@ class Control(SimUpdatable):
     def trafficlights(self) -> list[TrafficLight]:
         return list(map(lambda id: TrafficLight(id), traci.trafficlight.getIDList()))
 
+    def getTrafficLight(self, id: str) -> TrafficLight:
+        return TrafficLight(id)
+
     @override
     def _doSimulationStep(self, *args, step: int, time: float) -> None:
         pass
