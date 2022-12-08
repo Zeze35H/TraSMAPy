@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from trasmapy import TraSMAPy, Color, VehicleClass, StopType
+from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop, MoveReason
 
 
 
@@ -13,7 +13,7 @@ def run(traSMAPy: TraSMAPy):
     defaultVehicle = traSMAPy.users.getVehicleType("DEFAULT_VEHTYPE")
     evehicleType = defaultVehicle.duplicate("evehicle")
     evehicleType.vehicleClass = VehicleClass.EVEHICLE
-    evehicleType.color = Color(0, 0, 255)
+    evehicleType.color = Color(100, 100, 255)
 
     # get edges
     e40 = traSMAPy.network.getEdge("E40")
@@ -26,6 +26,8 @@ def run(traSMAPy: TraSMAPy):
     e41 = traSMAPy.network.getEdge("E41")
     e41a = traSMAPy.network.getEdge("-E41.28")
 
+    e6 = traSMAPy.network.getEdge("E6")
+    e11 = traSMAPy.network.getEdge("-E11")
 
     e31 = traSMAPy.network.getEdge("E31")
 
@@ -41,28 +43,20 @@ def run(traSMAPy: TraSMAPy):
 
     # setup custom route
     route2 = traSMAPy.users.createRouteFromEdges("r_2", [e40, e9])
+    pa_route = traSMAPy.users.createRouteFromEdges("pa_route", [e6, e11])
+    pa_1 = traSMAPy.network.getStop('pa_1')
 
-    stop0 = traSMAPy.network.createEdgeStop(edgeId=e31.id, startPos=10, endPos=10)
-    # lane0 = e53.getLane("E31_0")
-    # stop0 = traSMAPy.network.createLaneStop(lane0.id, endPos=0)
-
-    pa_0 = traSMAPy.network.getStop('pa_0')
-
-    # v = traSMAPy.users.createVehicle(f"vehicle1", route2, defaultVehicle)
-    
     vs = []
     evs = []
     for i in range(0, 300, 3):
-        # traSMAPy.users.createVehicle(f"vehicle{i}", route0, defaultVehicle)
+        # schedule parking
+        v = traSMAPy.users.createVehicle(f"vehicle{i}", pa_route, defaultVehicle)
+        v.stop(ScheduledStop(pa_1, 20, stopParams=[StopType.PARKING]))
+
         vs.append(traSMAPy.users.createVehicle(f"vehicle{i+1}", route2, defaultVehicle))
         evs.append(traSMAPy.users.createVehicle(f"vehicle{i+2}", route2, evehicleType))
 
-        
     while traSMAPy.minExpectedNumber > 0:
-
-        # if traSMAPy.step == 10:
-        #     v.stopFor(stop0, 0.1)
-
         traSMAPy.doSimulationStep()
 
     traSMAPy.closeSimulation()
