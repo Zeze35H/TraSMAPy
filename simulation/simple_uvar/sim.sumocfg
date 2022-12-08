@@ -9,4 +9,11 @@
         <begin value="0"/>
         <end value="10000"/>
     </time>
+    <rerouter id="myRerouter" edges="E10 E18 -E18 -E11">
+        <interval begin="0" end="2000">
+            <parkingAreaReroute id="pa_0"/>
+            <parkingAreaReroute id="pa_1"/>
+            <parkingAreaReroute id="pa_2"/>
+        </interval>
+    </rerouter>
 </configuration>
