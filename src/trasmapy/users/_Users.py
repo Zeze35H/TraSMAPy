@@ -24,8 +24,29 @@ class Users(SimUpdatable):
 
     def getAllVehicleTypeIds(self) -> list[str]:
         return traci.vehicletype.getIDList()  # type: ignore
+    
+    @property
+    def vehicles(self) -> list[Vehicle]:
+        """Retrieves an object for each vehicle currently in the simulation.
+        The API doesn't keep track of the liveness of the references returned
+        from this method. As such, the values returned from this method should
+        only be kept for one tick of the simulation (e.g., for querries)."""
+        return list(map(lambda id: Vehicle(id), self.getAllVehicleIds()))
+
+    @property
+    def pendingVehicles(self) -> list[Vehicle]:
+        """Retrieves an object for each pending vehicle currently in the simulation.
+        The API doesn't keep track of the liveness of the references returned
+        from this method. As such, the values returned from this method should
+        only be kept for one tick of the simulation (e.g., for querries)."""
+        return list(map(lambda id: Vehicle(id), self.getAllPendingVehicleIds()))
+
+    @property
+    def vehicleTypes(self) -> list[VehicleType]:
+        return list(map(lambda id: VehicleType(id), self.getAllVehicleTypeIds()))
 
     def getVehicleType(self, vehicleTypeId: str) -> VehicleType:
+        """Retrieves an object for each vehicle type currently in the simulation."""
         if vehicleTypeId not in self.getAllVehicleTypeIds():
             raise KeyError(
                 f"The vehicle type with the given ID does not exist: [vehicleTypeId={vehicleTypeId}]."
@@ -33,6 +54,8 @@ class Users(SimUpdatable):
         return VehicleType(vehicleTypeId)
 
     def getVehicle(self, vehicleId: str) -> Vehicle:
+        """Retrieve a registered vehicle reference to a vehicle in the network.
+        See createVehicle."""
         try:
             return self._vehicles[vehicleId]
         except KeyError:
@@ -53,7 +76,8 @@ class Users(SimUpdatable):
         personNumber: int = 0,
         personCapacity: int = 0,
     ) -> Vehicle:
-        """Creates a vehicle and adds it to the network.
+        """Creates a registered vehicle and adds it to the network.
+        Registered vehicles are vehicle objects whose liveness is checked (safe).
         If the route is None, the vehicle will be added to a random network edge.
         If the route consists of two disconnected edges, the vehicle will be treated like
         a <trip> and use the fastest route between the two edges."""

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2022-11-17 16:25:08 by Eclipse SUMO netedit Version 1.14.0
+<!-- generated on 2022-12-02 11:23:47 by Eclipse SUMO netedit Version 1.14.0
 <configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
@@ -29,16 +29,12 @@
         <walkingareas value="false"/>
     </pedestrian>
 
-    <netedit>
-        <additional-files value="/home/joao/Documents/UniStuff/5_1things/MS/TraSMAPy/examples/simple/hello.additionals.xml"/>
-    </netedit>
-
 </configuration>
 -->
 
 <net version="1.9" junctionCornerDetail="5" limitTurnSpeed="5.50" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
 
-    <location netOffset="250.00,0.00" convBoundary="0.00,0.00,501.00,0.00" origBoundary="-250.00,0.00,251.00,0.00" projParameter="!"/>
+    <location netOffset="250.00,0.00" convBoundary="0.00,-0.47,501.31,58.50" origBoundary="-250.00,0.00,251.00,0.00" projParameter="!"/>
 
     <edge id=":2_0" function="internal">
         <lane id=":2_0_0" index="0" speed="13.89" length="6.40" shape="496.00,-1.60 502.40,-1.60"/>
@@ -49,17 +45,28 @@
         <lane id="1to2_1" index="1" speed="13.89" length="496.00" shape="0.00,-4.80 496.00,-4.80"/>
         <lane id="1to2_2" index="2" speed="13.89" length="496.00" shape="0.00,-1.60 496.00,-1.60"/>
     </edge>
+    <edge id="E7" from="J20" to="J21" priority="-1">
+        <lane id="E7_0" index="0" speed="13.89" length="59.06" shape="502.91,-0.38 499.53,58.59"/>
+    </edge>
     <edge id="out" from="2" to="3" priority="-1">
         <lane id="out_0" index="0" speed="13.89" length="0.20" shape="502.40,-1.60 502.60,-1.60"/>
     </edge>
 
+    <tlLogic id="2" type="static" programID="0" offset="0">
+        <phase duration="82" state="G"/>
+        <phase duration="3"  state="y"/>
+        <phase duration="5"  state="r"/>
+    </tlLogic>
+
     <junction id="1" type="dead_end" x="0.00" y="0.00" incLanes="" intLanes="" shape="0.00,0.00 0.00,-9.60"/>
-    <junction id="2" type="priority" x="500.00" y="0.00" incLanes="1to2_0 1to2_1 1to2_2" intLanes=":2_0_0" shape="504.00,0.00 504.00,-3.20 496.00,-9.60 496.00,0.00">
+    <junction id="2" type="traffic_light" x="500.00" y="0.00" incLanes="1to2_0 1to2_1 1to2_2" intLanes=":2_0_0" shape="504.00,0.00 504.00,-3.20 496.00,-9.60 496.00,0.00">
         <request index="0" response="0" foes="0" cont="0"/>
     </junction>
     <junction id="3" type="dead_end" x="501.00" y="0.00" incLanes="out_0" intLanes="" shape="501.00,-3.20 501.00,0.00"/>
+    <junction id="J20" type="dead_end" x="501.31" y="-0.47" incLanes="" intLanes="" shape="501.31,-0.47 504.51,-0.29"/>
+    <junction id="J21" type="dead_end" x="497.94" y="58.50" incLanes="E7_0" intLanes="" shape="501.13,58.68 497.94,58.50"/>
 
-    <connection from="1to2" to="out" fromLane="2" toLane="0" via=":2_0_0" dir="s" state="M"/>
+    <connection from="1to2" to="out" fromLane="2" toLane="0" via=":2_0_0" tl="2" linkIndex="0" dir="s" state="O"/>
 
     <connection from=":2_0" to="out" fromLane="0" toLane="0" dir="s" state="M"/>
 

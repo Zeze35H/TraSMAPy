@@ -121,6 +121,20 @@ class Vehicle(IdentifiedObject, Colorable):
 
     @property
     @_checkVehicleExistance
+    def doRerouting(self) -> bool:
+        """Returns whether the vehicle is able to do automatic rerouting."""
+        return traci.vehicle.getParameter(self.id, "has.rerouting.device")  # type: ignore
+
+    @doRerouting.setter
+    @_checkVehicleExistance
+    def doRerouting(self, isRerouting: bool) -> None:
+        """Sets whether or not the vehicle is able to do automatic rerouting."""
+        if not isinstance(isRerouting, bool):
+            raise ValueError("isRerouting needs to be a bool.")
+        traci.vehicle.setParameter(self.id, "has.rerouting.device", isRerouting)
+
+    @property
+    @_checkVehicleExistance
     def edgeId(self) -> str:
         """Returns the ID of the edge the vehicle was in the previous time step."""
         return traci.vehicle.getRoadID(self.id)  # type: ignore
@@ -217,6 +231,22 @@ class Vehicle(IdentifiedObject, Colorable):
     @_checkVehicleExistance
     def color(self, color: Color) -> None:
         traci.vehicle.setColor(self.id, color.colorTupleA)
+
+    @property
+    @_checkVehicleExistance
+    def via(self) -> list[str]:
+        """Returns the list of IDs via edges (edge it needs to pass through in the route)
+        for the vehicle."""
+        return traci.vehicle.getVia(self.id) # type: ignore
+
+    @via.setter
+    @_checkVehicleExistance
+    def via(self, vias: list[str]) -> None:
+        """Sets the via edges for the vehicle."""
+        if isinstance(vias, list):
+            traci.vehicle.setVia(self.id, vias)
+        else:
+            raise ValueError("vias needs to be a list of IDs (list of strings).")
 
     def isDead(self) -> bool:
         return self._dead
