@@ -4,10 +4,8 @@
 from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop, MoveReason
 import random
 
-
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
-
 
     # vehicle types
     defaultVehicle = traSMAPy.users.getVehicleType("DEFAULT_VEHTYPE")
@@ -18,46 +16,47 @@ def run(traSMAPy: TraSMAPy):
     # get edges
     e40 = traSMAPy.network.getEdge("E40")
     e9 = traSMAPy.network.getEdge("E9")
-
-    e53 = traSMAPy.network.getEdge("E53")
-    e58 = traSMAPy.network.getEdge("E58")
-    e48 = traSMAPy.network.getEdge("E48")
     
     e41 = traSMAPy.network.getEdge("E41")
     e41a = traSMAPy.network.getEdge("-E41.28")
 
     e6 = traSMAPy.network.getEdge("E6")
-    e11 = traSMAPy.network.getEdge("-E11")
-
-    e31 = traSMAPy.network.getEdge("E31")
-
+    e6r = traSMAPy.network.getEdge("-E6")
     
     # forbid access to non eletric vehicles
     e41.setDisallowed([defaultVehicle.vehicleClass])
     e41a.setDisallowed([defaultVehicle.vehicleClass])
-    # e45.setDisallowed([defaultVehicle.vehicleClass])
-
-    # get prehexisting routes 
-    # route0 = traSMAPy.users.getRoute('r_0')  
-    # route1 = traSMAPy.users.getRoute('r_1')  
 
     # setup custom route
     route2 = traSMAPy.users.createRouteFromEdges("r_2", [e40, e9])
-    pa_route = traSMAPy.users.createRouteFromEdges("pa_route", [e6, e11])
-    pa_1 = traSMAPy.network.getStop('pa_1')
-
+    pa_route = traSMAPy.users.createRouteFromEdges("pa_route", [e6, e6r])
+    
+    parking_areas = [traSMAPy.network.getStop(f'pa_{x}') for x in range(0, 5)]
+    
     vs = []
-    evs = []
     for i in range(0, 300, 3):
         # schedule parking
         v = traSMAPy.users.createVehicle(f"vehicle{i}", pa_route, defaultVehicle)
-        v.stopFor(pa_1, random.randint(1000, 80000), stopParams=[StopType.PARKING])
+        park = random.choice(parking_areas)
 
-        vs.append(traSMAPy.users.createVehicle(f"vehicle{i+1}", route2, defaultVehicle))
-        evs.append(traSMAPy.users.createVehicle(f"vehicle{i+2}", route2, evehicleType))
+        v.via = [park.lane.parentEdge.id]
+
+        vehicle_obj = {
+            'obj' : v,
+            'park' : park
+        }
+        vs.append(vehicle_obj)
+
+        traSMAPy.users.createVehicle(f"vehicle{i+1}", route2, defaultVehicle)
+        traSMAPy.users.createVehicle(f"vehicle{i+2}", route2, evehicleType)
 
     while traSMAPy.minExpectedNumber > 0:
         traSMAPy.doSimulationStep()
+        
+        if len(vs) > 0 and traSMAPy.step > 10:
+            if vs[0]['obj'].id not in traSMAPy.users.pendingVehicles:
+                vs[0]['obj'].stopFor(vs[0]['park'], random.randint(1000, 80000), stopParams=[StopType.PARKING])
+                vs.pop(0)
 
     traSMAPy.closeSimulation()
 
