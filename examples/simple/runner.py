@@ -20,6 +20,12 @@ def run(traSMAPy: TraSMAPy):
     t_2 = traSMAPy.control.getTrafficLight("2")
     print(t_2.state)
 
+    print("---testing---")
+    print(t_2.completeRedYellowGreenDef)
+    print(t_2.getBlockingVehiclesIds(0))
+    print(t_2.getRivalVehiclesIds(0))
+    print(t_2.getPriorityVehiclesIds(0))
+
     e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
 

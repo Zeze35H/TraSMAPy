@@ -11,9 +11,11 @@ def run(traSMAPy: TraSMAPy):
     edgeStart = traSMAPy.network.getEdge("64131")
     edgeEnd = traSMAPy.network.getEdge("60697")
     edgeVia = traSMAPy.network.getEdge("-53535")
+    edgeEnd2 = traSMAPy.network.getEdge("-33492")
 
     r = traSMAPy.users.createRouteFromEdges("r0", [edgeStart, edgeEnd])
     v = traSMAPy.users.createVehicle("v0", r)
+    v.changeTargetEdge(edgeEnd2)
 
     v.via = [edgeVia.id]
 
