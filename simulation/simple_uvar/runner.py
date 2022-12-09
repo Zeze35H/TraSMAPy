@@ -51,7 +51,7 @@ def run(traSMAPy: TraSMAPy):
     for i in range(0, 300, 3):
         # schedule parking
         v = traSMAPy.users.createVehicle(f"vehicle{i}", pa_route, defaultVehicle)
-        v.stopFor(pa_1, random.randint(100, 300), stopParams=[StopType.PARKING])
+        v.stopFor(pa_1, random.randint(1000, 80000), stopParams=[StopType.PARKING])
 
         vs.append(traSMAPy.users.createVehicle(f"vehicle{i+1}", route2, defaultVehicle))
         evs.append(traSMAPy.users.createVehicle(f"vehicle{i+2}", route2, evehicleType))
