@@ -232,6 +232,22 @@ class Vehicle(IdentifiedObject, Colorable):
     def color(self, color: Color) -> None:
         traci.vehicle.setColor(self.id, color.colorTupleA)
 
+    @property
+    @_checkVehicleExistance
+    def via(self) -> list[str]:
+        """Returns the list of IDs via edges (edge it needs to pass through in the route)
+        for the vehicle."""
+        return traci.vehicle.getVia(self.id) # type: ignore
+
+    @via.setter
+    @_checkVehicleExistance
+    def via(self, vias: list[str]) -> None:
+        """Sets the via edges for the vehicle."""
+        if isinstance(vias, list):
+            traci.vehicle.setVia(self.id, vias)
+        else:
+            raise ValueError("vias needs to be a list of IDs (list of strings).")
+
     def isDead(self) -> bool:
         return self._dead
 
