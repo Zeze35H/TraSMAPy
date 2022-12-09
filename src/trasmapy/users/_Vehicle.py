@@ -6,6 +6,7 @@ import traci
 from trasmapy._IdentifiedObject import IdentifiedObject
 from trasmapy.color._Colorable import Colorable, Color
 from trasmapy.network._Stop import Stop
+from trasmapy.network._Edge import Edge
 from trasmapy.users.ScheduledStop import ScheduledStop
 from trasmapy.users.MoveReason import MoveReason
 from trasmapy.users.RemoveReason import RemoveReason
@@ -237,7 +238,7 @@ class Vehicle(IdentifiedObject, Colorable):
     def via(self) -> list[str]:
         """Returns the list of IDs via edges (edge it needs to pass through in the route)
         for the vehicle."""
-        return traci.vehicle.getVia(self.id) # type: ignore
+        return traci.vehicle.getVia(self.id)  # type: ignore
 
     @via.setter
     @_checkVehicleExistance
@@ -360,3 +361,7 @@ class Vehicle(IdentifiedObject, Colorable):
     def remove(self, reason: RemoveReason = RemoveReason.VAPORIZED) -> None:
         self._dead = True
         traci.vehicle.remove(self.id, reason=reason)
+
+    @_checkVehicleExistance
+    def changeTargetEdge(self, targedEdge: Edge) -> None:
+        traci.vehicle.changeTarget(self.id, targedEdge.id)
