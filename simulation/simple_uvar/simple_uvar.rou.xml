@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2022-12-08 15:42:16 by Eclipse SUMO netedit Version 1.15.0
+<!-- generated on 2022-12-10 15:08:06 by Eclipse SUMO netedit Version 1.14.0
 -->
 
 <routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
     <!-- Routes -->
-    <route id="r_0" edges="E40 E31 E32 E33 E34 E35"/>
+    <route id="bus_se_center" edges="-E23 -E110 E49 E50 E1 E2 E510 E27 E55 E56 E2 E3 E4 E0 -E50.40 -E49 E11 E23"/>
 </routes>
