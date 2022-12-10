@@ -2,7 +2,9 @@
 
 import traci
 
+from traci._trafficlight import Logic
 from trasmapy._IdentifiedObject import IdentifiedObject
+from trasmapy.control._Link import Link
 
 
 class TrafficLight(IdentifiedObject):
@@ -40,10 +42,17 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getNextSwitch(self.id) - traci.simulation.getTime()
 
     @property
-    def controlledLinkIds(self):
-        """Returns the links controlled by the traffic light, the index in the returned list corresponds to the tls link index of the connection.
-        Each index maps to a list of link objects that share the same link index."""
-        return traci.trafficlight.getControlledLinks(self.id)
+    def controlledLinkIds(self) -> dict[int, list[Link]]:
+        """Returns a dictionary of links controlled by the traffic light, where the key is the tls link index of the connection. """
+
+        linkList = traci.trafficlight.getControlledLinks(self.id)
+        dictLinks = {}
+        for i in range(len(linkList)):
+            dictLinks[i] = []
+            for links in linkList[i]:
+                dictLinks[i] += [Link(links[0], links[1], links[2])]
+        
+        return dictLinks
 
     @property
     def controlledLaneIds(self) -> list[str]:
@@ -51,12 +60,12 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getControlledLanes(self.id)
 
     @property
-    def getAllProgramLogics(self):
+    def getAllProgramLogics(self) -> list[Logic]:
         """Returns a list of Logic objects."""
         return traci.trafficlight.getAllProgramLogics(self.id)
 
     @property
-    def completeRedYellowGreenDef(self):
+    def completeRedYellowGreenDef(self) -> list[Logic]:
         """Returns the complete traffic light program, structure described under data types."""
         return traci.trafficlight.getCompleteRedYellowGreenDefinition(self.id)
 
