@@ -3,8 +3,9 @@
 import traci
 
 from traci._trafficlight import Logic
-from trasmapy._IdentifiedObject import IdentifiedObject
 from trasmapy.control._Link import Link
+from trasmapy.control.SignalColor import SignalColor
+from trasmapy._IdentifiedObject import IdentifiedObject
 
 
 class TrafficLight(IdentifiedObject):
@@ -65,6 +66,11 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getAllProgramLogics(self.id)
 
     @property
+    def programId(self) -> str:
+        """"Returns the id of the current program."""
+        return traci.trafficlight.getProgram(self.id)
+
+    @property
     def completeRedYellowGreenDef(self) -> list[Logic]:
         """Returns the complete traffic light program, structure described under data types."""
         return traci.trafficlight.getCompleteRedYellowGreenDefinition(self.id)
@@ -80,4 +86,22 @@ class TrafficLight(IdentifiedObject):
     def getPriorityVehiclesIds(self, linkIndex) -> list[str]:
         """Returns the ids of vehicles that are approaching the same rail signal block with higher priority."""
         return traci.trafficlight.getPriorityVehicles(self.id, linkIndex)
+    
+    def setPhase(self, phaseIndex: int):
+        """Sets the phase of the traffic light to the given value. The given index must be
+        valid for the current program of the traffic light."""
 
+        if(self.checkPhaseInProgram(self.programId, phaseIndex)):
+            traci.trafficlight.setPhase(self.id, phaseIndex)
+
+
+    def checkPhaseInProgram(self, programId: str, phaseIndex: int) -> bool:
+        programs = self.getAllProgramLogics
+
+        for logic in programs:
+            if logic.programID == str(programId):
+                return phaseIndex < len(logic.phases) and phaseIndex >= 0
+                
+        return False
+       
+        

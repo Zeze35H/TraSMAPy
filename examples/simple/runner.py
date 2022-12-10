@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop
+from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop, SignalColor
 
 import traci
 
@@ -23,13 +23,14 @@ def run(traSMAPy: TraSMAPy):
     #print(f"PhaseName: {t_2.phaseName}")
     #print(f"NextSwitchTime: {t_2.nextSwitchTime}")
     #print(f"TimeTillNextSwitch: {t_2.timeTillNextSwitch}")
-    print(f"ControlledLinks: {t_2.controlledLinkIds[0][0].incomingId}")
+    #print(f"ControlledLinks: {t_2.controlledLinkIds[0][0].incomingId}")
     #print(f"Controlled lanes: {t_2.controlledLaneIds}")
     #print(f"AllProgramLogics: {t_2.getAllProgramLogics}")
     #print(f"CompleteRedeYellowGreenDef: {t_2.completeRedYellowGreenDef}")
     #print(f"BlockingVehicles: {t_2.getBlockingVehiclesIds(0)}")
     #print(f"RivalVehicles: {t_2.getRivalVehiclesIds(0)}")
     #print(f"PriorityVehicles: {t_2.getPriorityVehiclesIds(0)}")
+    t_2.setPhase(1)
 
     e10 = traSMAPy.network.getDetector("e1_0")
     #e10.listen(lambda x: print(x))
