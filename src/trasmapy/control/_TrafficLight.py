@@ -86,6 +86,12 @@ class TrafficLight(IdentifiedObject):
     def getPriorityVehiclesIds(self, linkIndex) -> list[str]:
         """Returns the ids of vehicles that are approaching the same rail signal block with higher priority."""
         return traci.trafficlight.getPriorityVehicles(self.id, linkIndex)
+
+    def setRedYellowGreenState(self, colors: list[SignalColor]):
+        """Sets the phase definition."""
+        phaseState = "".join(s.value for s in colors)
+        traci.trafficlight.setRedYellowGreenState(self.id, phaseState)
+    
     
     def setPhase(self, phaseIndex: int):
         """Sets the phase of the traffic light to the given value. The given index must be
@@ -103,5 +109,9 @@ class TrafficLight(IdentifiedObject):
                 return phaseIndex < len(logic.phases) and phaseIndex >= 0
                 
         return False
+
+    @phaseDuration.setter
+    def phaseDuration(self, newValue: float):
+        """Sets the remaining duration of the current phase in seconds."""
+        traci.trafficlight.setPhaseDuration(self.id, newValue)
        
-        
