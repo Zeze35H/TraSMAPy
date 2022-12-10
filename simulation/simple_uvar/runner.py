@@ -4,6 +4,17 @@
 from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop, MoveReason
 import random
 
+def create_route(r_id : str,  edges : list, r_type : str = "normal", 
+                 prob : float = None, parks : list = []):
+    return {
+        "id" : r_id,
+        "route" : traSMAPy.users.createRouteFromEdges(r_id, edges),
+        "type" : r_type,
+        "prob" : prob,
+        "park_areas" : parks
+    }  
+    
+
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
 
@@ -15,6 +26,8 @@ def run(traSMAPy: TraSMAPy):
 
     # get edges
     e40 = traSMAPy.network.getEdge("E40")
+    e40r = traSMAPy.network.getEdge("-E40")
+    
     e9 = traSMAPy.network.getEdge("E9")
     
     e41 = traSMAPy.network.getEdge("E41")
@@ -27,36 +40,46 @@ def run(traSMAPy: TraSMAPy):
     e41.setDisallowed([defaultVehicle.vehicleClass])
     e41a.setDisallowed([defaultVehicle.vehicleClass])
 
+    PARKING_AREAS = [traSMAPy.network.getStop(f'pa_{x}') for x in range(7)]
+    
     # setup custom route
-    route2 = traSMAPy.users.createRouteFromEdges("r_2", [e40, e9])
-    pa_route = traSMAPy.users.createRouteFromEdges("pa_route", [e6, e6r])
+    ROUTES = [
+        create_route("r_north_south", [e40, e9], prob=0.6),
+        # create_route("pa_north", [e40, e40r], r_type="parking", prob=0.10, parks=PARKING_AREAS[:4]),
+        create_route("pa_south", [e6, e6r], r_type="parking", prob=0.40, parks=PARKING_AREAS)
+    ]
+    # TODO fix conflicting park routes
+    # TODO semaphores
     
-    parking_areas = [traSMAPy.network.getStop(f'pa_{x}') for x in range(0, 5)]
+    V_TYPES = [defaultVehicle, evehicleType]
     
-    vs = []
-    for i in range(0, 300, 3):
-        # schedule parking
-        v = traSMAPy.users.createVehicle(f"vehicle{i}", pa_route, defaultVehicle)
-        park = random.choice(parking_areas)
-
-        v.via = [park.lane.parentEdge.id]
-
-        vehicle_obj = {
-            'obj' : v,
-            'park' : park
-        }
-        vs.append(vehicle_obj)
-
-        traSMAPy.users.createVehicle(f"vehicle{i+1}", route2, defaultVehicle)
-        traSMAPy.users.createVehicle(f"vehicle{i+2}", route2, evehicleType)
-
-    while traSMAPy.minExpectedNumber > 0:
-        traSMAPy.doSimulationStep()
+    ROUTE_PROBS = [x["prob"] for x in ROUTES]
+    if None in ROUTE_PROBS or sum(ROUTE_PROBS) != 1:
+        ROUTE_PROBS = None
+        print("Ignoring route probalities.")
         
-        if len(vs) > 0 and traSMAPy.step > 10:
-            if vs[0]['obj'].id not in traSMAPy.users.pendingVehicles:
-                vs[0]['obj'].stopFor(vs[0]['park'], random.randint(1000, 80000), stopParams=[StopType.PARKING])
-                vs.pop(0)
+    vs_parks = []
+    for i in range(0, 1000):
+        route = random.choices(ROUTES, weights=ROUTE_PROBS, k=1)[0]
+        
+        v = traSMAPy.users.createVehicle(f"v{i}", route["route"], 
+                                            random.choices(V_TYPES, weights=(80, 20), k=1)[0])
+        if route["type"] == "parking":
+            park = random.choice(route["park_areas"])
+            v.via = [park.lane.parentEdge.id]
+            vs_parks.append((v, park))
+
+    while traSMAPy.minExpectedNumber > 0:        
+        if len(vs_parks) > 0 and traSMAPy.step > 10:
+            try:
+                if not vs_parks[0][0].isPending():
+                    vs_parks[0][0].stopFor(vs_parks[0][1], random.randint(400, 600), 
+                                               stopParams=[StopType.PARKING])
+                    vs_parks.pop(0)
+            except Exception as e:
+                print(e)
+                pass
+        traSMAPy.doSimulationStep()
 
     traSMAPy.closeSimulation()
 
