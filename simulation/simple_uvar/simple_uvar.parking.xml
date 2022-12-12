@@ -1,15 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2022-12-10 12:27:46 by Eclipse SUMO netedit Version 1.14.0
+<!-- generated on 2022-12-11 16:30:01 by Eclipse SUMO netedit Version 1.15.0
 -->
 
 <additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
     <!-- StoppingPlaces -->
-    <parkingArea id="pa_0" lane="E18_0" startPos="5.36" endPos="80.36" roadsideCapacity="20" length="8.00" angle="90.00"/>
-    <parkingArea id="pa_1" lane="-E11_0" startPos="3.56" endPos="83.56" roadsideCapacity="20" length="8.00" angle="90.00"/>
-    <parkingArea id="pa_2" lane="-E18_0" startPos="5.19" endPos="80.19" roadsideCapacity="20" length="8.00" angle="90.00"/>
-    <parkingArea id="pa_3" lane="-E20_0" startPos="5.90" endPos="80.90" roadsideCapacity="20" length="8.00" angle="90.00"/>
-    <parkingArea id="pa_4" lane="E20_0" startPos="5.21" endPos="80.21" roadsideCapacity="20" length="8.00" angle="90.00"/>
-    <parkingArea id="pa_5" lane="E25_0" startPos="16.46" endPos="76.46" roadsideCapacity="18" length="8.00" angle="90.00"/>
-    <parkingArea id="pa_6" lane="-E25_0" startPos="15.94" endPos="75.94" roadsideCapacity="18" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw4" lane="E24_0" startPos="125.64" endPos="245.64" roadsideCapacity="35" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw5" lane="-E20_0" startPos="121.97" endPos="241.97" roadsideCapacity="35" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw0" lane="E18_0" startPos="1.83" endPos="81.83" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw1" lane="E59_0" startPos="6.78" endPos="126.78" roadsideCapacity="35" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw2" lane="E20_0" startPos="122.95" endPos="242.95" roadsideCapacity="35" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw3" lane="E20_0" startPos="1.30" endPos="121.30" roadsideCapacity="35" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw6" lane="E24_0" startPos="1.39" endPos="121.39" roadsideCapacity="35" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw7" lane="-E20_0" startPos="1.03" endPos="121.03" roadsideCapacity="35" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw8" lane="-E24_0" startPos="126.51" endPos="246.51" roadsideCapacity="35" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_sw9" lane="-E24_0" startPos="2.88" endPos="122.88" roadsideCapacity="35" length="8.00" angle="90.00"/>
+
+    <!--NORTHEAST-->
+    <parkingArea id="pa_ne0" lane="-E36_0" startPos="9.38" endPos="89.38" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne1" lane="-E36_0" startPos="121.67" endPos="201.67" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne10" lane="E29_0" startPos="244.01" endPos="324.01" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne11" lane="E29_0" startPos="163.06" endPos="243.06" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne12" lane="E29_0" startPos="82.99" endPos="162.99" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne13" lane="E29_0" startPos="2.29" endPos="82.29" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne2" lane="-E36_0" startPos="237.40" endPos="317.40" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne3" lane="E36_0" startPos="230.42" endPos="310.42" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne4" lane="E36_0" startPos="117.41" endPos="197.41" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne5" lane="E36_0" startPos="1.72" endPos="81.72" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne6" lane="-E29_0" startPos="1.69" endPos="81.69" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne7" lane="-E29_0" startPos="83.53" endPos="163.53" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne8" lane="-E29_0" startPos="163.76" endPos="243.76" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne9" lane="-E29_0" startPos="244.57" endPos="324.57" roadsideCapacity="20" length="8.00" angle="90.00"/>
 </additional>

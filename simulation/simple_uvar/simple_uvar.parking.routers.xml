@@ -1,103 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2022-12-10 12:31:16.130790 by generateParkingAreaRerouters.py UNKNOWN
-<configuration>
-    <output value="simple_uvar.parking.routers.xml"/>
-    <parking-areas value="simple_uvar.parking.xml"/>
-    <sumo-net value="simple_uvar.net.xml"/>
-</configuration>
+<!-- generated on 2022-12-11 18:29:21 by Eclipse SUMO netedit Version 1.15.0
 -->
 
 <additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
-
-    <rerouter id="pa_0" edges="E18">
-        <interval begin="0.0" end="86400">
-            <!-- in order of distance --> 
-            <parkingAreaReroute id="pa_0" visible="true"/> <!-- dist: 0.0 -->
-            <parkingAreaReroute id="pa_4" visible="true"/> <!-- dist: 105.7 -->
-            <parkingAreaReroute id="pa_5" visible="true"/> <!-- dist: 135.9 -->
-            <parkingAreaReroute id="pa_6" visible="true"/> <!-- dist: 218.2 -->
-            <parkingAreaReroute id="pa_1" visible="true"/> <!-- dist: 226.0 -->
-            <parkingAreaReroute id="pa_3" visible="true"/> <!-- dist: 227.4 -->
-            <parkingAreaReroute id="pa_2" visible="false"/> <!-- dist: 274.6 -->
+    <!-- StoppingPlaces -->
+    <parkingArea id="pa_0" lane="E18_0" startPos="5.36" endPos="80.36" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_1" lane="-E11_0" startPos="3.56" endPos="83.56" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_2" lane="-E18_0" startPos="5.19" endPos="80.19" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_3" lane="-E20_0" startPos="5.90" endPos="80.90" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_4" lane="E20_0" startPos="5.21" endPos="80.21" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_5" lane="E25_0" startPos="4.15" endPos="64.15" roadsideCapacity="18" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_6" lane="-E25_0" startPos="5.56" endPos="80.56" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_0" lane="-E36_0" startPos="9.38" endPos="89.38" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_1" lane="-E36_0" startPos="121.67" endPos="201.67" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_10" lane="E29_0" startPos="244.01" endPos="324.01" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_11" lane="E29_0" startPos="163.06" endPos="243.06" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_12" lane="E29_0" startPos="82.99" endPos="162.99" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_13" lane="E29_0" startPos="2.29" endPos="82.29" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_2" lane="-E36_0" startPos="237.40" endPos="317.40" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_3" lane="E36_0" startPos="230.42" endPos="310.42" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_4" lane="E36_0" startPos="117.41" endPos="197.41" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_5" lane="E36_0" startPos="1.72" endPos="81.72" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_6" lane="-E29_0" startPos="1.69" endPos="81.69" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_7" lane="-E29_0" startPos="83.53" endPos="163.53" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_8" lane="-E29_0" startPos="163.76" endPos="243.76" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <parkingArea id="pa_ne_9" lane="-E29_0" startPos="244.57" endPos="324.57" roadsideCapacity="20" length="8.00" angle="90.00"/>
+    <!-- Other additionals -->
+    <rerouter id="pa_0" edges="E18" pos="416.57,-600.40">
+        <interval begin="0.00" end="86400.00">
+            <parkingAreaReroute id="pa_4" visible="1"/>
+            <parkingAreaReroute id="pa_5" visible="1"/>
+            <parkingAreaReroute id="pa_1" visible="1"/>
+            <parkingAreaReroute id="pa_3" visible="1"/>
+            <parkingAreaReroute id="pa_2"/>
         </interval>
     </rerouter>
-
-    <rerouter id="pa_1" edges="-E11">
-        <interval begin="0.0" end="86400">
-            <!-- in order of distance --> 
-            <parkingAreaReroute id="pa_1" visible="true"/> <!-- dist: 0.0 -->
-            <parkingAreaReroute id="pa_2" visible="true"/> <!-- dist: 106.9 -->
-            <parkingAreaReroute id="pa_4" visible="true"/> <!-- dist: 126.2 -->
-            <parkingAreaReroute id="pa_5" visible="true"/> <!-- dist: 156.4 -->
-            <parkingAreaReroute id="pa_3" visible="true"/> <!-- dist: 207.4 -->
-            <parkingAreaReroute id="pa_0" visible="true"/> <!-- dist: 226.5 -->
-            <parkingAreaReroute id="pa_6" visible="true"/> <!-- dist: 237.8 -->
+    <rerouter id="pa_1" edges="-E11" pos="385.75,-594.85">
+        <interval begin="0.00" end="86400.00">
+            <parkingAreaReroute id="pa_2" visible="1"/>
+            <parkingAreaReroute id="pa_4" visible="1"/>
+            <parkingAreaReroute id="pa_5" visible="1"/>
+            <parkingAreaReroute id="pa_3" visible="1"/>
+            <parkingAreaReroute id="pa_0" visible="1"/>
         </interval>
     </rerouter>
-
-    <rerouter id="pa_2" edges="-E18">
-        <interval begin="0.0" end="86400">
-            <!-- in order of distance --> 
-            <parkingAreaReroute id="pa_2" visible="true"/> <!-- dist: 0.0 -->
-            <parkingAreaReroute id="pa_3" visible="true"/> <!-- dist: 105.7 -->
-            <parkingAreaReroute id="pa_1" visible="true"/> <!-- dist: 106.6 -->
-            <parkingAreaReroute id="pa_6" visible="true"/> <!-- dist: 136.0 -->
-            <parkingAreaReroute id="pa_5" visible="true"/> <!-- dist: 216.7 -->
-            <parkingAreaReroute id="pa_4" visible="true"/> <!-- dist: 226.0 -->
-            <parkingAreaReroute id="pa_0" visible="false"/> <!-- dist: 326.2 -->
+    <rerouter id="pa_2" edges="-E18" pos="394.74,-666.70">
+        <interval begin="0.00" end="86400.00">
+            <parkingAreaReroute id="pa_3" visible="1"/>
+            <parkingAreaReroute id="pa_1" visible="1"/>
+            <parkingAreaReroute id="pa_5" visible="1"/>
+            <parkingAreaReroute id="pa_4" visible="1"/>
+            <parkingAreaReroute id="pa_0"/>
         </interval>
     </rerouter>
-
-    <rerouter id="pa_3" edges="-E20">
-        <interval begin="0.0" end="86400">
-            <!-- in order of distance --> 
-            <parkingAreaReroute id="pa_3" visible="true"/> <!-- dist: 0.0 -->
-            <parkingAreaReroute id="pa_2" visible="true"/> <!-- dist: 106.0 -->
-            <parkingAreaReroute id="pa_5" visible="true"/> <!-- dist: 116.9 -->
-            <parkingAreaReroute id="pa_1" visible="true"/> <!-- dist: 207.4 -->
-            <parkingAreaReroute id="pa_0" visible="true"/> <!-- dist: 226.4 -->
-            <parkingAreaReroute id="pa_6" visible="true"/> <!-- dist: 236.9 -->
-            <parkingAreaReroute id="pa_4" visible="false"/> <!-- dist: 274.9 -->
+    <rerouter id="pa_3" edges="-E20" pos="449.71,-606.19">
+        <interval begin="0.00" end="86400.00">
+            <parkingAreaReroute id="pa_2" visible="1"/>
+            <parkingAreaReroute id="pa_5" visible="1"/>
+            <parkingAreaReroute id="pa_1" visible="1"/>
+            <parkingAreaReroute id="pa_0" visible="1"/>
+            <parkingAreaReroute id="pa_4"/>
         </interval>
     </rerouter>
-
-    <rerouter id="pa_4" edges="E20">
-        <interval begin="0.0" end="86400">
-            <!-- in order of distance --> 
-            <parkingAreaReroute id="pa_4" visible="true"/> <!-- dist: 0.0 -->
-            <parkingAreaReroute id="pa_0" visible="true"/> <!-- dist: 105.5 -->
-            <parkingAreaReroute id="pa_6" visible="true"/> <!-- dist: 117.7 -->
-            <parkingAreaReroute id="pa_1" visible="true"/> <!-- dist: 125.5 -->
-            <parkingAreaReroute id="pa_2" visible="true"/> <!-- dist: 227.0 -->
-            <parkingAreaReroute id="pa_5" visible="true"/> <!-- dist: 236.0 -->
-            <parkingAreaReroute id="pa_3" visible="false"/> <!-- dist: 327.5 -->
+    <rerouter id="pa_4" edges="E20" pos="427.29,-672.64">
+        <interval begin="0.00" end="86400.00">
+            <parkingAreaReroute id="pa_0" visible="1"/>
+            <parkingAreaReroute id="pa_1" visible="1"/>
+            <parkingAreaReroute id="pa_2" visible="1"/>
+            <parkingAreaReroute id="pa_5" visible="1"/>
+            <parkingAreaReroute id="pa_3"/>
         </interval>
     </rerouter>
-
-    <rerouter id="pa_5" edges="E25">
-        <interval begin="0.0" end="86400">
-            <!-- in order of distance --> 
-            <parkingAreaReroute id="pa_5" visible="true"/> <!-- dist: 0.0 -->
-            <parkingAreaReroute id="pa_3" visible="true"/> <!-- dist: 108.0 -->
-            <parkingAreaReroute id="pa_0" visible="true"/> <!-- dist: 126.0 -->
-            <parkingAreaReroute id="pa_1" visible="true"/> <!-- dist: 146.0 -->
-            <parkingAreaReroute id="pa_2" visible="true"/> <!-- dist: 208.1 -->
-            <parkingAreaReroute id="pa_4" visible="true"/> <!-- dist: 226.4 -->
-            <parkingAreaReroute id="pa_6" visible="false"/> <!-- dist: 338.9 -->
-        </interval>
-    </rerouter>
-
-    <rerouter id="pa_6" edges="-E25">
-        <interval begin="0.0" end="86400">
-            <!-- in order of distance --> 
-            <parkingAreaReroute id="pa_6" visible="true"/> <!-- dist: 0.0 -->
-            <parkingAreaReroute id="pa_4" visible="true"/> <!-- dist: 105.9 -->
-            <parkingAreaReroute id="pa_2" visible="true"/> <!-- dist: 125.2 -->
-            <parkingAreaReroute id="pa_0" visible="true"/> <!-- dist: 206.2 -->
-            <parkingAreaReroute id="pa_3" visible="true"/> <!-- dist: 225.7 -->
-            <parkingAreaReroute id="pa_1" visible="true"/> <!-- dist: 226.2 -->
-            <parkingAreaReroute id="pa_5" visible="false"/> <!-- dist: 286.4 -->
+    <rerouter id="pa_5" edges="E25" pos="461.28,-678.58">
+        <interval begin="0.00" end="86400.00">
+            <parkingAreaReroute id="pa_5" visible="1"/>
+            <parkingAreaReroute id="pa_3" visible="1"/>
+            <parkingAreaReroute id="pa_0" visible="1"/>
+            <parkingAreaReroute id="pa_1" visible="1"/>
+            <parkingAreaReroute id="pa_2" visible="1"/>
+            <parkingAreaReroute id="pa_4" visible="1"/>
         </interval>
     </rerouter>
 </additional>

@@ -24,7 +24,7 @@ def run(traSMAPy: TraSMAPy):
     
     evehicleType = defaultVehicle.duplicate("evehicle")
     evehicleType.vehicleClass = VehicleClass.EVEHICLE
-    evehicleType.color = Color(100, 100, 255)
+    evehicleType.color = Color(50, 50, 255)
     evehicleType.emissionClass = "Energy"
     
     busType = defaultVehicle.duplicate("bus")
@@ -49,14 +49,18 @@ def run(traSMAPy: TraSMAPy):
     e41a.setDisallowed([defaultVehicle.vehicleClass])
 
 
-    PARKING_AREAS = [traSMAPy.network.getStop(f'pa_{x}') for x in range(7)]
+    PARKING_AREAS_SOUTH = [traSMAPy.network.getStop(f'pa_sw{x}') for x in range(7)]
+    PARKING_AREAS_NORTH = [traSMAPy.network.getStop(f"pa_ne{i}") for i in range(14)]
+
+    PARKS = PARKING_AREAS_SOUTH + PARKING_AREAS_NORTH
+
     V_TYPES = [defaultVehicle, evehicleType]
     
     # setup custom routes
     ROUTES = [
-        create_route("r_north_south", [e40, e9], prob=0.6), # NW-SE
-        # create_route("pa_north", [e40, e40r], r_type="parking", prob=0.10, parks=PARKING_AREAS[:4]),
-        create_route("pa_south", [e6, e6r], r_type="parking", prob=0.40, parks=PARKING_AREAS) # SW-SW
+        create_route("r_north_south", [e40, e9], prob=0.1), # NW-SE
+        create_route("pa_north", [e40, e40r], r_type="parking", prob=0.6, parks=PARKING_AREAS_NORTH),
+        create_route("pa_south", [e6, e6r], r_type="parking", prob=0.3, parks=PARKING_AREAS_NORTH) # SW-SW
     ]
     # TODO fix conflicting park routes
     # TODO semaphores
@@ -67,12 +71,19 @@ def run(traSMAPy: TraSMAPy):
         print("Ignoring route probalities.")
         
     # setup public transportation
-    bus_tops_r0 = [traSMAPy.network.getStop(f"bs_{i}") for i in range(8)]
+    bus_stops_r0 = [traSMAPy.network.getStop(f"bs_{i}") for i in range(8)]
     b_route0 = traSMAPy.users.getRoute("bus_se_center")
     traSMAPy.publicServices.createFleet(
-        "sw-ne", b_route0, busType, [ScheduledStop(x, 20) for x in bus_tops_r0], period=200, end=4000
+        "sw-ne", b_route0, busType, [ScheduledStop(x, 20) for x in bus_stops_r0], period=200, end=4000
+    )
+
+    bus_stops_r1 = [traSMAPy.network.getStop(f"bs_ne{i}") for i in range(8)]
+    b_route1 = traSMAPy.users.getRoute("bus_ne_center")
+    traSMAPy.publicServices.createFleet(
+        "ne-center", b_route1, busType, [ScheduledStop(x, 20) for x in bus_stops_r1], period=200, end=4000
     )
     # TODO bus lanes (priority or disallow)
+
         
     vs_parks = []
     for i in range(0, 800):
@@ -80,6 +91,7 @@ def run(traSMAPy: TraSMAPy):
         
         v = traSMAPy.users.createVehicle(f"v{i}", route["route"], 
                                             random.choices(V_TYPES, weights=(80, 20), k=1)[0])
+
         if route["type"] == "parking":
             park = random.choice(route["park_areas"])
             v.via = [park.lane.parentEdge.id]
@@ -94,6 +106,7 @@ def run(traSMAPy: TraSMAPy):
                     vs_parks.pop(0)
             except Exception as e:
                 print(e)
+                vs_parks.pop(0)
                 pass
         traSMAPy.doSimulationStep()
 
