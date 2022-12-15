@@ -45,6 +45,34 @@ def run(traSMAPy: TraSMAPy):
     # forbid access to non eletric vehicles
     e41.setDisallowed([defaultVehicle.vehicleClass])
     e41a.setDisallowed([defaultVehicle.vehicleClass])
+    
+    # Detectors
+    # traSMAPy.network.getDetector("e")
+    sw_in0 = traSMAPy.network.getDetector("sw_in0")
+    sw_in1 = traSMAPy.network.getDetector("sw_in1")
+    
+    sw_out0 = traSMAPy.network.getDetector("sw_out0")
+    sw_out1 = traSMAPy.network.getDetector("sw_out1")
+
+    queryStr = "network/edges[self.id == 'E40']/vehicleCount"
+    traSMAPy.registerQuery("north_in_ve_count", queryStr)
+    
+    traSMAPy.registerQuery("north_emissions", "network/edges[self.id == 'E40']/CO2Emissions")
+    
+    # traSMAPy.users.vehicleTypes.length    
+    traSMAPy.registerQuery("active_cars", "users/vehicles")
+    # # main_det = traSMAPy.network.getDetector("main_detector")
+    # traSMAPy.users.vehicles.
+    # print(main_det.__dict__)
+    
+    def process_in(x):
+        for v in x:
+            vehicle = traSMAPy.users.getVehicle(v)
+            # print(vehicle)
+            # print(dir(vehicle))
+            # print(vehicle.__dict__)
+    
+    sw_in0.listen(process_in)
 
 
     PARKING_AREAS_SOUTH = [traSMAPy.network.getStop(f'pa_sw{x}') for x in range(7)]
@@ -53,7 +81,7 @@ def run(traSMAPy: TraSMAPy):
     
     # setup custom routes
     ROUTES = [
-        # create_route("r_north_south", [e40, e9], prob=0.6), # NW-SE
+        create_route("r_north_south", [e40, e9], prob=0.6), # NW-SE
         create_route("pa_south", [e6, e6r], r_type="parking", prob=0.4, parks=PARKING_AREAS_SOUTH) # SW-SW
     ]
     
@@ -89,18 +117,23 @@ def run(traSMAPy: TraSMAPy):
     spawned = False
     while traSMAPy.minExpectedNumber > 0: 
         try:
-            if len(vs_parks) > 0 and spawned:
-                spawned = False
-                vs_parks[0][0].stopFor(vs_parks[0][1], random.randint(400, 600), 
-                                                stopParams=[StopType.PARKING, StopType.PARKING_AREA])
-                vs_parks.pop(0)
-                continue
-            
-            spawned = not vs_parks[0][0].isPending()
+            if len(vs_parks) > 0:
+                if spawned:
+                    spawned = False
+                    vs_parks[0][0].stopFor(vs_parks[0][1], random.randint(400, 600), 
+                                                    stopParams=[StopType.PARKING, StopType.PARKING_AREA])
+                    vs_parks.pop(0)
+                    continue
+                
+                spawned = not vs_parks[0][0].isPending()
         except Exception as e:
             print(e)
             pass
         traSMAPy.doSimulationStep()
+    
+    # traSMAPy.users.vehicles.count
+    print(traSMAPy.collectedStatistics[100])
+    # print(traSMAPy.query(queryStr))
     traSMAPy.closeSimulation()
 
 
