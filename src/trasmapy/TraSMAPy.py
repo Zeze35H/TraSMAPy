@@ -14,6 +14,7 @@ from sumolib import checkBinary
 import traci
 import pyflwor
 
+from trasmapy._Query import Query
 from trasmapy.network._Network import Network
 from trasmapy.users._Users import Users
 from trasmapy.publicservices._PublicServices import PublicServices
@@ -24,7 +25,7 @@ class TraSMAPy:
     def __init__(self, sumoCfg: str) -> None:
         self._step: int = 0
         self._collectedStatistics: dict[int, dict] = {}
-        self._queries = {}
+        self._queries: dict[str, Query] = {}
 
         self._startSimulation(sumoCfg)
         self._network: Network = Network()
@@ -78,15 +79,19 @@ class TraSMAPy:
         else:
             return query(self._getQueryMap())
 
-    def registerQuery(self, queryName: str, query: Union[str, Callable]) -> None:
-        """Register query to be run every tick.
+    def registerQuery(
+        self, queryName: str, query: Union[str, Callable], tickInterval: int = 1
+    ) -> None:
+        """Register query to be run every tick (by default).
+        The tickInterval param can be customized to change the frequency of the statistics collection.
         Results are accumulated and can be obtained through the collectedStatistics property."""
         if queryName in self._queries:
             raise KeyError(
                 f"There's a query with that name already registered: [queryName={queryName}]."
             )
-        self._queries[queryName] = (
-            pyflwor.compile(query) if isinstance(query, str) else query
+        self._queries[queryName] = Query(
+            pyflwor.compile(query) if isinstance(query, str) else query,
+            tickInterval,
         )
 
     def doSimulationStep(self) -> None:
@@ -100,8 +105,10 @@ class TraSMAPy:
         self._control._doSimulationStep(step=self._step, time=time)
 
         self._collectedStatistics[self._step] = {}
-        for (queryName, queryFunc) in self._queries.items():
-            self._collectedStatistics[self._step][queryName] = queryFunc(
+        for (queryName, query) in self._queries.items():
+            if not query.tick():
+                continue
+            self._collectedStatistics[self._step][queryName] = query(
                 self._getQueryMap()
             )
 
