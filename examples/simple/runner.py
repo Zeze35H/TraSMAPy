@@ -9,7 +9,11 @@ import traci
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
     queryStr = "network/edges[self.id == '1to2']/stops"
-    traSMAPy.registerQuery("stopsQuery", queryStr)
+    traSMAPy.registerQuery("stopsQuery", queryStr, 4)
+    traSMAPy.registerQuery(
+        "stopsQuery2",
+        lambda x: [edge.stops for edge in x["network"].edges if edge.id == "1to2"],
+    )
 
     lane = traSMAPy.network.getLane("1to2_1")
     lane.setDisallowed([VehicleClass.PASSENGER])
@@ -49,8 +53,15 @@ def run(traSMAPy: TraSMAPy):
             lane.allowAll()
         traSMAPy.doSimulationStep()
 
-    print(traSMAPy.collectedStatistics)
-    print(traSMAPy.query(queryStr))
+        print(traSMAPy.collectedStatistics)
+        #print(traSMAPy.query("users/vehicles/vehicleType/length"))
+        #print(
+        #    traSMAPy.query(
+        #        lambda x: [
+        #            v.vehicleType.length for v in x["users"].vehicles
+        #        ],
+        #    )
+        #)
     traSMAPy.closeSimulation()
 
 

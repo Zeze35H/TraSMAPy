@@ -1,6 +1,7 @@
 import os
 import sys
 import optparse
+from typing import Union, Callable
 
 # we need to import python modules from the $SUMO_HOME/tools directory
 if "SUMO_HOME" in os.environ:
@@ -13,6 +14,7 @@ from sumolib import checkBinary
 import traci
 import pyflwor
 
+from trasmapy._Query import Query
 from trasmapy.network._Network import Network
 from trasmapy.users._Users import Users
 from trasmapy.publicservices._PublicServices import PublicServices
@@ -23,7 +25,7 @@ class TraSMAPy:
     def __init__(self, sumoCfg: str) -> None:
         self._step: int = 0
         self._collectedStatistics: dict[int, dict] = {}
-        self._queries = {}
+        self._queries: dict[str, Query] = {}
 
         self._startSimulation(sumoCfg)
         self._network: Network = Network()
@@ -70,18 +72,27 @@ class TraSMAPy:
         """The accumulated statistics of the queries."""
         return self._collectedStatistics.copy()
 
-    def query(self, queryString: str) -> dict:
+    def query(self, query: Union[str, Callable]) -> dict:
         """Run a query once and get its current result."""
-        return pyflwor.execute(queryString, self._getQueryMap())
+        if isinstance(query, str):
+            return pyflwor.execute(query, self._getQueryMap())
+        else:
+            return query(self._getQueryMap())
 
-    def registerQuery(self, queryName: str, queryString: str) -> None:
-        """Register query to be run every tick.
+    def registerQuery(
+        self, queryName: str, query: Union[str, Callable], tickInterval: int = 1
+    ) -> None:
+        """Register query to be run every tick (by default).
+        The tickInterval param can be customized to change the frequency of the statistics collection.
         Results are accumulated and can be obtained through the collectedStatistics property."""
         if queryName in self._queries:
             raise KeyError(
                 f"There's a query with that name already registered: [queryName={queryName}]."
             )
-        self._queries[queryName] = pyflwor.compile(queryString)
+        self._queries[queryName] = Query(
+            pyflwor.compile(query) if isinstance(query, str) else query,
+            tickInterval,
+        )
 
     def doSimulationStep(self) -> None:
         self._step += 1
@@ -94,8 +105,10 @@ class TraSMAPy:
         self._control._doSimulationStep(step=self._step, time=time)
 
         self._collectedStatistics[self._step] = {}
-        for query in self._queries.items():
-            self._collectedStatistics[self._step][query[0]] = query[1](
+        for (queryName, query) in self._queries.items():
+            if not query.tick():
+                continue
+            self._collectedStatistics[self._step][queryName] = query(
                 self._getQueryMap()
             )
 
