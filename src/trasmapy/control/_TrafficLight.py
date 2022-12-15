@@ -121,7 +121,7 @@ class TrafficLight(IdentifiedObject):
         traci.trafficlight.setProgram(self.id, programId)
 
     @program.setter
-    def program(self, newProg: TrafficLogic) -> TrafficLogic:
+    def program(self, newProg: TrafficLogic):
         """Switches the traffic light to a new program. The program is directly instantiated."""
         traci.trafficlight.setProgram(self.id, newProg)
 

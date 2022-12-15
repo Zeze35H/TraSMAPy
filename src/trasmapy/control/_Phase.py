@@ -10,11 +10,11 @@ class Phase(Phase):
 
     @property
     def duration(self) -> int:
-        """Returns the phase's duration. (s)"""
+        """Returns the phase's duration (s)."""
         return self.duration
 
     @property
-    def state(self) -> list[SignalColor]:
+    def state(self) -> str:
         """Returns the phase's state."""
         return self.state
 
