@@ -12,7 +12,9 @@ def create_route(r_id : str,  edges : list, r_type : str = "normal",
         "type" : r_type,
         "prob" : prob,
         "park_areas" : parks
-    }  
+    }
+
+TICK_INTERVAL = 5  
 
 def run(traSMAPy: TraSMAPy):
     """execute the TraCI control loop"""
@@ -45,21 +47,24 @@ def run(traSMAPy: TraSMAPy):
     # forbid access to non eletric vehicles
     e41.setDisallowed([defaultVehicle.vehicleClass])
     e41a.setDisallowed([defaultVehicle.vehicleClass])
-
-    queryStr = "network/edges[self.id == 'E40']/vehicleCount"
-    traSMAPy.registerQuery("north_in_ve_count", queryStr)
     
-    traSMAPy.registerQuery("north_emissions", "network/edges[self.id == 'E40']/CO2Emissions")
+    # DATA
+    # active vehicles in a tick
+    traSMAPy.registerQuery(
+        "active_vehicles",
+        lambda ctx : len(ctx["users"].vehicles)
+    )
     
-    # traSMAPy.users.vehicleTypes.length    
-    traSMAPy.registerQuery("active_cars", "users/vehicles")
-    # # main_det = traSMAPy.network.getDetector("main_detector")
-    # traSMAPy.users.vehicles.
-    # print(main_det.__dict__)
-
+    # calculate edge positions for query efficiency
+    e_idx = {edge.id : idx for idx, edge in enumerate(traSMAPy.network.edges)}
+    
+    # CO2 emissions for edge E40 (NW)
+    traSMAPy.registerQuery(
+        "E40_CO2",
+        lambda ctx : ctx["network"].edges[e_idx["E40"]].CO2Emissions
+    )
 
     PARKING_AREAS_SOUTH = [traSMAPy.network.getStop(f'pa_sw{x}') for x in range(7)]
-
     V_TYPES = [defaultVehicle, evehicleType]
     
     # setup custom routes
@@ -113,10 +118,12 @@ def run(traSMAPy: TraSMAPy):
             print(e)
             pass
         traSMAPy.doSimulationStep()
+        
+        
+        if traSMAPy.step > 200:
+            break
     
-    # traSMAPy.users.vehicles.count
     print(traSMAPy.collectedStatistics)
-    # print(traSMAPy.query(queryStr))
     traSMAPy.closeSimulation()
 
 
