@@ -19,7 +19,7 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getRedYellowGreenState(self.id)
 
     @property
-    def phase(self) -> int:
+    def phaseId(self) -> int:
         """Returns the index of the current phase in the currrent program."""
         return traci.trafficlight.getPhase(self.id)
 
@@ -95,12 +95,14 @@ class TrafficLight(IdentifiedObject):
         """Returns the ids of vehicles that are approaching the same rail signal block with higher priority."""
         return traci.trafficlight.getPriorityVehicles(self.id, linkIndex)
 
-    @programId.setter
-    def programId(self, programId: str):
-        """Switches to the program with the given programId."""
-        if not self.getProgram(programId):
-            raise ValueError("A program with the given programID does not exist ofr the traffic light.")
-        traci.trafficlight.setProgram(self.id, programId)
+    @phaseId.setter
+    def phaseId(self, phaseIndex: int):
+        """Sets the phase of the traffic light to the phase with the given index. The index must be
+        valid for the current program of the traffic light."""
+        if not self.isPhaseInProgram(self.programId, phaseIndex):
+            raise ValueError("The given index is not valid for the current program.")
+    
+        traci.trafficlight.setPhase(self.id, phaseIndex)
 
     @phaseDuration.setter
     def phaseDuration(self, newValue: float):
@@ -109,6 +111,13 @@ class TrafficLight(IdentifiedObject):
             raise ValueError("Time must be greater than 0.")
         traci.trafficlight.setPhaseDuration(self.id, newValue)
 
+    @programId.setter
+    def programId(self, programId: str):
+        """Switches to the program with the given programId."""
+        if not self.getProgram(programId):
+            raise ValueError("A program with the given programID does not exist ofr the traffic light.")
+        traci.trafficlight.setProgram(self.id, programId)
+
     def setRedYellowGreenState(self, colors: list[SignalColor]):
         """Sets the phase definition. Accepts a list of SignalColors that represnt light definitions.
         After this call, the program of the traffic light will be set to online, and the state will be maintained until the next
@@ -116,21 +125,12 @@ class TrafficLight(IdentifiedObject):
         states = "".join(s.value for s in colors)
         traci.trafficlight.setRedYellowGreenState(self.id, states)
 
-    def setPhase(self, phaseIndex: int):
-        """Sets the phase of the traffic light to the phase with the given index. The index must be
-        valid for the current program of the traffic light."""
-
-        if(self.checkPhaseInProgram(self.programId, phaseIndex)):
-            traci.trafficlight.setPhase(self.id, phaseIndex)
-
     def turnOff(self):
         """Turns off the traffic light."""
         traci.trafficlight.setProgram(self.id, "off")
 
-    def checkPhaseInProgram(self, programId: str, phaseIndex: int) -> bool:
-        for prog in self.programLogics:
-            if prog.programID == programId:
-                return phaseIndex < len(prog.phases) and phaseIndex >= 0
-                
-        return False
+    def isPhaseInProgram(self, programId: str, phaseIndex: int) -> bool:
+        """Returns true if the program with the given Id contains a phase with at the given index."""
+        prog = self.getProgram(programId)
+        return 0 <= phaseIndex < len(prog.phases) 
        
