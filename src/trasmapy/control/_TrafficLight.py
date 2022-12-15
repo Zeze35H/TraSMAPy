@@ -71,6 +71,11 @@ class TrafficLight(IdentifiedObject):
         """"Returns the id of the current program."""
         return traci.trafficlight.getProgram(self.id)
 
+    @property
+    def program(self) -> TrafficLogic:
+        """"Returns the current program."""
+        return self.getProgram(self.programId)
+
     def getProgram(self, programId: str) -> TrafficLogic:
         """Returns the program with the given id."""
         for prog in self.programLogics:
@@ -112,6 +117,11 @@ class TrafficLight(IdentifiedObject):
         if not self.getProgram(programId):
             raise ValueError("A program with the given programID does not exist ofr the traffic light.")
         traci.trafficlight.setProgram(self.id, programId)
+
+    @program.setter
+    def program(self, newProg: TrafficLogic) -> TrafficLogic:
+        """Switches the traffic light to a new program. The program is directly instantiated."""
+        traci.trafficlight.setProgram(self.id, newProg)
 
     def setRedYellowGreenState(self, colors: list[SignalColor]):
         """Sets the phase definition. Accepts a list of SignalColors that represnt light definitions.
