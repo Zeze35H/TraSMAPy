@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 
-from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop, MoveReason
+from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop
+from uvar_toll import UVAR_Toll
 import random
 
 def create_route(r_id : str,  edges : list, r_type : str = "normal", 
@@ -22,7 +23,7 @@ def run(traSMAPy: TraSMAPy):
     # vehicle type definition
     defaultVehicle = traSMAPy.users.getVehicleType("DEFAULT_VEHTYPE")
     defaultVehicle.color = Color(200, 200, 200)
-    
+        
     evehicleType = defaultVehicle.duplicate("evehicle")
     evehicleType.vehicleClass = VehicleClass.EVEHICLE
     evehicleType.color = Color(50, 50, 255)
@@ -47,6 +48,19 @@ def run(traSMAPy: TraSMAPy):
     # forbid access to non eletric vehicles
     e41.setDisallowed([defaultVehicle.vehicleClass])
     e41a.setDisallowed([defaultVehicle.vehicleClass])
+    
+    # setup northern entrance toll
+    toll_detectors = [
+        traSMAPy.network.getDetector(f"toll_N0"),
+        traSMAPy.network.getDetector(f"toll_N1")
+    ]
+    
+    vtype_prices = {
+        defaultVehicle.id : 2.0,
+        evehicleType.id : 0.0
+    }
+    north_toll = UVAR_Toll("north_toll", toll_detectors, vtype_prices)
+    traSMAPy.control.registerToll(north_toll)
     
     # DATA
     # active vehicles in a tick
@@ -124,6 +138,7 @@ def run(traSMAPy: TraSMAPy):
             break
     
     print(traSMAPy.collectedStatistics)
+    print(north_toll.detected)
     traSMAPy.closeSimulation()
 
 
