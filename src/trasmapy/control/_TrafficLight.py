@@ -44,11 +44,6 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getNextSwitch(self.id) - traci.simulation.getTime()
 
     @property
-    def programId(self) -> str:
-        """Returns the Id of the current program. """
-        return traci.trafficlight.getProgram(self.id)
-
-    @property
     def controlledLinkIds(self) -> dict[int, list[Link]]:
         """Returns a dictionary of links controlled by the traffic light, where the key is the tls link index of the connection. """
 
