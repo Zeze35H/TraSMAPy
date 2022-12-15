@@ -3,6 +3,7 @@
 import traci
 
 from traci._trafficlight import Logic
+from trasmapy.control._TrafficLogic import TrafficLogic
 from trasmapy.control._Link import Link
 from trasmapy.control.SignalColor import SignalColor
 from trasmapy._IdentifiedObject import IdentifiedObject
@@ -75,6 +76,13 @@ class TrafficLight(IdentifiedObject):
         """"Returns the id of the current program."""
         return traci.trafficlight.getProgram(self.id)
 
+    def getProgram(self, programId: str) -> TrafficLogic:
+        """Returns the program with the given id."""
+        for prog in self.programLogics:
+            if prog.programID == programId:
+                return prog
+        return None
+
     def getBlockingVehiclesIds(self, linkIndex) -> list[str]:
         """Returns the ids of vehicles that occupy the subsequent rail signal block."""
         return traci.trafficlight.getBlockingVehicles(self.id, linkIndex)
@@ -87,32 +95,40 @@ class TrafficLight(IdentifiedObject):
         """Returns the ids of vehicles that are approaching the same rail signal block with higher priority."""
         return traci.trafficlight.getPriorityVehicles(self.id, linkIndex)
 
+    @programId.setter
+    def programId(self, programId: str):
+        """Switches to the program with the given programId."""
+        if not self.getProgram(programId):
+            raise ValueError("A program with the given programID does not exist ofr the traffic light.")
+        traci.trafficlight.setProgram(self.id, programId)
+
+    @phaseDuration.setter
+    def phaseDuration(self, newValue: float):
+        """Sets the remaining duration of the current phase (s)."""
+        traci.trafficlight.setPhaseDuration(self.id, newValue)
+
     def setRedYellowGreenState(self, colors: list[SignalColor]):
         """Sets the phase definition. Accepts a list of SignalColors that represnt light definitions.
         After this call, the program of the traffic light will be set to online, and the state will be maintained until the next
         call of setRedYellowGreenState() or until setting another program with setProgram()"""
         states = "".join(s.value for s in colors)
         traci.trafficlight.setRedYellowGreenState(self.id, states)
-    
-    
+
     def setPhase(self, phaseIndex: int):
-        """Sets the phase of the traffic light to the given value. The given index must be
+        """Sets the phase of the traffic light to the phase with the given index. The index must be
         valid for the current program of the traffic light."""
 
         if(self.checkPhaseInProgram(self.programId, phaseIndex)):
             traci.trafficlight.setPhase(self.id, phaseIndex)
 
-    def checkPhaseInProgram(self, programId: str, phaseIndex: int) -> bool:
-        programs = self.getAllProgramLogics
+    def turnOff(self):
+        """Turns off the traffic light."""
+        traci.trafficlight.setProgram(self.id, "off")
 
-        for logic in programs:
-            if logic.programID == str(programId):
-                return phaseIndex < len(logic.phases) and phaseIndex >= 0
+    def checkPhaseInProgram(self, programId: str, phaseIndex: int) -> bool:
+        for prog in self.programLogics:
+            if prog.programID == programId:
+                return phaseIndex < len(prog.phases) and phaseIndex >= 0
                 
         return False
-
-    @phaseDuration.setter
-    def phaseDuration(self, newValue: float):
-        """Sets the remaining duration of the current phase in seconds."""
-        traci.trafficlight.setPhaseDuration(self.id, newValue)
        
