@@ -34,7 +34,7 @@ class TrafficLight(IdentifiedObject):
 
     @property
     def nextSwitchTime(self) -> float:
-        """Returns the assumed time at which the TLS changes the phase (s)."""
+        """Returns the absolute simulation time at which the traffic light is schedule to switch to the next phase (s)."""
         return traci.trafficlight.getNextSwitch(self.id)
 
     @property
