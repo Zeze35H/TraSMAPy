@@ -105,6 +105,8 @@ class TrafficLight(IdentifiedObject):
     @phaseDuration.setter
     def phaseDuration(self, newValue: float):
         """Sets the remaining duration of the current phase (s)."""
+        if newValue < 0: 
+            raise ValueError("Time must be greater than 0.")
         traci.trafficlight.setPhaseDuration(self.id, newValue)
 
     def setRedYellowGreenState(self, colors: list[SignalColor]):
