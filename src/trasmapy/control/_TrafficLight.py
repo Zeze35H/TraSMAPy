@@ -61,19 +61,14 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getControlledLanes(self.id)
 
     @property
-    def getAllProgramLogics(self) -> list[Logic]:
-        """Returns a list of Logic objects."""
+    def programLogics(self) -> list[Logic]:
+        """Returns the list of programs of the traffic light. Each progam is encoded as a Logic object."""
         return traci.trafficlight.getAllProgramLogics(self.id)
 
     @property
     def programId(self) -> str:
         """"Returns the id of the current program."""
         return traci.trafficlight.getProgram(self.id)
-
-    @property
-    def completeRedYellowGreenDef(self) -> list[Logic]:
-        """Returns the complete traffic light program, structure described under data types."""
-        return traci.trafficlight.getCompleteRedYellowGreenDefinition(self.id)
 
     def getBlockingVehiclesIds(self, linkIndex) -> list[str]:
         """Returns the ids of vehicles that occupy the subsequent rail signal block."""
@@ -99,7 +94,6 @@ class TrafficLight(IdentifiedObject):
 
         if(self.checkPhaseInProgram(self.programId, phaseIndex)):
             traci.trafficlight.setPhase(self.id, phaseIndex)
-
 
     def checkPhaseInProgram(self, programId: str, phaseIndex: int) -> bool:
         programs = self.getAllProgramLogics
