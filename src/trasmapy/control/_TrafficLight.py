@@ -88,9 +88,11 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getPriorityVehicles(self.id, linkIndex)
 
     def setRedYellowGreenState(self, colors: list[SignalColor]):
-        """Sets the phase definition."""
-        phaseState = "".join(s.value for s in colors)
-        traci.trafficlight.setRedYellowGreenState(self.id, phaseState)
+        """Sets the phase definition. Accepts a list of SignalColors that represnt light definitions.
+        After this call, the program of the traffic light will be set to online, and the state will be maintained until the next
+        call of setRedYellowGreenState() or until setting another program with setProgram()"""
+        states = "".join(s.value for s in colors)
+        traci.trafficlight.setRedYellowGreenState(self.id, states)
     
     
     def setPhase(self, phaseIndex: int):
