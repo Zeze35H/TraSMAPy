@@ -53,7 +53,7 @@ class TrafficLight(IdentifiedObject):
             dictLinks[i] = []
             for links in linkList[i]:
                 dictLinks[i] += [Link(links[0], links[1], links[2])]
-        
+
         return dictLinks
 
     @property
@@ -100,14 +100,15 @@ class TrafficLight(IdentifiedObject):
         """Sets the phase of the traffic light to the phase with the given index. The index must be
         valid for the current program of the traffic light."""
         if not self.isPhaseInProgram(self.programId, phaseIndex):
-            raise ValueError("The given index is not valid for the current program.")
-    
+            raise ValueError(
+                "The given index is not valid for the current program.")
+
         traci.trafficlight.setPhase(self.id, phaseIndex)
 
     @phaseDuration.setter
     def phaseDuration(self, newValue: float):
         """Sets the remaining duration of the current phase (s)."""
-        if newValue < 0: 
+        if newValue < 0:
             raise ValueError("Time must be greater than 0.")
         traci.trafficlight.setPhaseDuration(self.id, newValue)
 
@@ -115,7 +116,8 @@ class TrafficLight(IdentifiedObject):
     def programId(self, programId: str):
         """Switches to the program with the given programId."""
         if not self.getProgram(programId):
-            raise ValueError("A program with the given programID does not exist ofr the traffic light.")
+            raise ValueError(
+                "A program with the given programID does not exist ofr the traffic light.")
         traci.trafficlight.setProgram(self.id, programId)
 
     @program.setter
@@ -137,5 +139,4 @@ class TrafficLight(IdentifiedObject):
     def isPhaseInProgram(self, programId: str, phaseIndex: int) -> bool:
         """Returns true if the program with the given Id contains a phase with at the given index."""
         prog = self.getProgram(programId)
-        return 0 <= phaseIndex < len(prog.phases) 
-       
+        return 0 <= phaseIndex < len(prog.phases)

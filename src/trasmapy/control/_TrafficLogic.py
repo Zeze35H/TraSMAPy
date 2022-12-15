@@ -40,6 +40,4 @@ class TrafficLogic(Logic):
 
     def __repr__(self):
         return ("Logic(programId='%s', type=%s, currentPhaseIndex=%s, phases=%s, parameter=%s)" %
-                (self.programId, self.type, self.currentPhaseIndex, self.phases, self.parameters))    
-
-    
+                (self.programId, self.type, self.currentPhaseIndex, self.phases, self.parameters))
