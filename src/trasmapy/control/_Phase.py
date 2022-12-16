@@ -37,3 +37,8 @@ class Phase(Phase):
     def name(self) -> str:
         """Returns the phase's name."""
         return self.name
+    
+    @duration.setter
+    def property(self, newValue):
+        """Sets the duration value (s)."""
+        self.property = newValue
