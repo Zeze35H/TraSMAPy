@@ -19,8 +19,8 @@ def run(traSMAPy: TraSMAPy):
 
     t_2 = traSMAPy.control.getTrafficLight("2")
     phase = Phase(10, [SignalColor.GREEEN_LIGHT_NO_PRIORITY])
-    print(phase.state)
-    #logic = TrafficLogic("3", 0, 0, [phase])
+    
+    logic = TrafficLogic("3", 0, 0, [phase])
 
 
     e10 = traSMAPy.network.getDetector("e1_0")
