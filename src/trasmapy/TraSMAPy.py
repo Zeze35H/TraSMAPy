@@ -146,4 +146,4 @@ class TraSMAPy:
             sumoBinary = checkBinary("sumo-gui")
 
         # sumo is started as a subprocess and then the python script connects and runs
-        traci.start([sumoBinary, "-c", sumoCfg, "--tripinfo-output", "tripinfo.xml"])
+        traci.start([sumoBinary, "-c", sumoCfg])
