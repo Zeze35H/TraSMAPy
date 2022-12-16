@@ -1,9 +1,9 @@
 <configuration>
     <input>
-        <net-file value="config/net.xml"/>
-        <route-files value="config/rou.xml"/>
-        <additional-files value="config/parking.xml,config/parking.routers.xml,config/bus.stops.xml,config/detectors.xml"/>
-        <gui-settings-file value="config/settings.xml"/>
+        <net-file value="../config/net.xml"/>
+        <route-files value="../config/rou.xml"/>
+        <additional-files value="../config/parking.xml,../config/parking.routers.xml,../config/bus.stops.xml,../config/detectors.xml"/>
+        <gui-settings-file value="../config/settings.xml"/>
     </input>
     <time>
         <begin value="0"/>
