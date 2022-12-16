@@ -14,12 +14,10 @@ class Phase(Phase):
         next=tuple(),
         name: str = "",
     ) -> None:
-        states = "".join(s.value for s in colors)
-        super().__init__(duration, states, minDur, maxDur, next, name)
-        self._stateColors = colors
+        super().__init__(duration, "", minDur, maxDur, next, name)
+        self.setState(colors)
 
-    def setColors(self, colors: list[SignalColor]):
-        """Sets the state colors."""
-        self._stateColors = colors
-        stateStr = "".join(s.value for s in colors)
-        self.state = stateStr
+
+    def setState(self, colors: list[SignalColor]):
+        states = "".join(s.value for s in colors)
+        self.state = states
