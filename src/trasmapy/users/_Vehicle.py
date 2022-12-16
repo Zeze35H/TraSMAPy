@@ -135,9 +135,15 @@ class Vehicle(IdentifiedObject, Colorable):
         traci.vehicle.setParameter(self.id, "has.rerouting.device", isRerouting)
 
     def rerouteByTravelTime(self) -> None:
+        """Computes a new route to the current destination that minimizes travel time.
+        The assumed values for each edge in the network can be customized in various ways.
+        See Simulation/Routing#Travel-time_values_for_routing.
+        Replaces the current route by the found."""
         traci.vehicle.rerouteTraveltime(self.id)
 
     def rerouteByEffort(self) -> None:
+        """Computes a new route using the vehicle's internal and the global edge effort information.
+        Replaces the current route by the found."""
         traci.vehicle.rerouteEffort(self.id)
 
     @property
