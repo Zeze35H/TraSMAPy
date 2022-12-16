@@ -24,3 +24,15 @@ class TrafficLogic(Logic):
             prog.phases,
             prog.subParameter,
         )
+
+    def __repr__(self):
+        return (
+            "TrafficLogic(programID='%s', type=%s, currentPhaseIndex=%s, phases=%s, subParameter=%s)"
+            % (
+                self.programID,
+                self.type,
+                self.currentPhaseIndex,
+                self.phases,
+                self.subParameter,
+            )
+        )

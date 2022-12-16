@@ -62,9 +62,10 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getControlledLanes(self.id)
 
     @property
-    def programLogics(self) -> list[Logic]:
+    def programLogics(self) -> list[TrafficLogic]:
         """Returns the list of programs of the traffic light. Each progam is encoded as a Logic object."""
-        return traci.trafficlight.getAllProgramLogics(self.id)
+        logics = traci.trafficlight.getAllProgramLogics(self.id)
+        return [TrafficLogic.traciLogic(l) for l in logics]
 
     @property
     def programId(self) -> str:
@@ -121,7 +122,7 @@ class TrafficLight(IdentifiedObject):
         traci.trafficlight.setProgram(self.id, programId)
 
     @program.setter
-    def program(self, newProg: Logic):
+    def program(self, newProg: TrafficLogic):
         """Switches the traffic light to a new program. The program is directly instantiated."""
         traci.trafficlight.setProgramLogic(self.id, newProg)
 
