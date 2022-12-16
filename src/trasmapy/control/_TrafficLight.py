@@ -45,7 +45,7 @@ class TrafficLight(IdentifiedObject):
 
     @property
     def controlledLinkIds(self) -> dict[int, list[Link]]:
-        """Returns a dictionary of links controlled by the traffic light, where the key is the tls link index of the connection. """
+        """Returns a dictionary of links controlled by the traffic light, where the key is the tls link index of the connection."""
 
         linkList = traci.trafficlight.getControlledLinks(self.id)
         dictLinks = {}
@@ -68,12 +68,12 @@ class TrafficLight(IdentifiedObject):
 
     @property
     def programId(self) -> str:
-        """"Returns the id of the current program."""
+        """ "Returns the id of the current program."""
         return traci.trafficlight.getProgram(self.id)
 
     @property
     def program(self) -> TrafficLogic:
-        """"Returns the current program."""
+        """ "Returns the current program."""
         return self.getProgram(self.programId)
 
     def getProgram(self, programId: str) -> TrafficLogic:
@@ -100,8 +100,7 @@ class TrafficLight(IdentifiedObject):
         """Sets the phase of the traffic light to the phase with the given index. The index must be
         valid for the current program of the traffic light."""
         if not self.isPhaseInProgram(self.programId, phaseIndex):
-            raise ValueError(
-                "The given index is not valid for the current program.")
+            raise ValueError("The given index is not valid for the current program.")
 
         traci.trafficlight.setPhase(self.id, phaseIndex)
 
@@ -117,7 +116,8 @@ class TrafficLight(IdentifiedObject):
         """Switches to the program with the given programId."""
         if not self.getProgram(programId):
             raise ValueError(
-                "A program with the given programID does not exist for the traffic light.")
+                "A program with the given programID does not exist for the traffic light."
+            )
         traci.trafficlight.setProgram(self.id, programId)
 
     @program.setter

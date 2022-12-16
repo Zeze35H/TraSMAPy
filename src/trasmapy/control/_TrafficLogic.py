@@ -5,5 +5,22 @@ from trasmapy.control._Phase import Phase
 
 
 class TrafficLogic(Logic):
-    def __init__(self, id: str, type: int, currentPhaseIndex: int, phases: list[Phase] = None, parameters=None) -> None:
+    def __init__(
+        self,
+        id: str,
+        type: int,
+        currentPhaseIndex: int,
+        phases: list[Phase] = None,
+        parameters=None,
+    ) -> None:
         super().__init__(id, type, currentPhaseIndex, phases, parameters)
+
+    @classmethod
+    def traciLogic(cls, prog: Logic):
+        return cls(
+            prog.programID,
+            prog.type,
+            prog.currentPhaseIndex,
+            prog.phases,
+            prog.subParameter,
+        )

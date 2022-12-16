@@ -1,7 +1,16 @@
 #!/usr/bin/env python
 
 
-from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop, SignalColor, Phase, TrafficLogic
+from trasmapy import (
+    TraSMAPy,
+    Color,
+    VehicleClass,
+    StopType,
+    ScheduledStop,
+    SignalColor,
+    Phase,
+    TrafficLogic,
+)
 
 import traci
 
@@ -18,10 +27,9 @@ def run(traSMAPy: TraSMAPy):
     laneStop = traSMAPy.network.createLaneStop(lane.id, endPos=100)
 
     t_2 = traSMAPy.control.getTrafficLight("2")
-    phase = Phase(10, [SignalColor.GREEEN_LIGHT_NO_PRIORITY])
-    
+    phase = Phase(10, [SignalColor.RED_LIGHT])
     logic = TrafficLogic("3", 0, 0, [phase])
-
+    t_2.program = logic
 
     e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
