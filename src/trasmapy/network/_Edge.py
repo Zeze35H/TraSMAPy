@@ -60,12 +60,17 @@ class Edge(IdentifiedObject):
     @property
     def electricityConsumption(self) -> float:
         """Sum of electricity consumption on this edge during this time step (kWh)."""
-        return traci.edge.getElectricityConsumption(self.id)  # type: ignore
+        return traci.edge.getElectricityConsumption(self.id)
 
     def getAdaptedTravelTime(self, time: float) -> float:
         """Returns the edge travel time for the given time as stored in the global container.
-        If such a value does not exist, -1 is returned."""
+        If no such value exists, -1 is returned."""
         return traci.edge.getAdaptedTraveltime(self.id, time)
+
+    def getEffort(self, time: float) -> float:
+        """Returns the edge effort for the given time as stored in the global container.
+        If no such value exists, -1 is returned."""
+        return traci.edge.getEffort(self.id, time)
 
     @property
     def vehicleCount(self) -> int:
