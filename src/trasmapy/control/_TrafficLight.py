@@ -2,7 +2,6 @@
 
 import traci
 
-from traci._trafficlight import Logic
 from trasmapy.control._TrafficLogic import TrafficLogic
 from trasmapy.control._Link import Link
 from trasmapy.control.SignalColor import SignalColor
@@ -14,9 +13,10 @@ class TrafficLight(IdentifiedObject):
         super().__init__(id)
 
     @property
-    def state(self) -> str:
+    def state(self) -> list[SignalColor]:
         """Returns the named traffic lights state."""
-        return traci.trafficlight.getRedYellowGreenState(self.id)
+        stateStr = traci.trafficlight.getRedYellowGreenState(self.id)
+        return [SignalColor(s) for s in stateStr]
 
     @property
     def phaseId(self) -> int:
@@ -63,7 +63,7 @@ class TrafficLight(IdentifiedObject):
 
     @property
     def programLogics(self) -> list[TrafficLogic]:
-        """Returns the list of programs of the traffic light. Each progam is encoded as a Logic object."""
+        """Returns the list of programs of the traffic light. Each progam is encoded as a TrafficLogic object."""
         logics = traci.trafficlight.getAllProgramLogics(self.id)
         return [TrafficLogic.traciLogic(l) for l in logics]
 

@@ -4,7 +4,7 @@ from traci._trafficlight import Logic
 from trasmapy.control._Phase import Phase
 
 
-class TrafficLogic():
+class TrafficLogic:
     def __init__(
         self,
         id: str,
