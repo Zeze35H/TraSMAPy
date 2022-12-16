@@ -24,7 +24,7 @@ class Users(SimUpdatable):
 
     def getAllVehicleTypeIds(self) -> list[str]:
         return traci.vehicletype.getIDList()  # type: ignore
-    
+
     @property
     def vehicles(self) -> list[Vehicle]:
         """Retrieves an object for each vehicle currently in the simulation.
@@ -75,12 +75,18 @@ class Users(SimUpdatable):
         vehicleType: VehicleType = VehicleType("DEFAULT_VEHTYPE"),
         personNumber: int = 0,
         personCapacity: int = 0,
+        departTime: Union[str, float] = "now",
     ) -> Vehicle:
         """Creates a registered vehicle and adds it to the network.
         Registered vehicles are vehicle objects whose liveness is checked (safe).
         If the route is None, the vehicle will be added to a random network edge.
         If the route consists of two disconnected edges, the vehicle will be treated like
-        a <trip> and use the fastest route between the two edges."""
+        a <trip> and use the fastest route between the two edges.
+        If depart time is the string 'now', the depart time is the same as the vehicle spawn.
+        Negative values for depart time have special meanings:
+            -1: 'triggered'
+            -2: 'containerTriggered'
+        """
         try:
             traci.vehicle.add(
                 vehicleId,
@@ -88,6 +94,7 @@ class Users(SimUpdatable):
                 typeID=vehicleType.id,
                 personNumber=personNumber,
                 personCapacity=personCapacity,
+                depart=str(departTime),
             )
             return self._registerVehicle(vehicleId)
         except traci.TraCIException as e:

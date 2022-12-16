@@ -46,7 +46,7 @@ def run(traSMAPy: TraSMAPy):
     bus.color = Color(112, 3, 0)
     bus.stopFor(laneStop, 20.4)
     for i in range(0, 5):
-        traSMAPy.users.createVehicle(f"vehicle{i}", route0, vehicleType=carType)
+        traSMAPy.users.createVehicle(f"vehicle{i}", route0, vehicleType=carType, departTime=20.0)
 
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:
