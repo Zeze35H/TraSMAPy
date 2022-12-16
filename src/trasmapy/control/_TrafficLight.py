@@ -117,13 +117,13 @@ class TrafficLight(IdentifiedObject):
         """Switches to the program with the given programId."""
         if not self.getProgram(programId):
             raise ValueError(
-                "A program with the given programID does not exist ofr the traffic light.")
+                "A program with the given programID does not exist for the traffic light.")
         traci.trafficlight.setProgram(self.id, programId)
 
     @program.setter
-    def program(self, newProg: TrafficLogic):
+    def program(self, newProg: Logic):
         """Switches the traffic light to a new program. The program is directly instantiated."""
-        traci.trafficlight.setProgram(self.id, newProg)
+        traci.trafficlight.setProgramLogic(self.id, newProg)
 
     def setRedYellowGreenState(self, colors: list[SignalColor]):
         """Sets the phase definition. Accepts a list of SignalColors that represnt light definitions.
