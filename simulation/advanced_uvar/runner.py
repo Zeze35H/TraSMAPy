@@ -133,8 +133,8 @@ def run(traSMAPy: TraSMAPy):
             pass
         traSMAPy.doSimulationStep()
         
-    print(traSMAPy.collectedStatistics)
-    print(north_toll.toll_hist)
+    # print(traSMAPy.collectedStatistics)
+    # print(north_toll.toll_hist)
     traSMAPy.closeSimulation()
 
 
