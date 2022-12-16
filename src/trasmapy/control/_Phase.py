@@ -29,16 +29,31 @@ class Phase(Phase):
         return self.maxDur
 
     @property
-    def next(self):
-        """Returns next."""
-        return self.next
-
-    @property
     def name(self) -> str:
         """Returns the phase's name."""
         return self.name
     
     @duration.setter
-    def property(self, newValue):
+    def duration(self, newValue: int):
         """Sets the duration value (s)."""
         self.property = newValue
+
+    @state.setter
+    def state(self, newValue: str):
+        """Sets the state value."""
+        self.state = newValue
+
+    @minDuration.setter
+    def minDuration(self, newValue: int):
+        """Sets the minimum duration value (s)."""
+        self.minDuration = newValue
+
+    @maxDuration.setter
+    def maxDuration(self, newValue: int):
+        """Sets the maximum duration value (s)."""
+        self.maxDuration = newValue
+
+    @name.setter
+    def name(self, newValue: str):
+        """Sets the name."""
+        self.name = newValue
