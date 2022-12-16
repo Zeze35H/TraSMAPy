@@ -134,6 +134,12 @@ class Vehicle(IdentifiedObject, Colorable):
             raise ValueError("isRerouting needs to be a bool.")
         traci.vehicle.setParameter(self.id, "has.rerouting.device", isRerouting)
 
+    def rerouteByTravelTime(self) -> None:
+        traci.vehicle.rerouteTraveltime(self.id)
+
+    def rerouteByEffort(self) -> None:
+        traci.vehicle.rerouteEffort(self.id)
+
     @property
     @_checkVehicleExistance
     def edgeId(self) -> str:
