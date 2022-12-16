@@ -4,7 +4,7 @@ from traci._trafficlight import Logic
 from trasmapy.control._Phase import Phase
 
 
-class TrafficLogic(Logic):
+class TrafficLogic():
     def __init__(
         self,
         id: str,
@@ -13,7 +13,11 @@ class TrafficLogic(Logic):
         phases: list[Phase] = None,
         parameters=None,
     ) -> None:
-        super().__init__(id, type, currentPhaseIndex, phases, parameters)
+        self.programId = id
+        self.type = type
+        self.currentPhaseIndex = currentPhaseIndex
+        self.phases = phases
+        self.parameters = parameters
 
     @classmethod
     def traciLogic(cls, prog: Logic):
@@ -24,6 +28,26 @@ class TrafficLogic(Logic):
             prog.phases,
             prog.subParameter,
         )
+
+    @property
+    def type(self) -> int:
+        """Returns the type of the program."""
+        return self.type
+
+    @property
+    def currentPhaseIndex(self) -> int:
+        """Returns the index of the current phase."""
+        return self.currentPhaseIndex
+
+    @property
+    def phases(self) -> list[Phase]:
+        """Returns the list of phases."""
+        return self.phases
+
+    @property
+    def parameters(self):
+        """Returns the a dictionary of parameters."""
+        return self.parameters
 
     def __repr__(self):
         return (
