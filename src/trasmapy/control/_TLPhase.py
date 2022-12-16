@@ -4,7 +4,7 @@ from traci._trafficlight import Phase
 from trasmapy.control.SignalColor import SignalColor
 
 
-class Phase(Phase):
+class TLPhase(Phase):
     def __init__(
         self,
         duration: int,
@@ -17,6 +17,12 @@ class Phase(Phase):
         super().__init__(duration, "", minDur, maxDur, next, name)
         self.setState(colors)
 
+    @classmethod
+    def tlPhase(cls, phase: Phase):
+        colors = [SignalColor(s) for s in phase.state]
+        return cls(
+            phase.duration, colors, phase.minDur, phase.maxDur, phase.next, phase.name
+        )
 
     def setState(self, colors: list[SignalColor]):
         states = "".join(s.value for s in colors)

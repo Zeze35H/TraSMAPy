@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import traci
-
-from trasmapy.control._TrafficLogic import TrafficLogic
+from traci._trafficlight import Logic
+from trasmapy.control._TLProgram import TLProgram
 from trasmapy.control._Link import Link
 from trasmapy.control.SignalColor import SignalColor
 from trasmapy._IdentifiedObject import IdentifiedObject
@@ -19,7 +19,7 @@ class TrafficLight(IdentifiedObject):
         return [SignalColor(s) for s in stateStr]
 
     @property
-    def phaseId(self) -> int:
+    def phaseIndex(self) -> int:
         """Returns the index of the current phase in the currrent program."""
         return traci.trafficlight.getPhase(self.id)
 
@@ -62,10 +62,10 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getControlledLanes(self.id)
 
     @property
-    def programLogics(self) -> list[TrafficLogic]:
+    def programSet(self) -> list[TLProgram]:
         """Returns the list of programs of the traffic light. Each progam is encoded as a TrafficLogic object."""
         logics = traci.trafficlight.getAllProgramLogics(self.id)
-        return [TrafficLogic.traciLogic(l) for l in logics]
+        return [TLProgram.tlProg(l) for l in logics]
 
     @property
     def programId(self) -> str:
@@ -73,31 +73,31 @@ class TrafficLight(IdentifiedObject):
         return traci.trafficlight.getProgram(self.id)
 
     @property
-    def program(self) -> TrafficLogic:
+    def program(self) -> TLProgram:
         """ "Returns the current program."""
         return self.getProgram(self.programId)
 
-    def getProgram(self, programId: str) -> TrafficLogic:
+    def getProgram(self, programId: str) -> TLProgram:
         """Returns the program with the given id."""
-        for prog in self.programLogics:
-            if prog.programID == programId:
+        for prog in self.programSet:
+            if prog.programId == programId:
                 return prog
         return None
 
-    def getBlockingVehiclesIds(self, linkIndex) -> list[str]:
+    def getBlockingVehiclesIds(self, linkIndex: int) -> list[str]:
         """Returns the ids of vehicles that occupy the subsequent rail signal block."""
         return traci.trafficlight.getBlockingVehicles(self.id, linkIndex)
 
-    def getRivalVehiclesIds(self, linkIndex) -> list[str]:
+    def getRivalVehiclesIds(self, linkIndex: int) -> list[str]:
         """Returns the ids of vehicles that are approaching the same rail signal block."""
         return traci.trafficlight.getRivalVehicles(self.id, linkIndex)
 
-    def getPriorityVehiclesIds(self, linkIndex) -> list[str]:
+    def getPriorityVehiclesIds(self, linkIndex: int) -> list[str]:
         """Returns the ids of vehicles that are approaching the same rail signal block with higher priority."""
         return traci.trafficlight.getPriorityVehicles(self.id, linkIndex)
 
-    @phaseId.setter
-    def phaseId(self, phaseIndex: int):
+    @phaseIndex.setter
+    def phaseIndex(self, phaseIndex: int):
         """Sets the phase of the traffic light to the phase with the given index. The index must be
         valid for the current program of the traffic light."""
         if not self.isPhaseInProgram(self.programId, phaseIndex):
@@ -122,12 +122,19 @@ class TrafficLight(IdentifiedObject):
         traci.trafficlight.setProgram(self.id, programId)
 
     @program.setter
-    def program(self, newProg: TrafficLogic):
+    def program(self, newProg: TLProgram):
         """Switches the traffic light to a new program. The program is directly instantiated."""
-        traci.trafficlight.setProgramLogic(self.id, newProg)
+        prog = Logic(
+            newProg.programId,
+            newProg.typeP,
+            newProg.currentPhaseIndex,
+            newProg.phases,
+            newProg.parameters,
+        )
+        traci.trafficlight.setProgramLogic(self.id, prog)
 
     def setRedYellowGreenState(self, colors: list[SignalColor]):
-        """Sets the phase definition. Accepts a list of SignalColors that represnt light definitions.
+        """Sets the phase definition. Accepts a list of SignalColors that represent light definitions.
         After this call, the program of the traffic light will be set to online, and the state will be maintained until the next
         call of setRedYellowGreenState() or until setting another program with setProgram()"""
         states = "".join(s.value for s in colors)

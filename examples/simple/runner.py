@@ -8,8 +8,8 @@ from trasmapy import (
     StopType,
     ScheduledStop,
     SignalColor,
-    Phase,
-    TrafficLogic,
+    TLPhase,
+    TLProgram,
 )
 
 import traci
@@ -26,7 +26,7 @@ def run(traSMAPy: TraSMAPy):
     parkingArea = traSMAPy.network.getStop("pa_0")
     laneStop = traSMAPy.network.createLaneStop(lane.id, endPos=100)
 
-    t_2 = traSMAPy.control.getTrafficLight("2")
+    t_2 = traSMAPy.control.getTrafficLight("2")   
 
     e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
