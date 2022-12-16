@@ -39,9 +39,10 @@ class Phase(Phase):
         self.property = newValue
 
     @state.setter
-    def state(self, newValue: str):
+    def state(self, colors: list[SignalColor]):
         """Sets the state value."""
-        self.state = newValue
+        states = "".join(s.value for s in colors)
+        self.state = states
 
     @minDuration.setter
     def minDuration(self, newValue: int):
