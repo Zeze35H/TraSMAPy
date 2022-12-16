@@ -59,7 +59,7 @@ def run(traSMAPy: TraSMAPy):
         defaultVehicle.id : 2.0,
         evehicleType.id : 0.0
     }
-    north_toll = UVAR_Toll("north_toll", toll_detectors, vtype_prices)
+    north_toll = UVAR_Toll("north_toll", toll_detectors, vtype_prices, traSMAPy)
     traSMAPy.control.registerToll(north_toll)
     
     # DATA
@@ -133,12 +133,8 @@ def run(traSMAPy: TraSMAPy):
             pass
         traSMAPy.doSimulationStep()
         
-        
-        if traSMAPy.step > 200:
-            break
-    
     print(traSMAPy.collectedStatistics)
-    print(north_toll.detected)
+    print(north_toll.toll_hist)
     traSMAPy.closeSimulation()
 
 

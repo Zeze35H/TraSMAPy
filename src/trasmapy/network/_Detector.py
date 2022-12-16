@@ -31,10 +31,11 @@ class Detector(IdentifiedObject, SimUpdatable):
 
     @override
     def _doSimulationStep(self, *args, step: int, time: float) -> None:
-        detectedVehicles = traci.inductionloop.getLastStepVehicleIDs(self.id)
-        if len(detectedVehicles) == 0:
+        # detectedVehicles = traci.inductionloop.getLastStepVehicleIDs(self.id)
+        detected = traci.inductionloop.getVehicleData(self.id)
+        if len(detected) == 0:
             # nothing happened
             return
 
         for listener in self._listeners:
-            listener(detectedVehicles)
+            listener(detected)
