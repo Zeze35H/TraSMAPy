@@ -12,5 +12,5 @@ and licensed under an MIT license.
 
 .. toctree::
 
-   install
-   quickstart
+   install.rst
+   quickstart.rst
