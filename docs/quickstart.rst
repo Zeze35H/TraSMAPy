@@ -8,6 +8,8 @@ After installing TraSMAPy, you need a network to work with. The `netgenerate`
 utility from SUMO can be used to generate a simple network. The following
 command will generate a random network:
 
+.. code-block::
+
     netgenerate --rand -o rand.net.xml
 
 The file `rand.net.xml` containes our network. Now we need a sumo configuration
