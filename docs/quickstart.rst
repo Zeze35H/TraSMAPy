@@ -156,6 +156,7 @@ register the query to be executed every simulation tick. This can be done by usi
 (note that you need to provide a name for registered queries):
 
 .. code-block::
+
     def run(traSMAPy: TraSMAPy):
         """execute the TraCI control loop"""
         for i in range(100):

@@ -14,3 +14,12 @@ and licensed under an MIT license.
 
    install.rst
    quickstart.rst
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
