@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TraSMAPy"
-version = "0.0.1"
+version = "1.0.0"
 authors = [
   { name="Ana Barros", email="author@example.com" },
   { name="Ivo Saavedra", email="author@example.com" },
