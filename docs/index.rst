@@ -11,6 +11,8 @@ The open-source code is available on `GitHub <https://github.com/joaoCostaIFG/tr
 and licensed under an MIT license.
 
 .. toctree::
+   :maxdepth: 2
+   :caption: Introduction:
 
    install.rst
    quickstart.rst
@@ -18,8 +20,10 @@ and licensed under an MIT license.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+
+.. autosummary::
+   :toctree: _autosummary
+   :recursive:
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
