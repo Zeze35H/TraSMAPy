@@ -174,3 +174,32 @@ register the query to be executed every simulation tick. This can be done by usi
 
 As you can see, the `collectedStatistics` attribute of the `TraSMAPy` class contains
 all the statistics collected by the registered queries, organized by tick and name.
+
+We can also take advantage of the `registerQuery` method to register a query that
+doesn't run every simulation tick, thus having a smaller performance hit. For example,
+we can register a query that runs every 10 simulation ticks:
+
+.. code-block::
+
+    def run(traSMAPy: TraSMAPy):
+        """execute the TraCI control loop"""
+        for i in range(100):
+            v = traSMAPy.users.createVehicle(f"v{i}")
+            v.speed = 10
+
+        traSMAPy.registerQuery("Total CO2 Emissions", "return sum(<network/edges/CO2Emissions>)", tickInterval=10)
+
+        while traSMAPy.minExpectedNumber > 0:
+            traSMAPy.doSimulationStep()
+
+            print(traSMAPy.collectedStatistics)
+
+        traSMAPy.closeSimulation()
+
+The next steps
+--------------
+
+This is just a small introduction to TraSMAPy. For more information, please refer to
+the `API reference <https://trasmapy.readthedocs.io/en/latest/autoapi/index.html>`_,
+and to the `examples <https://github.com/JoaoCostaIFG/TraSMAPy/tree/master/examples>`_
+on the TraSMAPy repository.
