@@ -18,6 +18,9 @@ file to run the simulation. You can put the following in the a `rand.sumocfg` fi
         </input>
     </configuration>
 
+Note that you can also consult the `official SUMO documentation <https://sumo.dlr.de/docs/index.html#network_building>`_
+for more information about importing, building, and customizing networks.
+
 With this, we are ready to write our runner script and use TraSMAPy. Create a `runner.py`
 file with the following content:
 
