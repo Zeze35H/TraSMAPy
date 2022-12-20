@@ -54,12 +54,11 @@ def run(traSMAPy: TraSMAPy):
         traSMAPy.network.getDetector(f"toll_N0"),
         traSMAPy.network.getDetector(f"toll_N1")
     ]
-    
     vtype_prices = {
         defaultVehicle.id : 2.0,
         evehicleType.id : 0.0
     }
-    north_toll = UVAR_Toll("north_toll", toll_detectors, vtype_prices, traSMAPy)
+    north_toll = UVAR_Toll("north_toll", toll_detectors, vtype_prices, traSMAPy, 1000)
     traSMAPy.control.registerToll(north_toll)
     
     # DATA
@@ -105,31 +104,26 @@ def run(traSMAPy: TraSMAPy):
         "ne-center", b_route1, busType, [ScheduledStop(x, 20) for x in bus_stops_r1], period=200, end=3000
     )
     
-    vs_parks = []
+    vs_parks = {}
     for i in range(0, 800):
         route = random.choices(ROUTES, weights=ROUTE_PROBS, k=1)[0]
         
         v = traSMAPy.users.createVehicle(f"v{i}", route["route"], 
-                                            random.choices(V_TYPES, weights=(80, 20), k=1)[0])
+                                            random.choices(V_TYPES, weights=(80, 20), k=1)[0], departTime=random.randint(0, 1000))
         if route["type"] == "parking":
             park = random.choice(route["park_areas"])
             v.via = [park.lane.parentEdge.id]
-            vs_parks.append((v, park))
+            vs_parks[v.id] = park
     
-    spawned = False
     while traSMAPy.minExpectedNumber > 0: 
         try:
-            if len(vs_parks) > 0:
-                if spawned:
-                    spawned = False
-                    vs_parks[0][0].stopFor(vs_parks[0][1], random.randint(400, 600), 
-                                                    stopParams=[StopType.PARKING, StopType.PARKING_AREA])
-                    vs_parks.pop(0)
-                    continue
-                
-                spawned = not vs_parks[0][0].isPending()
+            # assign parking stops
+            for v in traSMAPy.users.pendingVehicles:
+                if v.id not in vs_parks: continue
+                v.stopFor(vs_parks[v.id], random.randint(400, 600), stopParams=[StopType.PARKING, StopType.PARKING_AREA])
+            
         except Exception as e:
-            print(e)
+            print("Error: ", e)
             pass
         traSMAPy.doSimulationStep()
         
