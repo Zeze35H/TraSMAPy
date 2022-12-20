@@ -60,7 +60,7 @@ class Edge(IdentifiedObject):
     @property
     def electricityConsumption(self) -> float:
         """Sum of electricity consumption on this edge during this time step (kWh)."""
-        return traci.edge.getElectricityConsumption(self.id)  # type: ignore
+        return traci.edge.getElectricityConsumption(self.id)
 
     @property
     def vehicleCount(self) -> int:
@@ -109,6 +109,26 @@ class Edge(IdentifiedObject):
 
     def getLane(self, laneId) -> Lane:
         return self._lanes[laneId]
+
+    def getAdaptedTravelTime(self, time: float) -> float:
+        """Returns the edge travel time for the given time as stored in the global container.
+        If no such value exists, -1 is returned."""
+        return traci.edge.getAdaptedTraveltime(self.id, time)
+
+    def setAdaptedTravelTime(
+        self, beginTime: float, endTime: float, travelTime: float
+    ) -> None:
+        traci.edge.adaptTraveltime(self.id, beginTime, endTime, travelTime)
+
+    def getEffort(self, time: float) -> float:
+        """Returns the edge effort for the given time as stored in the global container.
+        If no such value exists, -1 is returned."""
+        return traci.edge.getEffort(self.id, time)
+
+    def setEffort(self, beginTime: float, endTime: float, travelTime: float) -> None:
+        """Inserts the information about the effort of the named edge valid from begin
+        time to end time into the global edge weights container."""
+        traci.edge.setEffort(self.id, beginTime, endTime, travelTime)
 
     def setMaxSpeed(self, maxSpeed: float) -> None:
         """Sets the maximum speed for the vehicles in this edge (for all lanes) to the given value."""

@@ -1,7 +1,16 @@
 #!/usr/bin/env python
 
 
-from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop
+from trasmapy import (
+    TraSMAPy,
+    Color,
+    VehicleClass,
+    StopType,
+    ScheduledStop,
+    SignalColor,
+    TLPhase,
+    TLProgram,
+)
 
 import traci
 
@@ -21,14 +30,7 @@ def run(traSMAPy: TraSMAPy):
     parkingArea = traSMAPy.network.getStop("pa_0")
     laneStop = traSMAPy.network.createLaneStop(lane.id, endPos=100)
 
-    t_2 = traSMAPy.control.getTrafficLight("2")
-    print(t_2.state)
-
-    print("---testing---")
-    print(t_2.completeRedYellowGreenDef)
-    print(t_2.getBlockingVehiclesIds(0))
-    print(t_2.getRivalVehiclesIds(0))
-    print(t_2.getPriorityVehiclesIds(0))
+    t_2 = traSMAPy.control.getTrafficLight("2")   
 
     e10 = traSMAPy.network.getDetector("e1_0")
     e10.listen(lambda x: print(x))
@@ -46,7 +48,7 @@ def run(traSMAPy: TraSMAPy):
     bus.color = Color(112, 3, 0)
     bus.stopFor(laneStop, 20.4)
     for i in range(0, 5):
-        traSMAPy.users.createVehicle(f"vehicle{i}", route0, vehicleType=carType)
+        traSMAPy.users.createVehicle(f"vehicle{i}", route0, vehicleType=carType, departTime=20.0)
 
     while traSMAPy.minExpectedNumber > 0:
         if traSMAPy.step > 20:
