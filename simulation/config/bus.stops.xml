@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2022-12-11 16:48:13 by Eclipse SUMO netedit Version 1.15.0
+<!-- generated on 2022-12-21 17:53:26 by Eclipse SUMO netedit Version 1.15.0
 -->
 
 <additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
     <!-- StoppingPlaces -->
     <busStop id="bs_0" lane="-E23_0" startPos="43.90" endPos="53.90"/>
     <busStop id="bs_1" lane="E50_0" startPos="112.38" endPos="122.38"/>
-    <busStop id="bs_16" lane="E36_0" startPos="99.54" endPos="109.54"/>
     <busStop id="bs_2" lane="E510_0" startPos="99.13" endPos="109.13"/>
     <busStop id="bs_3" lane="E27_0" startPos="84.77" endPos="94.77"/>
     <busStop id="bs_4" lane="E55_0" startPos="182.35" endPos="192.35"/>
     <busStop id="bs_5" lane="E56_0" startPos="102.91" endPos="112.91"/>
     <busStop id="bs_6" lane="-E50.40_0" startPos="117.17" endPos="127.17"/>
     <busStop id="bs_7" lane="E23_0" startPos="32.15" endPos="42.15"/>
-    <busStop id="bs_ne0" lane="-E36_0" startPos="209.85" endPos="219.85"/>
-    <busStop id="bs_ne1" lane="-E45_0" startPos="235.86" endPos="245.86"/>
-    <busStop id="bs_ne2" lane="-E43_0" startPos="174.14" endPos="184.14"/>
-    <busStop id="bs_ne3" lane="-E560_0" startPos="64.99" endPos="74.99"/>
-    <busStop id="bs_ne4" lane="-E55_0" startPos="125.29" endPos="135.29"/>
-    <busStop id="bs_ne5" lane="-E54_0" startPos="190.15" endPos="200.15"/>
-    <busStop id="bs_ne6" lane="-E5_0" startPos="86.51" endPos="96.51"/>
-    <busStop id="bs_ne7" lane="E45_0" startPos="178.75" endPos="188.75"/>
+    <busStop id="bs_ne0" lane="E38.79_0" startPos="117.26" endPos="127.26"/>
+    <busStop id="bs_ne1" lane="-E38.79_0" startPos="120.03" endPos="130.03"/>
+    <busStop id="bs_ne2" lane="-E45_0" startPos="235.86" endPos="245.86"/>
+    <busStop id="bs_ne3" lane="-E43_0" startPos="174.14" endPos="184.14"/>
+    <busStop id="bs_ne4" lane="-E560_0" startPos="64.99" endPos="74.99"/>
+    <busStop id="bs_ne5" lane="-E55_0" startPos="125.29" endPos="135.29"/>
+    <busStop id="bs_ne6" lane="-E54_0" startPos="190.15" endPos="200.15"/>
+    <busStop id="bs_ne7" lane="-E5_0" startPos="86.51" endPos="96.51"/>
+    <busStop id="bs_ne8" lane="E45_0" startPos="178.75" endPos="188.75"/>
 </additional>
