@@ -107,7 +107,7 @@ def run(traSMAPy: TraSMAPy):
     )
     
     vs_parks = {}
-    for i in range(0, 800):
+    for i in range(0, 2000):
         route = random.choices(ROUTES, weights=ROUTE_PROBS, k=1)[0]
         v = traSMAPy.users.createVehicle(f"v{i}", route["route"], 
                                             random.choices(V_TYPES, weights=(80, 20), k=1)[0], departTime=random.randint(0, 1000))
