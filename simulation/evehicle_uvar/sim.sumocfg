@@ -1,12 +1,14 @@
 <configuration>
     <input>
         <net-file value="../config/net.xml"/>
-        <!-- <route-files value="../config/rou.xml"/> -->
-        <additional-files value="../config/detectors.xml"/>
+        <route-files value="../config/rou.xml"/>
+        <additional-files value="../config/detectors.xml,../config/measurements.xml"/>
         <gui-settings-file value="../config/settings.xml"/>
     </input>
     <time>
         <begin value="0"/>
         <end value="10000"/>
     </time>
+    <tripinfo-output value="out/tripinfo.xml"/>
+    <summary value="out/summary.xml"/>
 </configuration>
