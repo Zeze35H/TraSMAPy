@@ -1,6 +1,5 @@
 ### Add custom .gitignore rules here
 tripinfo.xml
-
 .vscode
 
 ### Python Project Template

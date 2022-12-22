@@ -5,7 +5,7 @@ from trasmapy import TraSMAPy
 class UVAR_Toll(Toll):
 
     def __init__(self, id: str, detectors: list[Detector], 
-                 vtype_prices : dict[str, float], ctx : TraSMAPy) -> None:
+                 vtype_prices : dict[str, float], ctx : TraSMAPy, effort : float = 300) -> None:
         super().__init__(id, detectors)
         
         if not vtype_prices:
@@ -15,6 +15,10 @@ class UVAR_Toll(Toll):
         self._hist_step = 0
         self._toll_hist = {}
         self._ctx = ctx
+
+        # add effort to edge containing toll (vehicles try to avoid if possible)
+        toll_edge = self._ctx.network.getLane(detectors[0].laneId).parentEdge
+        toll_edge.setEffort(0, 100000, effort)
         
     def roadPricingScheme(self, detectedVehicles):
         self._toll_hist[self._ctx.step] = self._toll_hist.get(self._ctx.step, 0)

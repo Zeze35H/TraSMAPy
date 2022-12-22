@@ -33,6 +33,8 @@ class TraSMAPy:
         self._publicServices: PublicServices = PublicServices(self._users)
         self._control: Control = Control()
 
+        self._queryMap = self._genQueryMap()
+
     @property
     def network(self) -> Network:
         return self._network
@@ -65,6 +67,7 @@ class TraSMAPy:
 
     @property
     def minExpectedNumber(self) -> int:
+        """The minimum number of vehicles expected to be in the simulation."""
         return traci.simulation.getMinExpectedNumber()  # type: ignore
 
     @property
@@ -75,9 +78,9 @@ class TraSMAPy:
     def query(self, query: Union[str, Callable]) -> dict:
         """Run a query once and get its current result."""
         if isinstance(query, str):
-            return pyflwor.execute(query, self._getQueryMap())
+            return pyflwor.execute(query, self._genQueryMap())
         else:
-            return query(self._getQueryMap())
+            return query(self._genQueryMap())
 
     def registerQuery(
         self, queryName: str, query: Union[str, Callable], tickInterval: int = 1
@@ -109,20 +112,22 @@ class TraSMAPy:
             if not query.tick():
                 continue
             self._collectedStatistics[self._step][queryName] = query(
-                self._getQueryMap()
+                self._genQueryMap()
             )
 
     def closeSimulation(self) -> None:
         traci.close()
         sys.stdout.flush()
 
-    def _getQueryMap(self) -> dict:
-        return {
+    def _genQueryMap(self) -> dict:
+        ret = {
             "network": self._network,
             "users": self._users,
             "publicServices": self._publicServices,
             "control": self._control,
         }
+        ret.update(__builtins__)
+        return ret
 
     def _getOptions(self):
         optParser = optparse.OptionParser()
@@ -146,4 +151,4 @@ class TraSMAPy:
             sumoBinary = checkBinary("sumo-gui")
 
         # sumo is started as a subprocess and then the python script connects and runs
-        traci.start([sumoBinary, "-c", sumoCfg, "--tripinfo-output", "tripinfo.xml"])
+        traci.start([sumoBinary, "-c", sumoCfg])
