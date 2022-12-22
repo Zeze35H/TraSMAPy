@@ -19,7 +19,7 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     entrance_edge = context.network.getEdge("E41")
     entrance_edge_rev = context.network.getEdge("-E41.28")
 
-    southeast_edge = context.network.getEdge("E19")
+    southeast_edge = context.network.getEdge("E19.70")
     southwest_edge = context.network.getEdge("E6")
 
     # Forbid Edges
@@ -52,15 +52,15 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     ]
     context.registerQuery("city_co2",
         lambda ctx: sum([
-            ctx["network"].edges[edges_idx[idx]].C02Emissions
+            ctx["network"].edges[edges_idx[idx]].CO2Emissions
                 for idx in edges_co2_tocollect
         ])
     )
 
     # Routes
     routes = [
-        create_trip(context, "north_south", [north_edge, southwest_edge], weight=0.5),
-        create_trip(context, "south_north", [southeast_edge, north_edge_rev], weight=0.5)
+        create_trip(context, "north_south", [north_edge, southeast_edge], weight=0.5),
+        create_trip(context, "south_north", [southwest_edge, north_edge_rev], weight=0.5)
     ]
 
     route_weights = [route.get("weight", 0.5) for route in routes]
@@ -84,7 +84,7 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     context.closeSimulation()
 
 def parse_opt():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument("--sumocfg", default="sim.sumocfg")
     parser.add_argument("--forbid", action="store_true", default=False)
     parser.add_argument("--no-vehicles", type=int, default=800)
