@@ -8,6 +8,7 @@ sys.path.append("..")
 from tools.trasmapy_utils import *
 
 from trasmapy import TraSMAPy
+from trasmapy import StopType
 
 def run(context: TraSMAPy, opt: Dict[str, Any]):
     # Vehicle Types
@@ -23,6 +24,7 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
 
     southeast_edge = context.network.getEdge("E19.70")
     southwest_edge = context.network.getEdge("E6")
+    southwest_edge_rev = context.network.getEdge("-E6")
 
     # Forbid Edges
     if opt["forbid"]:
@@ -61,13 +63,22 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
 
     # Routes
     routes = [
-        create_trip(context, "north_south", [north_edge, southeast_edge], weight=0.5),
-        create_trip(context, "south_north", [southwest_edge, north_edge_rev], weight=0.5)
+        create_trip(context, "north_south", [north_edge, southeast_edge], weight=0.4),
+        create_trip(context, "north_north", [north_edge, north_edge_rev], weight=0.3),
+        create_trip(context, "south_south", [southwest_edge, southwest_edge_rev], weight=0.3),
     ]
 
     route_weights = [route.get("weight", 0.5) for route in routes]
 
+    edge_stops = ["E5", "E52", "E54", "-E53", "E53", "E5", "-E5", "E44", "-E44", "E43", "-E43", "-E42", "E420"]
+
+
+    edge_stops = [context.network.getEdge(x) for x in edge_stops]
+    lane_stops = [edge.lanes[0] for edge in edge_stops]
+    lane_stops = [context.network.createLaneStop(lane.id, lane.length/2) for lane in lane_stops]
+
     # Generate Vehicles
+    vs_stops = {}
     vehicle_types = [default_vehicle, electric_vehicle]
     for i in range(opt.get("no_vehicles", 2000)):
         vehicle_route = random.choices(
@@ -75,13 +86,21 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             weights=route_weights
         )[0]
 
-        context.users.createVehicle(
+        v = context.users.createVehicle(
             f"v{i}", route=vehicle_route["route"],
             vehicleType=random.choices(vehicle_types, weights=(0.8, 0.2))[0],
             departTime=random.randint(0, 1000)
         )
 
+        lane_stop = random.choices(lane_stops, k=1)[0]
+        v.via = [lane_stop.lane.parentEdge.id]
+        vs_stops[v.id] = lane_stop
+
     while context.minExpectedNumber > 0:
+        for v in context.users.pendingVehicles:
+            if v.id not in vs_stops: continue
+            v.stopFor(vs_stops[v.id], duration=random.randint(400, 600), stopParams=[StopType.PARKING])
+
         context.doSimulationStep()
 
     context.closeSimulation()
@@ -90,7 +109,7 @@ def parse_opt():
     parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument("--sumocfg", default="sim.sumocfg")
     parser.add_argument("--forbid", action="store_true", default=False)
-    parser.add_argument("-n", "--no-vehicles",  type=int, default=800)
+    parser.add_argument("-n", "--no-vehicles",  type=int, default=2000)
 
 
     args = parser.parse_args()
