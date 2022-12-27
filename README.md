@@ -17,9 +17,9 @@ and/or the [examples directory](./examples)
 
 The API authors:
 
-- Ana de Inês de Oliveira de de de Barros<anaiobarros2014@gmail.com>
-- João de Jesus Costa<jc.work@posteo.net>
-- João António Cardoso Vieira e Basto de Sousa<joaosousa.pt@gmail.com>
+- Ana de Inês de Oliveira de de de Barros <anaiobarros2014@gmail.com>
+- João de Jesus Costa <jc.work@posteo.net>
+- João António Cardoso Vieira e Basto de Sousa <joaosousa.pt@gmail.com>
 
 Some simulations on the [examples directory](./examples) are authored by other
 developers.
