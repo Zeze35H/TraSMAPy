@@ -1,19 +1,12 @@
 #!/usr/bin/env python
 
-
 from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop
 from uvar_toll import UVAR_Toll
 import random
 
-def create_route(r_id : str,  edges : list, r_type : str = "normal", 
-                 prob : float = None, parks : list = []):
-    return {
-        "id" : r_id,
-        "route" : traSMAPy.users.createRouteFromEdges(r_id, edges),
-        "type" : r_type,
-        "prob" : prob,
-        "park_areas" : parks
-    }
+import sys
+sys.path.append("..")
+from tools.trasmapy_utils import *
 
 TICK_INTERVAL = 5  
 
@@ -83,12 +76,12 @@ def run(traSMAPy: TraSMAPy):
     
     # setup custom routes
     ROUTES = [
-        create_route("r_north_south", [e40, e19], prob=0.4), # NW-SE
-        create_route("pa_south", [e6, e6r], r_type="parking", prob=0.3, parks=PARKING_AREAS_SOUTH),# SW-SW
-        create_route("pa_north", [e40, e40r], r_type="parking", prob=0.3, parks=PARKING_AREAS_NORTH) # SW-SW
+        create_trip(traSMAPy, "r_north_south", [e40, e19], weight=0.4), # NW-SE
+        create_trip(traSMAPy, "pa_south", [e6, e6r], route_type="parking", weight=0.3, parks=PARKING_AREAS_SOUTH),# SW-SW
+        create_trip(traSMAPy, "pa_north", [e40, e40r], route_type="parking", weight=0.3, parks=PARKING_AREAS_NORTH) # NW-NW
     ]
     
-    ROUTE_PROBS = [x["prob"] for x in ROUTES]
+    ROUTE_PROBS = [x["weight"] for x in ROUTES]
     if None in ROUTE_PROBS or sum(ROUTE_PROBS) != 1:
         ROUTE_PROBS = None
         print("Ignoring route probalities.")

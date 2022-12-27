@@ -3,11 +3,13 @@ from typing import Any, Dict
 import argparse
 import random
 
-from trasmapy_utils import create_trip, get_default_vtype, get_electric_vtype
+import sys
+sys.path.append("..")
+from tools.trasmapy_utils import *
+
 from trasmapy import TraSMAPy
 
 def run(context: TraSMAPy, opt: Dict[str, Any]):
-    print("HERE")
     # Vehicle Types
     default_vehicle = get_default_vtype(context)
     electric_vehicle = get_electric_vtype(context)
@@ -67,7 +69,7 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
 
     # Generate Vehicles
     vehicle_types = [default_vehicle, electric_vehicle]
-    for i in range(opt.get("no_vehicles", 800)):
+    for i in range(opt.get("no_vehicles", 2000)):
         vehicle_route = random.choices(
             routes,
             weights=route_weights
@@ -75,7 +77,8 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
 
         context.users.createVehicle(
             f"v{i}", route=vehicle_route["route"],
-            vehicleType=random.choices(vehicle_types, weights=(0.8, 0.2))[0]
+            vehicleType=random.choices(vehicle_types, weights=(0.8, 0.2))[0],
+            departTime=random.randint(0, 1000)
         )
 
     while context.minExpectedNumber > 0:
@@ -87,12 +90,14 @@ def parse_opt():
     parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument("--sumocfg", default="sim.sumocfg")
     parser.add_argument("--forbid", action="store_true", default=False)
-    parser.add_argument("--no-vehicles", type=int, default=800)
+    parser.add_argument("-n", "--no-vehicles",  type=int, default=800)
+
 
     args = parser.parse_args()
     return vars(args)
 
 if __name__ == "__main__":
+
     opt = parse_opt()
 
     context = TraSMAPy(opt["sumocfg"])
