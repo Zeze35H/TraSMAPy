@@ -13,6 +13,7 @@ then
 fi
 
 # Set variables
+in_net=""
 in=""
 out=""
 
@@ -20,24 +21,29 @@ out=""
 # Process the input options. Add options as needed.        #
 ############################################################
 # Get the options
-while getopts ":h:i:o:" option; do
+while getopts ":h:i:o:n:" option; do
    case $option in
       h)
          exit;;
-      i) # summary file
+      i) # dump file
          in=$OPTARG;;
       o) # output dir
          out=$OPTARG;;
+      n)
+         # network input
+         in_net=$OPTARG;;
      \?) # Invalid option
          echo "Error: Invalid option"
          exit;;
    esac
 done
 
-# summary running vehicles
-python "$SUMO_HOME/tools/visualization/plotXMLAttributes.py" $in/summary.xml -x time -y running -o ${out}/running.png;
-
-# depart over delay time
-python "$SUMO_HOME/tools/visualization/plotXMLAttributes.py" -i id -x depart -y departDelay --scatterplot\
- --xlabel "depart time [s]" --ylabel "depart delay [s]"\
- --label "depart delay over depart time" -o $out/depart_delay.png $in/tripinfo.xml
+# net dump density
+python "$SUMO_HOME/tools/visualization/plot_net_dump.py" -v -n $in_net \
+--measures entered,entered --xlabel [m] --ylabel [m] \
+--default-width 1 -i $in \
+--xlim -500,2500 --ylim -1250,500 \
+--default-color "#606060" \
+--min-color-value -100 --max-color-value 100 \
+--max-width-value 1000 --min-width-value -1000 \
+--colormap "viridis" --blind -o $out/edge_dense_%s.png --dpi 120 --size 15,10

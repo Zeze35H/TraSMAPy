@@ -40,10 +40,10 @@ done
 
 # net dump density
 python "$SUMO_HOME/tools/visualization/plot_net_dump.py" -v -n $in_net \
---measures entered,entered --xlabel [m] --ylabel [m] \
---default-width 2 -i $in \
---xlim -500,2500 --ylim -1250,500 \
---default-color "#606060" \
---min-color-value -100 --max-color-value 100 \
---max-width-value 1000 --min-width-value -1000 \
---colormap "viridis" --blind -o $out/edge_dense_%s.png --dpi 120 --size 15,10
+ --measures CO2_normed,CO2_normed --xlabel [m] --ylabel [m] \
+ --default-width 2 -i $in \
+ --xlim -500,2500 --ylim -1250,500 \
+ --default-color "#606060" \
+ --min-color-value -10000 --max-color-value 100000 \
+ --max-width-value 1000 --min-width-value -1000 \
+ --colormap "summer" --blind -o $out/edge_emission_%s.png --dpi 120 --size 15,10
