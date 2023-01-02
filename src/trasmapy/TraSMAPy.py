@@ -1,6 +1,5 @@
 import os
 import sys
-import optparse
 from typing import Union, Callable
 
 # we need to import python modules from the $SUMO_HOME/tools directory
@@ -22,12 +21,12 @@ from trasmapy.control._Control import Control
 
 
 class TraSMAPy:
-    def __init__(self, sumoCfg: str) -> None:
+    def __init__(self, sumoCfg: str, useGui: bool = True) -> None:
         self._step: int = 0
         self._collectedStatistics: dict[int, dict] = {}
         self._queries: dict[str, Query] = {}
 
-        self._startSimulation(sumoCfg)
+        self._startSimulation(sumoCfg, useGui)
         self._network: Network = Network()
         self._users: Users = Users()
         self._publicServices: PublicServices = PublicServices(self._users)
@@ -129,26 +128,13 @@ class TraSMAPy:
         ret.update(__builtins__)
         return ret
 
-    def _getOptions(self):
-        optParser = optparse.OptionParser()
-        optParser.add_option(
-            "--nogui",
-            action="store_true",
-            default=False,
-            help="run the commandline version of sumo",
-        )
-        options, args = optParser.parse_args()
-        return options
-
-    def _startSimulation(self, sumoCfg: str) -> None:
-        options = self._getOptions()
-
+    def _startSimulation(self, sumoCfg: str, useGui: bool) -> None:
         # script has been called from the command line. It will start sumo as a
         # server, then connect and run
-        if options.nogui:
-            sumoBinary = checkBinary("sumo")
-        else:
+        if useGui:
             sumoBinary = checkBinary("sumo-gui")
+        else:
+            sumoBinary = checkBinary("sumo")
 
         # sumo is started as a subprocess and then the python script connects and runs
         traci.start([sumoBinary, "-c", sumoCfg])

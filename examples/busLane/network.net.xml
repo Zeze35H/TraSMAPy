@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2022-12-27 20:59:56 by Eclipse SUMO netedit Version 1.15.0
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <output>
+        <output-file value="C:\Users\anaio\Documents\FEUP\trasmapy\examples\busLane\network.net.xml"/>
+    </output>
+
+    <processing>
+        <offset.disable-normalization value="true"/>
+    </processing>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+    </junctions>
+
+</configuration>
+-->
+
+<net version="1.9" junctionCornerDetail="5" limitTurnSpeed="5.50" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/net_file.xsd">
+
+    <location netOffset="0.00,0.00" convBoundary="-20.40,58.42,112.09,58.56" origBoundary="10000000000.00,10000000000.00,-10000000000.00,-10000000000.00" projParameter="!"/>
+
+    <edge id="E2" from="J8" to="J9" priority="-1">
+        <lane id="E2_0" index="0" speed="13.89" length="132.49" shape="-20.41,53.76 112.09,53.62"/>
+        <lane id="E2_1" index="1" speed="13.89" length="132.49" shape="-20.40,56.96 112.09,56.82"/>
+    </edge>
+
+    <junction id="J8" type="dead_end" x="-20.40" y="58.56" incLanes="" intLanes="" shape="-20.40,58.56 -20.41,52.16"/>
+    <junction id="J9" type="dead_end" x="112.09" y="58.42" incLanes="E2_0 E2_1" intLanes="" shape="112.09,52.02 112.09,58.42"/>
+
+</net>
