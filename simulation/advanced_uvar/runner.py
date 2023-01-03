@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from trasmapy import TraSMAPy, Color, VehicleClass, StopType, ScheduledStop
-from uvar_toll import UVAR_Toll
 import random
 
 import sys
 sys.path.append("..")
 from tools.trasmapy_utils import *
+from tools.uvar_toll import UVAR_Toll
 
 TICK_INTERVAL = 5  
 
@@ -44,8 +44,8 @@ def run(traSMAPy: TraSMAPy):
     
     # setup northern entrance toll
     toll_detectors = [
-        traSMAPy.network.getDetector(f"toll_N0"),
-        traSMAPy.network.getDetector(f"toll_N1")
+        traSMAPy.network.getDetector("toll_N0"),
+        traSMAPy.network.getDetector("toll_N1")
     ]
     vtype_prices = {
         defaultVehicle.id : 2.0,

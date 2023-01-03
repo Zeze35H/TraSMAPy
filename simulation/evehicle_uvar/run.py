@@ -6,6 +6,7 @@ import random
 import sys
 sys.path.append("..")
 from tools.trasmapy_utils import *
+from tools.uvar_toll import UVAR_Toll
 
 from trasmapy import TraSMAPy
 from trasmapy import StopType
@@ -20,7 +21,8 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     north_edge_rev = context.network.getEdge("-E40")
     
     entrance_edge = context.network.getEdge("E41")
-    entrance_edge_rev = context.network.getEdge("-E41.28")
+    entrance_edge_east = context.network.getEdge("-E45")
+    entrance_edge_west = context.network.getEdge("E49")
 
     southeast_edge = context.network.getEdge("E19.70")
     southeast_edge_in = context.network.getEdge("-E19")
@@ -30,7 +32,46 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     # Forbid Edges
     if opt["forbid"]:
         entrance_edge.setDisallowed([default_vehicle.vehicleClass])
-        entrance_edge_rev.setDisallowed([default_vehicle.vehicleClass])
+        entrance_edge_east.setDisallowed([default_vehicle.vehicleClass])
+        entrance_edge_west.setDisallowed([default_vehicle.vehicleClass])
+
+    
+    if opt["tolls"]:
+
+        for edge in context.network.edges:
+            edge.setEffort(edge.travelTime)
+        price = 2.0
+        effort = 70
+        north_toll = UVAR_Toll("north_toll",
+            [
+                context.network.getDetector("toll_north0"),
+                context.network.getDetector("toll_north1")
+            ],
+            price,
+            context,
+            effort=effort
+        )
+        east_toll = UVAR_Toll("east_toll",
+            [
+                context.network.getDetector("toll_east0"),
+                context.network.getDetector("toll_east1")
+            ],
+            price,
+            context,
+            effort=effort
+        )
+        west_toll = UVAR_Toll("west_toll",
+            [
+                context.network.getDetector("toll_west0"),
+                context.network.getDetector("toll_west1")
+            ],
+            price,
+            context,
+            effort=effort
+        )
+        context.control.registerToll(north_toll)
+        context.control.registerToll(east_toll)
+        context.control.registerToll(west_toll)
 
     # Data collection
     edges_idx = {edge.id : idx for idx, edge in enumerate(context.network.edges)}
@@ -62,7 +103,6 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
         ])
     )
 
-
     parking_areas = [context.network.getStop(f'pa_sw{x}') for x in range(7)]
     parking_areas.extend([context.network.getStop(f'pa_ne{x}') for x in range(12)])
     
@@ -80,15 +120,9 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     ]
 
     route_weights = [x["weight"] for x in routes]
-    if None in route_weights or sum(route_weights) != 1:
+    if None in route_weights or round(sum(route_weights), 1) != 1:
         route_weights = None
         print("Ignoring route probalities.")
-
-    edge_stops = ["E5", "E52", "E54", "-E53", "E53", "E5", "-E5", "E44", "-E44", "E43", "-E43", "-E42", "E420"]
-
-    edge_stops = [context.network.getEdge(x) for x in edge_stops]
-    lane_stops = [edge.lanes[0] for edge in edge_stops]
-    lane_stops = [context.network.createLaneStop(lane.id, lane.length/2) for lane in lane_stops]
 
     # Generate Vehicles
     vs_parks = {}
@@ -110,22 +144,28 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             v.via = [park.lane.parentEdge.id]
             vs_parks[v.id] = park
 
+    rerouted = set()
     while context.minExpectedNumber > 0:
+        if opt["tolls"]:
+            for v in context.users.vehicles:
+                if v.id not in rerouted:
+                    v.rerouteByEffort()
+                    rerouted.add(v.id)
+
         # assign parking stops
         for v in context.users.pendingVehicles:
             if v.id not in vs_parks: continue
             v.stopFor(vs_parks[v.id], random.randint(400, 600), stopParams=[StopType.PARKING, StopType.PARKING_AREA])
 
         context.doSimulationStep()
-
     context.closeSimulation()
 
 def parse_opt():
     parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument("--sumocfg", default="sim.sumocfg")
     parser.add_argument("--forbid", action="store_true", default=False)
+    parser.add_argument("--tolls", action="store_true", default=False)
     parser.add_argument("-n", "--no-vehicles",  type=int, default=2000)
-    parser.add_argument("-s", "--scenario",  type=int, default=0)
 
 
     args = parser.parse_args()
