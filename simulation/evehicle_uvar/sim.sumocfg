@@ -2,7 +2,7 @@
     <input>
         <net-file value="../config/net.xml"/>
         <route-files value="../config/rou.xml"/>
-        <additional-files value="../config/detectors.xml,../config/measurements.xml"/>
+        <additional-files value="../config/parking.xml,../config/parking.routers.xml,../config/detectors.xml,../config/measurements.xml"/>
         <gui-settings-file value="../config/settings.xml"/>
     </input>
     <time>
