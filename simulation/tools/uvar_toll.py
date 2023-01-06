@@ -1,3 +1,4 @@
+from collections import defaultdict
 from trasmapy import Toll
 from trasmapy.network._Detector import Detector
 from trasmapy import TraSMAPy
@@ -10,7 +11,7 @@ class UVAR_Toll(Toll):
         
         self.price = price
         self._hist_step = 0
-        self._toll_hist = {}
+        self._toll_hist = defaultdict(lambda: 0.0)
         self._ctx = ctx
 
         # add effort to edge containing toll (vehicles try to avoid if possible)
@@ -18,8 +19,7 @@ class UVAR_Toll(Toll):
         toll_edge.setEffort(toll_edge.travelTime + effort)
         
     def roadPricingScheme(self, detectedVehicles):
-        self._toll_hist[self._ctx.step] = self._toll_hist.get(self._ctx.step, 0)
-        self.toll_hist[self._ctx.step] = self.price * len(detectedVehicles)
+        self._toll_hist[self._ctx.step] = self.price * len(detectedVehicles)
 
     @property
     def toll_hist(self):

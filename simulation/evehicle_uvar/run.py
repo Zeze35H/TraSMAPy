@@ -43,26 +43,12 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             edge.setEffort(edge.travelTime)
         price = 2.0
         effort = 70
-        north_toll = UVAR_Toll("north_toll",
+        tolls = UVAR_Toll("tolls", 
             [
                 context.network.getDetector("toll_north0"),
-                context.network.getDetector("toll_north1")
-            ],
-            price,
-            context,
-            effort=effort
-        )
-        east_toll = UVAR_Toll("east_toll",
-            [
+                context.network.getDetector("toll_north1"),
                 context.network.getDetector("toll_east0"),
-                context.network.getDetector("toll_east1")
-            ],
-            price,
-            context,
-            effort=effort
-        )
-        west_toll = UVAR_Toll("west_toll",
-            [
+                context.network.getDetector("toll_east1"),
                 context.network.getDetector("toll_west0"),
                 context.network.getDetector("toll_west1")
             ],
@@ -70,9 +56,39 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             context,
             effort=effort
         )
-        context.control.registerToll(north_toll)
-        context.control.registerToll(east_toll)
-        context.control.registerToll(west_toll)
+
+        # north_toll = UVAR_Toll("north_toll",
+        #     [
+        #         context.network.getDetector("toll_north0"),
+        #         context.network.getDetector("toll_north1")
+        #     ],
+        #     price,
+        #     context,
+        #     effort=effort
+        # )
+        # east_toll = UVAR_Toll("east_toll",
+        #     [
+        #         context.network.getDetector("toll_east0"),
+        #         context.network.getDetector("toll_east1")
+        #     ],
+        #     price,
+        #     context,
+        #     effort=effort
+        # )
+        # west_toll = UVAR_Toll("west_toll",
+        #     [
+        #         context.network.getDetector("toll_west0"),
+        #         context.network.getDetector("toll_west1")
+        #     ],
+        #     price,
+        #     context,
+        #     effort=effort
+        # )
+        # context.control.registerToll(north_toll)
+        # context.control.registerToll(east_toll)
+        # context.control.registerToll(west_toll)
+        context.control.registerToll(tolls)
+
 
     # Data collection
     edges_idx = {edge.id : idx for idx, edge in enumerate(context.network.edges)}
@@ -182,11 +198,14 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     
     context.closeSimulation()
 
-    df = pd.DataFrame(columns=["active_vehicles", "avg_travel_time", "avg_waiting_time", "avg_halt_count", "global_co2", "city_co2"])
+    df = pd.DataFrame(columns=["active_vehicles", "avg_travel_time", "avg_waiting_time", "avg_halt_count", "global_co2", "city_co2", "tolls_profit"])
 
     for idx, stat in stats.items():
         df.loc[idx, ["avg_travel_time", "avg_waiting_time", "avg_halt_count", "global_co2", "city_co2"]] = stat["edge_stats"]
         df.loc[idx, "active_vehicles"] = stat["active_vehicles"]
+
+        if opt["tolls"]:
+            df.loc[idx, "tolls_profit"] = tolls.toll_hist[idx]
 
     df.to_csv(opt["stats_path"], sep=",")
 
@@ -197,7 +216,7 @@ def parse_opt():
     parser.add_argument("--tolls", action="store_true", default=False)
     parser.add_argument("-n", "--no-vehicles",  type=int, default=2000)
     parser.add_argument("--steps", default=-1, type=int)
-    parser.add_argument("--stats-path", default="./stats/stats.csv", type=str)
+    parser.add_argument("--stats-path", default="../stats/stats.csv", type=str)
 
     args = parser.parse_args()
     return vars(args)
