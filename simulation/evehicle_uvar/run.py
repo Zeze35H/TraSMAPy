@@ -116,14 +116,14 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     def collect_edge_stats(context):
         avg_travel_time = 0
         avg_waiting_time = 0
-        avg_halt_count = 0
+        halt_count = 0
         global_co2 = 0
         city_co2 = 0
 
         for edge_id, edge_idx in edges_idx.items():
             avg_travel_time += context["network"].edges[edge_idx].travelTime
             avg_waiting_time += context["network"].edges[edge_idx].vehicleWaitingTime
-            avg_halt_count += context["network"].edges[edge_idx].vehicleHaltCount
+            halt_count += context["network"].edges[edge_idx].vehicleHaltCount
             edge_co2 = context["network"].edges[edge_idx].CO2Emissions
             global_co2 += edge_co2
             if edge_id in edges_co2_tocollect:
@@ -131,9 +131,8 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
         
         avg_travel_time /= len(edges_idx)
         avg_waiting_time /= len(edges_idx)
-        avg_halt_count /= len(edges_idx)
 
-        return (avg_travel_time, avg_waiting_time, avg_halt_count, global_co2, city_co2)
+        return (avg_travel_time, avg_waiting_time, halt_count, global_co2, city_co2)
 
     context.registerQuery("edge_stats", collect_edge_stats)
 
@@ -198,14 +197,17 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     
     context.closeSimulation()
 
-    df = pd.DataFrame(columns=["active_vehicles", "avg_travel_time", "avg_waiting_time", "avg_halt_count", "global_co2", "city_co2", "tolls_profit"])
+    df = pd.DataFrame(columns=["active_vehicles", "avg_travel_time", "avg_waiting_time", "halt_count", "global_co2", "city_co2", "tolls_profit"])
+    df.index.name = "step"
 
     for idx, stat in stats.items():
-        df.loc[idx, ["avg_travel_time", "avg_waiting_time", "avg_halt_count", "global_co2", "city_co2"]] = stat["edge_stats"]
+        df.loc[idx, ["avg_travel_time", "avg_waiting_time", "halt_count", "global_co2", "city_co2"]] = stat["edge_stats"]
         df.loc[idx, "active_vehicles"] = stat["active_vehicles"]
 
         if opt["tolls"]:
             df.loc[idx, "tolls_profit"] = tolls.toll_hist[idx]
+        else:
+            df.loc[idx, "tolls_profit"] = 0
 
     df.to_csv(opt["stats_path"], sep=",")
 
