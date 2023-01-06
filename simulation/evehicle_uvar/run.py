@@ -2,6 +2,7 @@
 from typing import Any, Dict
 import argparse
 import random
+import pandas as pd
 
 import sys
 sys.path.append("..")
@@ -82,7 +83,7 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     )
 
     ## C02 Emission on city interior
-    edges_co2_tocollect = [
+    edges_co2_tocollect = set([
         "E0", "E1", "E2", "E3", "E4",
         "E50", "-E50.40", "E49", "-E49",
         "E10", "-E110", "E10.256", "-E100",
@@ -94,14 +95,20 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
         "E5", "-E5", "-E27", "E54", "-E54",
         "E53", "-E53", "E58",
         "E14", "E15", "E16", "E17"
+    ])
 
-    ]
-    context.registerQuery("city_co2",
-        lambda ctx: sum([
-            ctx["network"].edges[edges_idx[idx]].CO2Emissions
-                for idx in edges_co2_tocollect
-        ])
-    )
+    def collect_c02(context):
+        global_co2 = 0
+        city_co2 = 0
+        for edge_id, edge_idx in edges_idx.items():
+            edge_co2 = context["network"].edges[edge_idx].CO2Emissions
+            global_co2 += edge_co2
+            if edge_id in edges_co2_tocollect:
+                city_co2 += edge_co2
+        
+        return (global_co2, city_co2)
+
+    context.registerQuery("global_city_co2", collect_c02)
 
     parking_areas = [context.network.getStop(f'pa_sw{x}') for x in range(7)]
     parking_areas.extend([context.network.getStop(f'pa_ne{x}') for x in range(12)])
@@ -145,7 +152,8 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             vs_parks[v.id] = park
 
     rerouted = set()
-    while context.minExpectedNumber > 0:
+    max_steps = opt["steps"] if opt["steps"] != -1 else float("inf")
+    while context.minExpectedNumber > 0 and context.step < max_steps:
         if opt["tolls"]:
             for v in context.users.vehicles:
                 if v.id not in rerouted:
@@ -158,7 +166,17 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             v.stopFor(vs_parks[v.id], random.randint(400, 600), stopParams=[StopType.PARKING, StopType.PARKING_AREA])
 
         context.doSimulationStep()
+
+    stats = context.collectedStatistics
+    
     context.closeSimulation()
+
+    df = pd.DataFrame(columns=["global_co2", "city_co2"])
+
+    for idx, stat in stats.items():
+        df.loc[idx, ["global_co2", "city_co2"]] = stat["global_city_co2"]
+
+    df.to_csv(opt["stats_path"], sep=",")
 
 def parse_opt():
     parser = argparse.ArgumentParser(add_help=True)
@@ -166,7 +184,8 @@ def parse_opt():
     parser.add_argument("--forbid", action="store_true", default=False)
     parser.add_argument("--tolls", action="store_true", default=False)
     parser.add_argument("-n", "--no-vehicles",  type=int, default=2000)
-
+    parser.add_argument("--steps", default=-1, type=int)
+    parser.add_argument("--stats-path", default="./stats/stats.csv", type=str)
 
     args = parser.parse_args()
     return vars(args)
