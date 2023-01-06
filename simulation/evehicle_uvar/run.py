@@ -97,18 +97,29 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
         "E14", "E15", "E16", "E17"
     ])
 
-    def collect_c02(context):
+    def collect_edge_stats(context):
+        avg_travel_time = 0
+        avg_waiting_time = 0
+        avg_halt_count = 0
         global_co2 = 0
         city_co2 = 0
+
         for edge_id, edge_idx in edges_idx.items():
+            avg_travel_time += context["network"].edges[edge_idx].travelTime
+            avg_waiting_time += context["network"].edges[edge_idx].vehicleWaitingTime
+            avg_halt_count += context["network"].edges[edge_idx].vehicleHaltCount
             edge_co2 = context["network"].edges[edge_idx].CO2Emissions
             global_co2 += edge_co2
             if edge_id in edges_co2_tocollect:
                 city_co2 += edge_co2
         
-        return (global_co2, city_co2)
+        avg_travel_time /= len(edges_idx)
+        avg_waiting_time /= len(edges_idx)
+        avg_halt_count /= len(edges_idx)
 
-    context.registerQuery("global_city_co2", collect_c02)
+        return (avg_travel_time, avg_waiting_time, avg_halt_count, global_co2, city_co2)
+
+    context.registerQuery("edge_stats", collect_edge_stats)
 
     parking_areas = [context.network.getStop(f'pa_sw{x}') for x in range(7)]
     parking_areas.extend([context.network.getStop(f'pa_ne{x}') for x in range(12)])
@@ -171,10 +182,11 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     
     context.closeSimulation()
 
-    df = pd.DataFrame(columns=["global_co2", "city_co2"])
+    df = pd.DataFrame(columns=["active_vehicles", "avg_travel_time", "avg_waiting_time", "avg_halt_count", "global_co2", "city_co2"])
 
     for idx, stat in stats.items():
-        df.loc[idx, ["global_co2", "city_co2"]] = stat["global_city_co2"]
+        df.loc[idx, ["avg_travel_time", "avg_waiting_time", "avg_halt_count", "global_co2", "city_co2"]] = stat["edge_stats"]
+        df.loc[idx, "active_vehicles"] = stat["active_vehicles"]
 
     df.to_csv(opt["stats_path"], sep=",")
 
