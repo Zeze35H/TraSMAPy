@@ -2,37 +2,53 @@ import argparse
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
+
+
+def plot_error_band(data : pd.DataFrame, scenarios : list[str], column : str, xstep : int,
+                    xlabel : str, ylabel : str, title : str, path : str):
+    fig, ax = plt.subplots()
+    for sce in scenarios:
+        tmp_df = data[data["scenario"] == sce]
+        tmp_df.reset_index(inplace=True)
+
+        bin_ranges = np.arange(0, tmp_df.shape[0], xstep)
+        tmp_df = tmp_df[[column]].groupby(pd.cut(tmp_df.index, bin_ranges)).agg(['mean', 'std'])
+        tmp_df.reset_index(inplace=True)
+        tmp_df.columns = [f"{x[0]}_{x[1]}" for x in tmp_df.columns]
+
+        ax.plot(bin_ranges[:-1],  
+                        tmp_df[f'{column}_mean'], label=sce)
+
+        ax.fill_between(bin_ranges[:-1], tmp_df[f'{column}_mean'] - tmp_df[f'{column}_std'], 
+                        tmp_df[f'{column}_mean'] + tmp_df[f'{column}_std'], alpha=0.2)
+
+    ax.legend()
+    ax.set_xlim(xmin=0, xmax=bin_ranges[-1])
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_title(title)
+    fig.savefig(path, dpi=240, bbox_inches="tight")
 
 def run(opt):
     sns.set_theme("notebook")
     stats_df = pd.DataFrame()
+    scenarios = []
     for id, stats_path in opt["stats_files"]:
         df = pd.read_csv(stats_path, sep=",")
         df.loc[:, "scenario"] = id
-
+        scenarios.append(id)
         stats_df = pd.concat([stats_df, df], ignore_index=True)
-    
-    # City CO2 Emissions
-    fig, ax = plt.subplots()
+
     stats_df["city_co2"] /= 1000
-    sns.lineplot(data=stats_df, x="step", y="city_co2", hue="scenario", ax=ax)
-    ax.set_xlabel("Step")
-    ax.set_ylabel("CO2 Emission (g)")
-    ax.set_title("CO2 Emissions (city)")
-    fig.savefig("stats/co2_emissions_city.png", dpi=240, bbox_inches="tight")
+    plot_error_band(stats_df, scenarios, "city_co2",
+                    xstep=50, xlabel="Step", ylabel="CO2 Emission (g)",
+                    title="CO2 Emissions (city)", path="stats/co2_emissions_city.png")
 
-    plt.clf()
-
-    # Global CO2 Emissions
-    fig, ax = plt.subplots()
     stats_df["global_co2"] /= 1000
-    sns.lineplot(data=stats_df, x="step", y="global_co2", hue="scenario", ax=ax)
-    ax.set_xlabel("Step")
-    ax.set_ylabel("CO2 Emission (g)")
-    ax.set_title("CO2 Emissions (global)")
-    fig.savefig("stats/co2_emissions_global.png", dpi=240, bbox_inches="tight")
-
-    plt.clf()
+    plot_error_band(stats_df, scenarios, "global_co2",
+                    xstep=50, xlabel="Step", ylabel="CO2 Emission (g)",
+                    title="CO2 Emissions (global)", path="stats/co2_emissions_global.png")
 
     # Active Vehicles
     fig, ax = plt.subplots()
