@@ -42,51 +42,24 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
         for edge in context.network.edges:
             edge.setEffort(edge.travelTime)
         price = 2.0
-        effort = 70
         tolls = UVAR_Toll("tolls", 
             [
-                context.network.getDetector("toll_north0"),
-                context.network.getDetector("toll_north1"),
-                context.network.getDetector("toll_east0"),
-                context.network.getDetector("toll_east1"),
-                context.network.getDetector("toll_west0"),
-                context.network.getDetector("toll_west1")
+                {
+                    "detectors" : [context.network.getDetector("toll_north0"), context.network.getDetector("toll_north1")],
+                    "price" : price
+                },
+                {
+                    "detectors" : [context.network.getDetector("toll_east0"), context.network.getDetector("toll_east1")],
+                    "price" : price
+                },
+                {
+                    "detectors" : [context.network.getDetector("toll_west0"), context.network.getDetector("toll_west1")],
+                    "price" : price
+                },
             ],
             price,
             context,
-            effort=effort
         )
-
-        # north_toll = UVAR_Toll("north_toll",
-        #     [
-        #         context.network.getDetector("toll_north0"),
-        #         context.network.getDetector("toll_north1")
-        #     ],
-        #     price,
-        #     context,
-        #     effort=effort
-        # )
-        # east_toll = UVAR_Toll("east_toll",
-        #     [
-        #         context.network.getDetector("toll_east0"),
-        #         context.network.getDetector("toll_east1")
-        #     ],
-        #     price,
-        #     context,
-        #     effort=effort
-        # )
-        # west_toll = UVAR_Toll("west_toll",
-        #     [
-        #         context.network.getDetector("toll_west0"),
-        #         context.network.getDetector("toll_west1")
-        #     ],
-        #     price,
-        #     context,
-        #     effort=effort
-        # )
-        # context.control.registerToll(north_toll)
-        # context.control.registerToll(east_toll)
-        # context.control.registerToll(west_toll)
         context.control.registerToll(tolls)
 
 
@@ -138,6 +111,7 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
 
     parking_areas = [context.network.getStop(f'pa_sw{x}') for x in range(7)]
     parking_areas.extend([context.network.getStop(f'pa_ne{x}') for x in range(12)])
+    random.shuffle(parking_areas)
     
     # setup custom routes
     routes = [

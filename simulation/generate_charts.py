@@ -73,6 +73,7 @@ def run(opt):
     # Average Waiting Time
     fig, ax = plt.subplots()
     sns.lineplot(data=stats_df, x="step", y="avg_waiting_time", hue="scenario", ax=ax)
+    ax.set_yscale("symlog")
     ax.set_xlabel("Step")
     ax.set_ylabel("Travel Time")
     ax.set_title("Average Waiting Time (global)")
