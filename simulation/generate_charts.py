@@ -101,6 +101,15 @@ def run(opt):
 
     plt.clf()
 
+    stats_table = dict()
+    for scenario in scenarios:
+        tmp = stats_df[stats_df["scenario"] == scenario]
+        stats_table[scenario] = [tmp["city_co2"].sum(), tmp["global_co2"].sum()]
+
+    stats_df.to_latex("stats/table.tex", index=False)
+
+    total = pd.DataFrame()
+
 
 def parse_opt():
     parser = argparse.ArgumentParser()

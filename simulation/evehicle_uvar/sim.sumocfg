@@ -4,6 +4,7 @@
         <route-files value="../config/rou.xml"/>
         <additional-files value="../config/parking.xml,../config/parking.routers.xml,../config/detectors.xml,../config/measurements.xml"/>
         <gui-settings-file value="../config/settings.xml"/>
+        <weights.random-factor value="1.5"/>
     </input>
     <time>
         <begin value="0"/>

@@ -46,15 +46,15 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             [
                 {
                     "detectors" : [context.network.getDetector("toll_north0"), context.network.getDetector("toll_north1")],
-                    "price" : price
+                    "price" : 2.5
                 },
                 {
                     "detectors" : [context.network.getDetector("toll_east0"), context.network.getDetector("toll_east1")],
-                    "price" : price
+                    "price" : 2.5
                 },
                 {
                     "detectors" : [context.network.getDetector("toll_west0"), context.network.getDetector("toll_west1")],
-                    "price" : price
+                    "price" : 3.9
                 },
             ],
             price,
@@ -155,6 +155,7 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     max_steps = opt["steps"] if opt["steps"] != -1 else float("inf")
     while context.minExpectedNumber > 0 and context.step < max_steps:
         if opt["tolls"]:
+            tolls.recalculate_efforts()
             for v in context.users.vehicles:
                 if v.id not in rerouted:
                     v.rerouteByEffort()

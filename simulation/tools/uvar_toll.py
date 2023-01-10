@@ -2,6 +2,7 @@ from collections import defaultdict
 from trasmapy import Toll
 from trasmapy.network._Detector import Detector
 from trasmapy import TraSMAPy
+import random
 
 class UVAR_Toll(Toll):
 
@@ -14,21 +15,31 @@ class UVAR_Toll(Toll):
         self._toll_hist = defaultdict(lambda: 0.0)
         self._ctx = ctx
 
+        self.detect_prices = detect_price
+
         detectors = []
         for det_price in detect_price:
-            weight = det_price["price"] * 2
             for detector in det_price["detectors"]:
                 # add effort to edge containing toll (vehicles try to avoid if possible)
                 toll_edge = self._ctx.network.getLane(detector.laneId).parentEdge
-                toll_edge.setEffort(toll_edge.travelTime * (1 + weight))
+                toll_edge.setEffort(toll_edge.travelTime * (1 + det_price["price"]))
                 detectors.append(detector)
 
-            print("=========================")
             print(toll_edge.travelTime)
             print(toll_edge.getEffort(0))
         
         super().__init__(id, detectors)
 
+    def recalculate_efforts(self):
+        """The edge efforts need to be recalculated ate every step because of the dynamic random weights applied to travel time.
+           Vehicles will be more likely to choose alternative routes during runtime.
+        """
+
+        for det_price in self.detect_prices:
+            for detector in det_price["detectors"]:
+                # add effort to edge containing toll (vehicles try to avoid if possible)
+                toll_edge = self._ctx.network.getLane(detector.laneId).parentEdge
+                toll_edge.setEffort((toll_edge.travelTime * (1 + det_price["price"])))
         
     def roadPricingScheme(self, detectedVehicles):
         self._toll_hist[self._ctx.step] = self.price * len(detectedVehicles)
