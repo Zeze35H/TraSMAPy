@@ -50,11 +50,11 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
                 },
                 {
                     "detectors" : [context.network.getDetector("toll_east0"), context.network.getDetector("toll_east1")],
-                    "price" : 2.5
+                    "price" : 2.3
                 },
                 {
                     "detectors" : [context.network.getDetector("toll_west0"), context.network.getDetector("toll_west1")],
-                    "price" : 3.9
+                    "price" : 3.6
                 },
             ],
             price,
@@ -86,26 +86,91 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
         "E14", "E15", "E16", "E17"
     ])
 
+    city_entrance_egdes = set(["E41", "-E10.47", "E70"])
+    city_exit_edges = set(["E100", "E8", "E63"])
+    global_entrance_edges = set(["E40", "E6", "-E19" ])
+    global_exit_edges = set(["-E6", "E19.70", "-E40"])
+
     def collect_edge_stats(context):
         avg_travel_time = 0
         avg_waiting_time = 0
         halt_count = 0
         global_co2 = 0
+        global_entered = 0
+        global_exited = 0
+        
         city_co2 = 0
+        city_halt = 0
+        city_wait_time = 0
+        city_travel_time = 0
+        city_entered = 0
+        city_exited = 0
 
+        out_halt = 0
+        out_wait_time = 0
+        out_travel_time = 0
+        out_co2 = 0
+
+        total_out = 0
+        total_city = 0
         for edge_id, edge_idx in edges_idx.items():
-            avg_travel_time += context["network"].edges[edge_idx].travelTime
-            avg_waiting_time += context["network"].edges[edge_idx].vehicleWaitingTime
-            halt_count += context["network"].edges[edge_idx].vehicleHaltCount
+            edge_travel_time = context["network"].edges[edge_idx].travelTime
+            avg_travel_time += edge_travel_time
+
+            edge_wait_time = context["network"].edges[edge_idx].vehicleWaitingTime
+            avg_waiting_time += edge_wait_time
+
+            edge_halt_count = context["network"].edges[edge_idx].vehicleHaltCount
+            halt_count += edge_halt_count
             edge_co2 = context["network"].edges[edge_idx].CO2Emissions
             global_co2 += edge_co2
-            if edge_id in edges_co2_tocollect:
-                city_co2 += edge_co2
-        
-        avg_travel_time /= len(edges_idx)
-        avg_waiting_time /= len(edges_idx)
 
-        return (avg_travel_time, avg_waiting_time, halt_count, global_co2, city_co2)
+
+            edge_weight = context["network"].edges[edge_idx].vehicleCount
+
+            if edge_id in city_entrance_egdes:
+                city_entered += edge_weight
+            elif edge_id in city_exit_edges:
+                city_exited += edge_weight
+            elif edge_id in  global_entrance_edges:
+                global_entered += edge_weight
+            elif edge_id in global_exit_edges:
+                global_exited += edge_weight
+
+
+            if edge_id in edges_co2_tocollect:
+                total_city += edge_weight
+
+                city_halt += edge_halt_count
+                city_wait_time += edge_wait_time * edge_weight
+                city_travel_time += edge_travel_time * edge_weight
+                city_co2 += edge_co2 * edge_weight
+            else:
+                total_out += edge_weight
+                out_halt += edge_halt_count
+                out_wait_time += edge_wait_time * edge_weight
+                out_travel_time += edge_travel_time * edge_weight
+                out_co2 += edge_co2
+
+            avg_waiting_time *= edge_weight
+            avg_travel_time *= edge_weight
+            # halt_count *= edge_weight
+        
+        if total_city != 0:
+            # city_halt /= total_city
+            city_wait_time /= total_city
+            city_travel_time /= total_city
+        if total_out != 0:
+            # out_halt /= total_out
+            out_wait_time /= total_out
+            out_travel_time /= total_out
+
+
+        # city_throughput = city_entered/city_exited if city_exited != 0 else 0
+        # global_throughput = global_entered/global_exited if global_exited != 0 else 0
+
+        return (city_entered, city_exited, global_entered, global_exited, global_co2, city_co2, 
+                city_halt, city_wait_time, city_travel_time, out_halt, out_wait_time, out_travel_time, out_co2)
 
     context.registerQuery("edge_stats", collect_edge_stats)
 
@@ -133,18 +198,29 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
 
     # Generate Vehicles
     vs_parks = {}
+    vehicles = {}
     vehicle_types = [default_vehicle, electric_vehicle]
+
+    
     for i in range(opt.get("no_vehicles", 2000)):
         route = random.choices(
             routes,
             weights=route_weights
         )[0]
 
+        depart_time = random.randint(0, 1000)
         v = context.users.createVehicle(
             f"v{i}", route=route["route"],
             vehicleType=random.choices(vehicle_types, weights=(0.8, 0.2))[0],
-            departTime=random.randint(0, 1000)
+            departTime=depart_time
         )
+        
+        vehicles[v.id] = {
+            "obj" : v,
+            "start" : depart_time,
+            "end": depart_time,
+            "dead": False,
+        }
 
         if route["type"] == "parking":
             park = random.choice(route["park_areas"])
@@ -166,17 +242,24 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             if v.id not in vs_parks: continue
             v.stopFor(vs_parks[v.id], random.randint(400, 600), stopParams=[StopType.PARKING, StopType.PARKING_AREA])
 
+        for v in context.users.vehicles:
+            if v.isDead != vehicles[v.id]["dead"]:
+                vehicles[v.id]["dead"] = True
+                vehicles[v.id]["end"] = context.step
+
         context.doSimulationStep()
 
     stats = context.collectedStatistics
     
     context.closeSimulation()
 
-    df = pd.DataFrame(columns=["active_vehicles", "avg_travel_time", "avg_waiting_time", "halt_count", "global_co2", "city_co2", "tolls_profit"])
+    df = pd.DataFrame(columns=["active_vehicles", "city_entered", "city_exited", "global_entered", "global_exited", "global_co2", "city_co2",
+                                "city_halt", "city_wait_time", "city_travel_time", "out_halt", "out_wait_time", "out_travel_time", "out_co2", "tolls_profit"])
     df.index.name = "step"
 
     for idx, stat in stats.items():
-        df.loc[idx, ["avg_travel_time", "avg_waiting_time", "halt_count", "global_co2", "city_co2"]] = stat["edge_stats"]
+        df.loc[idx, ["city_entered", "city_exited", "global_entered", "global_exited", "global_co2", "city_co2",
+                    "city_halt", "city_wait_time", "city_travel_time", "out_halt", "out_wait_time", "out_travel_time", "out_co2"]] = stat["edge_stats"]
         df.loc[idx, "active_vehicles"] = stat["active_vehicles"]
 
         if opt["tolls"]:
@@ -185,6 +268,13 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             df.loc[idx, "tolls_profit"] = 0
 
     df.to_csv(opt["stats_path"], sep=",")
+
+
+    v_dict = {"id" : vehicles.keys(), "depart_time" : [x["depart_time"] for x in vehicles], "end_time" : [x["end_time"] for x in vehicles]}
+    vehicle_stats = pd.DataFrame(v_dict)
+    vehicle_stats.to_csv(opt["stats_path"].split(".csv") + "_vehicles.csv", sep=",")
+
+    
 
 def parse_opt():
     parser = argparse.ArgumentParser(add_help=True)
