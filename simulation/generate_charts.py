@@ -31,6 +31,8 @@ def plot_error_band(data : pd.DataFrame, scenarios : list[str], column : str, xs
 
     ax.set_ylim(0)
     fig.savefig(path, dpi=240, bbox_inches="tight")
+    plt.close(fig)
+    plt.clf()
 
 def run(opt):
     sns.set_theme("notebook")
@@ -64,7 +66,7 @@ def run(opt):
     ax.set_ylabel("Active Vehicles")
     ax.set_title("Active Vehicles")
     fig.savefig("stats/active_vehicles.png", dpi=240, bbox_inches="tight")
-
+    plt.close(fig)
     plt.clf()
 
     # # Average Travel Time
@@ -109,7 +111,7 @@ def run(opt):
     ax.set_ylabel("Profit (€)")
     ax.set_title("Profit gained from tolls (global)")
     fig.savefig("stats/tolls_profit.png", dpi=240, bbox_inches="tight")
-
+    plt.close(fig)
     plt.clf()
 
     stats_table = {"metric" : ["CO2 (city)",  "Halt (city)", "Wait Time (city)", "Travel time (city)",
@@ -122,27 +124,33 @@ def run(opt):
         tmp_df = stats_df[stats_df["scenario"] == sce]
         tmp_df.reset_index(inplace=True)
 
-        bins = np.arange(0, tmp_df.shape[0], 50)
+        bin_size = 25
+        bins = np.arange(0, tmp_df.shape[0], bin_size)
         v_count_stats = tmp_df[["city_entered", "city_exited","global_entered","global_exited"]].groupby(pd.cut(tmp_df.index, bins)).agg(['sum'])
         v_count_stats.reset_index(inplace=True)
         v_count_stats.columns = [f"{x[0]}" for x in v_count_stats.columns]
 
         calculated = pd.DataFrame(columns=throughput_df.columns)
         calculated["index"] = bins
-        calculated["global"] = v_count_stats["global_exited"] / 50
-        calculated["city"] = v_count_stats["city_exited"] / 50
+        calculated["global"] = v_count_stats["global_exited"] / bin_size
+        calculated["city"] = v_count_stats["city_exited"] / bin_size
         calculated["scenario"] = sce
 
         throughput_df = pd.concat([throughput_df, calculated], axis=0)
 
-        sns.boxplot(data=calculated, y="global", ax=axs[idx] )
+    fig, ax = plt.subplots()
+    sns.boxplot(data=throughput_df, y="global", x="scenario", ax=ax)
+    ax.set_xlabel("Scenario")
+    ax.set_ylabel("Global Throughput (s^-1)")
+    ax.set_title("Throughput on the network (global)")
+    fig.savefig("stats/global_throughput.png", dpi=240, bbox_inches="tight")
+    plt.close(fig)
+    plt.clf()
 
+    # print("Throughput values")
+    # print(throughput_df)
+    # print(throughput_df.groupby("scenario").agg(["mean", "std"]))
 
-    print("Throughput values")
-    print(throughput_df.groupby("scenario").agg(["mean", "std"]))
-
-    print(throughput_df)
-    plt.show()
     unit = 1000000.0
     for scenario in scenarios:
         tmp = stats_df[stats_df["scenario"] == scenario]
