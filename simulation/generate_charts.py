@@ -4,6 +4,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
+from scipy import stats
+
 
 def plot_error_band(data : pd.DataFrame, scenarios : list[str], column : str, xstep : int,
                     xlabel : str, ylabel : str, title : str, path : str):
@@ -69,41 +71,6 @@ def run(opt):
     plt.close(fig)
     plt.clf()
 
-    # # Average Travel Time
-    # fig, ax = plt.subplots()
-    # sns.lineplot(data=stats_df, x="step", y="avg_travel_time", hue="scenario", ax=ax)
-    # ax.set_xlabel("Step")
-    # ax.set_ylabel("Travel Time (s)")
-    # ax.set_title("Average Travel Time (global)")
-    # fig.savefig("stats/avg_travel_time.png", dpi=240, bbox_inches="tight")
-
-    # plt.clf()
-
-    # plot_error_band(stats_df, scenarios, "avg_travel_time",
-    #                 xstep=50, xlabel="Step", ylabel="Travel Time (s)",
-    #                 title="Travel Time", path="stats/travel_time.png")
-
-    # Average Waiting Time
-    # fig, ax = plt.subplots()
-    # sns.lineplot(data=stats_df, x="step", y="avg_waiting_time", hue="scenario", ax=ax)
-    # ax.set_yscale("symlog")
-    # ax.set_xlabel("Step")
-    # ax.set_ylabel("Travel Time")
-    # ax.set_title("Average Waiting Time (global)")
-    # fig.savefig("stats/avg_waiting_time.png", dpi=240, bbox_inches="tight")
-
-    # plt.clf()
-
-    # # Average Halt Count
-    # fig, ax = plt.subplots()
-    # sns.lineplot(data=stats_df, x="step", y="halt_count", hue="scenario", ax=ax)
-    # ax.set_xlabel("Step")
-    # ax.set_ylabel("Halt Count")
-    # ax.set_title("Halted Vehicles (global)")
-    # fig.savefig("stats/halt_count.png", dpi=240, bbox_inches="tight")
-
-    # plt.clf()
-
     # Tolls Profit
     fig, ax = plt.subplots()
     sns.lineplot(data=stats_df, x="step", y="tolls_profit", hue="scenario", ax=ax)
@@ -114,8 +81,6 @@ def run(opt):
     plt.close(fig)
     plt.clf()
 
-    stats_table = {"metric" : ["CO2 (city)",  "Halt (city)", "Wait Time (city)", "Travel time (city)",
-                                "Halt (out)", "Wait Time (out)", "Travel Time (out)", "CO2 (out)", "CO2 (global)"]}
 
 
     throughput_df = pd.DataFrame(columns=["index", "global", "city", "scenario"])
@@ -124,7 +89,7 @@ def run(opt):
         tmp_df = stats_df[stats_df["scenario"] == sce]
         tmp_df.reset_index(inplace=True)
 
-        bin_size = 25
+        bin_size = 10
         bins = np.arange(0, tmp_df.shape[0], bin_size)
         v_count_stats = tmp_df[["city_entered", "city_exited","global_entered","global_exited"]].groupby(pd.cut(tmp_df.index, bins)).agg(['sum'])
         v_count_stats.reset_index(inplace=True)
@@ -141,15 +106,16 @@ def run(opt):
     fig, ax = plt.subplots()
     sns.boxplot(data=throughput_df, y="global", x="scenario", ax=ax)
     ax.set_xlabel("Scenario")
-    ax.set_ylabel("Global Throughput (s^-1)")
-    ax.set_title("Throughput on the network (global)")
+    ax.set_ylabel("Throughput (n/Δt)")
+    ax.set_title("Network Throughput")
     fig.savefig("stats/global_throughput.png", dpi=240, bbox_inches="tight")
     plt.close(fig)
     plt.clf()
 
-    # print("Throughput values")
-    # print(throughput_df)
-    # print(throughput_df.groupby("scenario").agg(["mean", "std"]))
+    stats_table = {"metric" : ["CO2 (city)",  "Halt (city)", "Wait Time (city)", "Travel time (city)",
+                                "Halt (out)", "Wait Time (out)", "Travel Time (out)", "CO2 (out)", "CO2 (global)"]}
+
+    print("Toll profit: ", stats_df[stats_df["scenario"] == "Tolls"]["tolls_profit"].sum())
 
     unit = 1000000.0
     for scenario in scenarios:
@@ -171,7 +137,6 @@ def run(opt):
 
     total = total.round(2)
 
-    # total = total.applymap(lambda x : round(x, 3) if type(x) == str else x)
     total.to_latex("stats/table.tex", index=False)
 
 

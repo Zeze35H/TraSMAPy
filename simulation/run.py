@@ -4,8 +4,6 @@ import argparse
 import random
 import pandas as pd
 
-import sys
-sys.path.append("..")
 from tools.trasmapy_utils import *
 from tools.uvar_toll import UVAR_Toll
 
@@ -125,7 +123,6 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
             edge_co2 = context["network"].edges[edge_idx].CO2Emissions
             global_co2 += edge_co2
 
-
             edge_weight = context["network"].edges[edge_idx].vehicleCount
 
             if edge_id in city_entrance_egdes:
@@ -136,7 +133,6 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
                 global_entered += edge_weight
             elif edge_id in global_exit_edges:
                 global_exited += edge_weight
-
 
             if edge_id in edges_co2_tocollect:
                 total_city += edge_weight
@@ -154,20 +150,13 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
 
             avg_waiting_time *= edge_weight
             avg_travel_time *= edge_weight
-            # halt_count *= edge_weight
         
         if total_city != 0:
-            # city_halt /= total_city
             city_wait_time /= total_city
             city_travel_time /= total_city
         if total_out != 0:
-            # out_halt /= total_out
             out_wait_time /= total_out
             out_travel_time /= total_out
-
-
-        # city_throughput = city_entered/city_exited if city_exited != 0 else 0
-        # global_throughput = global_entered/global_exited if global_exited != 0 else 0
 
         return (city_entered, city_exited, global_entered, global_exited, global_co2, city_co2, 
                 city_halt, city_wait_time, city_travel_time, out_halt, out_wait_time, out_travel_time, out_co2)
@@ -200,8 +189,6 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     vs_parks = {}
     vehicles = {}
     vehicle_types = [default_vehicle, electric_vehicle]
-
-    
     for i in range(opt.get("no_vehicles", 2000)):
         route = random.choices(
             routes,
@@ -270,7 +257,8 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     df.to_csv(opt["stats_path"], sep=",")
 
 
-    v_dict = {"id" : vehicles.keys(), "depart_time" : [x["depart_time"] for x in vehicles], "end_time" : [x["end_time"] for x in vehicles]}
+    print(vehicles)
+    v_dict = {"id" : vehicles.keys(), "depart_time" : [x["start"] for x in vehicles.values()], "end_time" : [x["end"] for x in vehicles.values()]}
     vehicle_stats = pd.DataFrame(v_dict)
     vehicle_stats.to_csv(opt["stats_path"].split(".csv") + "_vehicles.csv", sep=",")
 
@@ -278,12 +266,12 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
 
 def parse_opt():
     parser = argparse.ArgumentParser(add_help=True)
-    parser.add_argument("--sumocfg", default="sim.sumocfg")
-    parser.add_argument("--forbid", action="store_true", default=False)
-    parser.add_argument("--tolls", action="store_true", default=False)
-    parser.add_argument("-n", "--no-vehicles",  type=int, default=2000)
-    parser.add_argument("--steps", default=-1, type=int)
-    parser.add_argument("--stats-path", default="../stats/stats.csv", type=str)
+    parser.add_argument("--sumocfg", default="sim.sumocfg", help="path to sumocfg")
+    parser.add_argument("-n", "--no-vehicles",  type=int, default=2000, help="number of vehicles to create")
+    parser.add_argument("--steps", default=-1, type=int, help="maximum simulation steps")
+    parser.add_argument("--forbid", action="store_true", default=False, help="run the forbid scenario (restrict access)")
+    parser.add_argument("--tolls", action="store_true", default=False, help="run the tolls scenario (toll fees)")
+    parser.add_argument("--stats-path", default="../stats/stats.csv", type=str, help="path to the output statistics file")
 
     args = parser.parse_args()
     return vars(args)
