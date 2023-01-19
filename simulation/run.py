@@ -257,10 +257,9 @@ def run(context: TraSMAPy, opt: Dict[str, Any]):
     df.to_csv(opt["stats_path"], sep=",")
 
 
-    print(vehicles)
     v_dict = {"id" : vehicles.keys(), "depart_time" : [x["start"] for x in vehicles.values()], "end_time" : [x["end"] for x in vehicles.values()]}
     vehicle_stats = pd.DataFrame(v_dict)
-    vehicle_stats.to_csv(opt["stats_path"].split(".csv") + "_vehicles.csv", sep=",")
+    vehicle_stats.to_csv(opt["stats_path"].split(".csv")[0] + "_vehicles.csv", sep=",")
 
     
 
@@ -271,7 +270,7 @@ def parse_opt():
     parser.add_argument("--steps", default=-1, type=int, help="maximum simulation steps")
     parser.add_argument("--forbid", action="store_true", default=False, help="run the forbid scenario (restrict access)")
     parser.add_argument("--tolls", action="store_true", default=False, help="run the tolls scenario (toll fees)")
-    parser.add_argument("--stats-path", default="../stats/stats.csv", type=str, help="path to the output statistics file")
+    parser.add_argument("--stats-path", default="./stats/stats.csv", type=str, help="path to the output statistics file")
 
     args = parser.parse_args()
     return vars(args)

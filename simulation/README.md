@@ -25,6 +25,16 @@ options:
                         path to the output statistics file
 ```
 
+Example for baseline scenario limiting the number of steps:
+```
+python run.py --steps 2000
+```
+
+Example for forbid scenario with custom stats path:
+```
+python run.py --forbid --stats-path ./stats/forbid.csv
+```
+
 ### Statistics
 To generate charts from the collected statistics:
 
