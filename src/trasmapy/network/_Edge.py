@@ -116,19 +116,19 @@ class Edge(IdentifiedObject):
         return traci.edge.getAdaptedTraveltime(self.id, time)
 
     def setAdaptedTravelTime(
-        self, beginTime: float, endTime: float, travelTime: float
+        self, travelTime: float, beginTime: float = None, endTime: float = None
     ) -> None:
-        traci.edge.adaptTraveltime(self.id, beginTime, endTime, travelTime)
+        traci.edge.adaptTraveltime(self.id, travelTime, beginTime, endTime)
 
     def getEffort(self, time: float) -> float:
         """Returns the edge effort for the given time as stored in the global container.
         If no such value exists, -1 is returned."""
         return traci.edge.getEffort(self.id, time)
 
-    def setEffort(self, beginTime: float, endTime: float, travelTime: float) -> None:
+    def setEffort(self, travelTime: float, beginTime: float = None, endTime: float = None) -> None:
         """Inserts the information about the effort of the named edge valid from begin
         time to end time into the global edge weights container."""
-        traci.edge.setEffort(self.id, beginTime, endTime, travelTime)
+        traci.edge.setEffort(self.id, travelTime, beginTime, endTime)
 
     def setMaxSpeed(self, maxSpeed: float) -> None:
         """Sets the maximum speed for the vehicles in this edge (for all lanes) to the given value."""
